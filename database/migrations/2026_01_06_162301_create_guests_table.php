@@ -11,7 +11,6 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->foreignId('wedding_id');
-            $table->string('name');
             $table->string('mealChoice')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
