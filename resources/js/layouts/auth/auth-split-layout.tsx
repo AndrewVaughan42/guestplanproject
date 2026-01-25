@@ -24,7 +24,7 @@ export default function AuthSplitLayout({
                 <img
                     src={loginImage}
                     alt="Login image"
-                    className="absolute inset-0 h-full w-full object-cover opacity-20"
+                    className="absolute inset-0 h-full w-full object-cover opacity-50"
                 />
                 <Link
                     href={home()}
