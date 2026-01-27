@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\TodoItemController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -16,8 +16,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    Route::get('todoList', [TodoItemController::class, 'index'])->name('todoList');
-    Route::resource('todoItems', TodoItemController::class)->except('show');
+    Route::get('todoList', [TaskController::class, 'index'])->name('todoList');
+    Route::resource('todoItems', TaskController::class)->except('show');
 
 
     Route::get('guestManager', function () {

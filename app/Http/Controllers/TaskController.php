@@ -2,35 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TodoItem;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class TodoItemController extends Controller
+class TaskController extends Controller
 {
     public function index()
     {
         return Inertia::render('todoList', [
-            'todoList' => TodoItem::where('user_id', auth()->id())->get(),
+            'todoList' => Task::where('user_id', auth()->id())->get(),
         ]);
     }
 
-    public function store(Request $request): TodoItem
+    public function store(Request $request): Task
     {
         $data = $request->validate([
             'name' => ['required'],
             'user_id' => ['required', 'exists:users'],
         ]);
 
-        return TodoItem::create($data);
+        return Task::create($data);
     }
 
-    public function show(TodoItem $todoItem): TodoItem
+    public function show(Task $todoItem): Task
     {
         return $todoItem;
     }
 
-    public function update(Request $request, TodoItem $todoItem): TodoItem
+    public function update(Request $request, Task $todoItem): Task
     {
         $data = $request->validate([
             'name' => ['required'],
@@ -42,7 +42,7 @@ class TodoItemController extends Controller
         return $todoItem;
     }
 
-    public function destroy(TodoItem $todoItem): \Illuminate\Http\JsonResponse
+    public function destroy(Task $todoItem): \Illuminate\Http\JsonResponse
     {
         $todoItem->delete();
 
