@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\TodoItem;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-class TodoItemFactory extends Factory
+class TaskFactory extends Factory
 {
-    protected $model = TodoItem::class;
+    protected $model = Task::class;
 
     public function definition(): array
     {
