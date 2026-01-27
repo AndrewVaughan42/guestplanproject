@@ -15,7 +15,6 @@ function getDays(weddingDate: string | Date) {
 
 export default function Countdown({weddingDate, onComplete} : CountdownProps) {
 
-
     const [daysLeft, setDaysLeft] = useState<number>(() => getDays(weddingDate));
 
     useEffect(() => {

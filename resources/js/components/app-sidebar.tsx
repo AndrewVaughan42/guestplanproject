@@ -10,11 +10,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard, guestManager, tasks } from '@/routes';
+import { dashboard, guestManager } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, FileUser, Folder, LayoutGrid, ListTodo } from 'lucide-react';
 import AppLogo from './app-logo';
+import tasks from '@/routes/tasks';
 
 const mainNavItems: NavItem[] = [
     {
@@ -24,7 +25,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Task List',
-        href: tasks().url,
+        href: tasks.index().url,
         icon: ListTodo,
     },
     {

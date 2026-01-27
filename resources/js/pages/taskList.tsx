@@ -1,6 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type Task } from '@/types';
-import { tasks } from '@/routes';
 import { Head } from '@inertiajs/react';
 import {
     Table,
@@ -9,17 +8,24 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Button } from '@headlessui/react';
-
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import AddNewTask from '@/pages/myComponents/tasks/addNewTask';
+import DeleteTask from '@/pages/myComponents/tasks/deleteTask';
+import tasks from '@/routes/tasks';
+import { Trash2 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Task List',
-        href: tasks().url,
+        href: tasks.index().url,
     },
 ];
 
+
 export default function TaskList({tasks}: {tasks: Task[]}) {
+    const [open, setOpen] = useState(false);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Task List" />
@@ -30,21 +36,62 @@ export default function TaskList({tasks}: {tasks: Task[]}) {
                     </h2>
                     <div>
                         <div>
-                            <Button>TODO Add New Task</Button>
+                            <Button
+                                className={'mb-4'}
+                                variant={'outline'}
+                                onClick={() => setOpen(true)}
+                            >
+                                Add New Task
+                            </Button>
+                            <AddNewTask open={open} setOpen={setOpen} />
                         </div>
-                        <Table>
+                        <Table className={'mt-4'}>
                             <TableHeader>
                                 <TableRow>
-                                    <TableCell>Task</TableCell>
-                                    <TableCell>Due Date</TableCell>
-
+                                    <TableCell
+                                        align={'left'}
+                                        className={'font-bold'}
+                                    >
+                                        <b className={'text-2xl'}>Task</b>
+                                    </TableCell>
+                                    <TableCell align={'center'}>
+                                        <b className={'text-2xl'}>Status</b>
+                                    </TableCell>
+                                    <TableCell align={'right'}>
+                                        <b className={'text-2xl'}>Due Date</b>
+                                    </TableCell>
+                                    <TableCell align={'right'}>
+                                        <b className={'text-2xl'}>Actions</b>
+                                    </TableCell>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {tasks.map((task) => (
                                     <TableRow key={task.id}>
-                                        <TableCell>{task.title}</TableCell>
-                                        <TableCell>{task.due_date}</TableCell>
+                                        <TableCell align={'left'}>
+                                            {task.title}
+                                        </TableCell>
+                                        <TableCell align={'center'}>
+                                            {task.status}
+                                        </TableCell>
+                                        <TableCell align={'right'}>
+                                            {task.due_date}
+                                        </TableCell>
+                                        <TableCell
+                                            className={
+                                                'flex items-center justify-end'
+                                            }
+                                        >
+                                            <Button
+                                                variant={'ghost'}
+                                                size={'icon'}
+                                                onClick={() =>
+                                                    DeleteTask(task.id)
+                                                }
+                                            >
+                                                <Trash2 />
+                                            </Button>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

@@ -36,7 +36,7 @@ class TaskController extends Controller
         $data['status'] ??= TaskStatus::PENDING;
 
         Task::create($data);
-        return redirect()->route('tasklist')->with('success', 'Task created successfully.');
+        return redirect()->back()->with('success', 'Task created successfully.');
     }
 
     public function show(Task $task): Task
@@ -55,13 +55,13 @@ class TaskController extends Controller
 
         $task->update($data);
 
-        return redirect()->route('tasklist')->with('success', 'Task updated successfully.');
+        return redirect()->back()->with('success', 'Task updated successfully.');
     }
 
     public function destroy(Task $task): RedirectResponse
     {
         $task->delete();
 
-        return redirect()->route('tasklist')->with('success', 'Task deleted successfully.');
+        return redirect()->back()->with('success', 'Task deleted successfully.');
     }
 }

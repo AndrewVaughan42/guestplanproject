@@ -16,7 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    Route::get('tasks', [TaskController::class, 'index'])->name('tasks');
+    Route::resource('tasks', TaskController::class);
 
 
     Route::get('guestManager', function () {
