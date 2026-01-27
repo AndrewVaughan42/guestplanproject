@@ -9,12 +9,14 @@ return new class extends Migration {
     {
         Schema::create('todo_items', function (Blueprint $table) {
             $table->id();
-            $table->text('name');
+            $table->text('title');
             $table->foreignId('user_id')
                 ->references('id')
                 ->on('users')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->boolean('status');
+            $table->date('due_date');
             $table->timestamps();
         });
     }

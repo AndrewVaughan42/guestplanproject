@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('weddings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id');
             $table->foreignId('venue_id');
             $table->foreignId('venue_layer_id');
             $table->string('name');

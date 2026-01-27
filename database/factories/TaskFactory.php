@@ -14,7 +14,9 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->text(),
+            'title' => $this->faker->text(),
+            'status' => $this->faker->word(),
+            'due-date' => $this->faker->date(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
 

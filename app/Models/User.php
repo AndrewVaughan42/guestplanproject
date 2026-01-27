@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -49,5 +51,22 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    public function weddings() :HasMany
+    {
+        return $this->hasMany(Wedding::class);
+    }
+    public function tasks() :HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+    public function venueLayers() :HasMany
+    {
+        return $this->hasMany(VenueLayer::class);
+    }
+    public function seatplans() :HasMany
+    {
+        return $this->hasMany(Seatplan::class);
     }
 }

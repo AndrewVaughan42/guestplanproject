@@ -5,10 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Wedding extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'venue_id',
+        'venue_layer_id',
+        'name',
+        'date',
+    ];
 
     public function venue(): BelongsTo
     {
@@ -18,6 +27,21 @@ class Wedding extends Model
     public function venueLayer(): BelongsTo
     {
         return $this->belongsTo(VenueLayer::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function guests(): HasMany
+    {
+        return $this->hasMany(Guest::class);
+    }
+
+    public function seatplans(): HasMany
+    {
+        return $this->hasMany(Seatplan::class);
     }
 
     protected function casts(): array

@@ -10,6 +10,13 @@ class Guest extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'wedding_id',
+        'mealChoice',
+        'notes',
+    ];
+
     public function wedding(): BelongsTo
     {
         return $this->belongsTo(Wedding::class);

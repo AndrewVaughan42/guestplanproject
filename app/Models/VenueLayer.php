@@ -11,9 +11,21 @@ class VenueLayer extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'venue_id',
+        'user_id',
+        'tableAmount',
+        'tableLayout',
+    ];
+
     public function venue(): BelongsTo
     {
         return $this->belongsTo(Venue::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function weddings(): HasMany

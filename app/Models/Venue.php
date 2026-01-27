@@ -10,8 +10,19 @@ class Venue extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'minimumCapacity',
+        'maximumCapacity',
+    ];
+
     public function venueLayers(): HasMany {
         return $this->hasMany(VenueLayer::class);
+    }
+
+    public function weddings(): HasMany
+    {
+        return $this->hasMany(Wedding::class);
     }
 }
 
