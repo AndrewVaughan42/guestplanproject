@@ -1,5 +1,6 @@
 <?php
 
+use App\TaskStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -7,22 +8,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('todo_items', function (Blueprint $table) {
+        Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->text('title');
-            $table->foreignId('user_id')
-                ->references('id')
-                ->on('users')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
-            $table->boolean('status');
-            $table->date('due_date');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('status')->default(TaskStatus::PENDING->value)->nullable();
+            $table->date('due_date')->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('todo_items');
+        Schema::dropIfExists('tasks');
     }
 };
