@@ -16,14 +16,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    Route::get('todoList', [TaskController::class, 'index'])->name('todoList');
-    Route::resource('todoItems', TaskController::class)->except('show');
+    Route::get('tasks', [TaskController::class, 'index'])->name('tasks');
 
 
     Route::get('guestManager', function () {
         return Inertia::render('guestManager');
     })->name('guestManager');
-
 
 
 });

@@ -42,7 +42,13 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
-export interface TodoItem {
+export interface Task {
     id: number;
-    name: string;
+    title: string;
+    user_id: number;
+    status: 'pending' | 'in progress' | 'completed';
+    due_date: string | null;
+    created_at: string;
+    updated_at: string;
+    user?: User;
 }

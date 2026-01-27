@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
-import { todoList as todoListRoute } from '@/routes';
-import { type BreadcrumbItem, TodoItem } from '@/types';
+import { type BreadcrumbItem, type Task } from '@/types';
+import { tasks } from '@/routes';
 import { Head } from '@inertiajs/react';
 import {
     Table,
@@ -14,12 +14,12 @@ import { Button } from '@headlessui/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Todo List',
-        href: todoListRoute().url,
+        title: 'Task List',
+        href: tasks().url,
     },
 ];
 
-export default function TodoList( {todoList}: {todoList: TodoItem[]}) {
+export default function TaskList({tasks}: {tasks: Task[]}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Task List" />
@@ -30,16 +30,21 @@ export default function TodoList( {todoList}: {todoList: TodoItem[]}) {
                     </h2>
                     <div>
                         <div>
-                            <Button>Add New Task</Button>
+                            <Button>TODO Add New Task</Button>
                         </div>
                         <Table>
                             <TableHeader>
-                                <TableRow></TableRow>
+                                <TableRow>
+                                    <TableCell>Task</TableCell>
+                                    <TableCell>Due Date</TableCell>
+
+                                </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {todoList.map((todoItem) => (
-                                    <TableRow key={todoItem.id}>
-                                        <TableCell>{todoItem.name}</TableCell>
+                                {tasks.map((task) => (
+                                    <TableRow key={task.id}>
+                                        <TableCell>{task.title}</TableCell>
+                                        <TableCell>{task.due_date}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

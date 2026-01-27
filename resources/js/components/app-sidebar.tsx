@@ -10,7 +10,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard, todoList, guestManager } from '@/routes';
+import { dashboard, guestManager, tasks } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, FileUser, Folder, LayoutGrid, ListTodo } from 'lucide-react';
@@ -23,8 +23,8 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Todo List',
-        href: todoList().url,
+        title: 'Task List',
+        href: tasks().url,
         icon: ListTodo,
     },
     {

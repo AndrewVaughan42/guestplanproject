@@ -3,49 +3,65 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\TaskStatus;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
-        return Inertia::render('todoList', [
-            'todoList' => Task::where('user_id', auth()->id())->get(),
+        return Inertia::render('taskList', [
+            'tasks' => Task::where('user_id', auth()->id())->get(),
         ]);
     }
 
-    public function store(Request $request): Task
+    public function create(): Response
+    {
+        return Inertia::render('tasks/create');
+    }
+
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => ['required'],
-            'user_id' => ['required', 'exists:users'],
+            'title' => 'required',
+            'status' => ['nullable', new Enum(TaskStatus::class)],
+            'due_date' => 'nullable|date'
         ]);
 
-        return Task::create($data);
+        $data['user_id'] = auth()->id();
+        $data['status'] ??= TaskStatus::PENDING;
+
+        Task::create($data);
+        return redirect()->route('tasklist')->with('success', 'Task created successfully.');
     }
 
-    public function show(Task $todoItem): Task
+    public function show(Task $task): Task
     {
-        return $todoItem;
+        return $task;
     }
 
-    public function update(Request $request, Task $todoItem): Task
+    public function update(Request $request, Task $task): RedirectResponse
     {
         $data = $request->validate([
-            'name' => ['required'],
-            'user_id' => ['required', 'exists:users'],
+            'title' => 'required',
+            'user_id' => 'required', 'exists:users',
+            'status' => ['nullable', new Enum(TaskStatus::class)],
+            'due_date' => 'nullable|date'
         ]);
 
-        $todoItem->update($data);
+        $task->update($data);
 
-        return $todoItem;
+        return redirect()->route('tasklist')->with('success', 'Task updated successfully.');
     }
 
-    public function destroy(Task $todoItem): \Illuminate\Http\JsonResponse
+    public function destroy(Task $task): RedirectResponse
     {
-        $todoItem->delete();
+        $task->delete();
 
-        return response()->json();
+        return redirect()->route('tasklist')->with('success', 'Task deleted successfully.');
     }
 }
