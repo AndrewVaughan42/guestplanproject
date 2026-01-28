@@ -17,7 +17,6 @@ class GuestController extends Controller
         $data = $request->validate([
             'name' => ['required'],
             'wedding_id' => ['required', 'exists:weddings'],
-            'name' => ['required'],
             'mealChoice' => ['required'],
             'notes' => ['nullable'],
         ]);
@@ -35,7 +34,6 @@ class GuestController extends Controller
         $data = $request->validate([
             'name' => ['required'],
             'wedding_id' => ['required', 'exists:weddings'],
-            'name' => ['required'],
             'mealChoice' => ['required'],
             'notes' => ['nullable'],
         ]);
