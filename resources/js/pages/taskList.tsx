@@ -22,6 +22,15 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+const dateFormatter = (date: string | null) => {
+    if (!date) return null;
+
+    return new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    }).format(new Date(date));
+};
 
 export default function TaskList({tasks}: {tasks: Task[]}) {
     const [open, setOpen] = useState(false);
@@ -75,7 +84,7 @@ export default function TaskList({tasks}: {tasks: Task[]}) {
                                             {task.status}
                                         </TableCell>
                                         <TableCell align={'right'}>
-                                            {task.due_date}
+                                            <span>{dateFormatter(task.due_date)}</span>
                                         </TableCell>
                                         <TableCell
                                             className={
