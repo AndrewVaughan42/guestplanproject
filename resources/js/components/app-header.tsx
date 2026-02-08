@@ -29,18 +29,34 @@ import {
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn, isSameUrl, resolveUrl } from '@/lib/utils';
-import { dashboard } from '@/routes';
+import { dashboard, guestManager, seatplan } from '@/routes';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import { BookOpen, FileUser, Folder, LayoutGrid, ListTodo, Menu, Search, Wine } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
+import tasks from '@/routes/tasks';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Task List',
+        href: tasks.index().url,
+        icon: ListTodo,
+    },
+    {
+        title: 'Guest Manager',
+        href: guestManager().url,
+        icon: FileUser,
+    },
+    {
+        title: 'My SeatPlan',
+        href: seatplan().url,
+        icon: Wine,
     },
 ];
 
