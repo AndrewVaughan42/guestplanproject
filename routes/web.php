@@ -23,6 +23,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('guestManager');
     })->name('guestManager');
 
+    Route::get('seatplan', function () {
+        return Inertia::render('seatplan');
+    })->name('seatplan');
+
 
 });
 

@@ -10,10 +10,17 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard, guestManager } from '@/routes';
+import { dashboard, guestManager, seatplan } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, FileUser, Folder, LayoutGrid, ListTodo } from 'lucide-react';
+import {
+    BookOpen,
+    FileUser,
+    Folder,
+    LayoutGrid,
+    ListTodo,
+    Wine,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 import tasks from '@/routes/tasks';
 
@@ -32,6 +39,12 @@ const mainNavItems: NavItem[] = [
         title: 'Guest Manager',
         href: guestManager().url,
         icon: FileUser,
+    },
+    {
+        title: 'My SeatPlan',
+        href: seatplan().url,
+        icon: Wine
+
     },
 ];
 
