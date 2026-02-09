@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import AddNewTask from '@/pages/myComponents/tasks/addNewTask';
-import DeleteTask from '@/pages/myComponents/tasks/deleteTask';
+import AddNewTask from '@/components/tasks/addNewTask';
+import DeleteTask from '@/components/tasks/deleteTask';
 import tasks from '@/routes/tasks';
 import { Trash2 } from 'lucide-react';
 

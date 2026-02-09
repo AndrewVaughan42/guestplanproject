@@ -14,14 +14,9 @@ class TaskController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('taskList', [
+        return Inertia::render('user/taskList', [
             'tasks' => Task::where('user_id', auth()->id())->get(),
         ]);
-    }
-
-    public function create(): Response
-    {
-        return Inertia::render('tasks/create');
     }
 
     public function store(Request $request): RedirectResponse

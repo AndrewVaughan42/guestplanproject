@@ -13,18 +13,18 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        return Inertia::render('user/dashboard');
     })->name('dashboard');
 
     Route::resource('tasks', TaskController::class);
 
 
     Route::get('guestManager', function () {
-        return Inertia::render('guestManager');
+        return Inertia::render('user/guestManager');
     })->name('guestManager');
 
     Route::get('seatplan', function () {
-        return Inertia::render('seatplan');
+        return Inertia::render('user/seatplan');
     })->name('seatplan');
 
 
