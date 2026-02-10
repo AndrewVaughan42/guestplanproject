@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react'
-import { seatplan} from '@/routes';
+import { seatPlan} from '@/routes';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { Circle, Layer, Stage } from 'react-konva';
@@ -9,7 +9,7 @@ export default function Seatplan() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'My Seatplan',
-            href: seatplan.url(),
+            href: seatPlan.url(),
         },
     ];
     const containerRef = useRef<HTMLDivElement | null>(null);

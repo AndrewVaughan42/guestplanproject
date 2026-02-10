@@ -10,7 +10,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard, guestManager, seatplan } from '@/routes';
+import { dashboard, guestManager, seatPlan } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
@@ -42,7 +42,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'My SeatPlan',
-        href: seatplan().url,
+        href: seatPlan().url,
         icon: Wine
 
     },
