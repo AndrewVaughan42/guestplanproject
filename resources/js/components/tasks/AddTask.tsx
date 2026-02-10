@@ -25,7 +25,7 @@ import {
 //Gets today's date, used as placeholder for New Task
 const today = new Date().toISOString().split('T')[0];
 
-export default function AddNewTask({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function AddTask({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const { data, setData, post, processing, reset, errors } = useForm({
         title: '',
         status: 'pending',

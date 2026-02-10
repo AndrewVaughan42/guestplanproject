@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import AddNewTask from '@/components/tasks/addNewTask';
-import DeleteTask from '@/components/tasks/deleteTask';
+import AddTask from '@/components/tasks/AddTask';
+import DeleteTask from '@/components/tasks/DeleteTask';
 import tasks from '@/routes/tasks';
 import { Trash2 } from 'lucide-react';
 
@@ -52,7 +52,7 @@ export default function TaskList({tasks}: {tasks: Task[]}) {
                             >
                                 Add New Task
                             </Button>
-                            <AddNewTask open={open} setOpen={setOpen} />
+                            <AddTask open={open} setOpen={setOpen} />
                         </div>
                         <Table className={'mt-4'}>
                             <TableHeader>
