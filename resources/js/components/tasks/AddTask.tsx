@@ -22,18 +22,25 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
-//Gets today's date, used as placeholder for New Task
-const today = new Date().toISOString().split('T')[0];
+export default function AddTask({ open, setOpen }: {
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
 
-export default function AddTask({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
-    const { data, setData, post, processing, reset, errors } = useForm({
+    type TaskForm = {
+        title: string;
+        status: string | null;
+        due_date: string | null;
+    }
+
+    const { data, setData, post, processing, reset, errors } = useForm<TaskForm>({
         title: '',
-        status: 'pending',
-        due_date: today,
+        status: null,
+        due_date: null,
     });
 
-    function handleSubmit(e: React.FormEvent) {
+    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
+
         post(tasks.store().url,
             {
                 onSuccess: () => {
@@ -45,7 +52,7 @@ export default function AddTask({ open, setOpen }: { open: boolean; setOpen: Rea
 
     return (
         <Dialog open={open} onOpenChange={(value) => setOpen(value)}>
-            <DialogContent className="sm:max-w-106.25">
+            <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle>Add New Task</DialogTitle>
                 </DialogHeader>
@@ -70,15 +77,15 @@ export default function AddTask({ open, setOpen }: { open: boolean; setOpen: Rea
                     </div>
                     {/* Task Status */}
                     <div className="grid gap-2">
-                        <Label htmlFor="title">Status</Label>
+                        <Label htmlFor="status">Status</Label>
                         <Select
-                            value={data.status}
-                            onValueChange={(value) => setData('status', value)}
+                            value={data.status ?? undefined}
+                            onValueChange={(value) =>
+                                setData('status', value || null)
+                            }
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue
-                                    placeholder={data.status || 'Status'}
-                                />
+                                <SelectValue placeholder="Status (Optional)" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
@@ -102,7 +109,7 @@ export default function AddTask({ open, setOpen }: { open: boolean; setOpen: Rea
                         <Input
                             id="due_date"
                             type="date"
-                            value={data.due_date}
+                            value={data.due_date || ''}
                             onChange={(e) =>
                                 setData('due_date', e.target.value)
                             }

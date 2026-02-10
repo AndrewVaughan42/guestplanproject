@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->id();
             $table->text('title');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('status')->default(TaskStatus::PENDING->value)->nullable();
+            $table->string('status')->nullable();
             $table->date('due_date')->nullable();
             $table->timestamps();
         });

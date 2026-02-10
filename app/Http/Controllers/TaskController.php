@@ -28,7 +28,6 @@ class TaskController extends Controller
         ]);
 
         $data['user_id'] = auth()->id();
-        $data['status'] ??= TaskStatus::PENDING;
 
         Task::create($data);
         return redirect()->back()->with('success', 'Task created successfully.');
