@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Andrew Vaughan',
                 'password' => 'qwertyuiop',
                 'email_verified_at' => now(),
+                'isAdmin' => true
             ]
         );
     }
