@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('venues', function (Blueprint $table) {
+        Schema::create('venues', static function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->integer('minimumTableAmount');
+            $table->integer('maximumTableAmount');
             $table->integer('minimumCapacity');
             $table->integer('maximumCapacity');
             $table->timestamps();

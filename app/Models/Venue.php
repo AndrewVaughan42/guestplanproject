@@ -12,6 +12,8 @@ class Venue extends Model
 
     protected $fillable = [
         'name',
+        'minimumTableAmount',
+        'maximumTableAmount',
         'minimumCapacity',
         'maximumCapacity',
     ];
