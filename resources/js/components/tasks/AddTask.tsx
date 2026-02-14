@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import React from 'react';
 import tasks from '@/routes/tasks';
+import { Task } from '@/types';
 
 import {
     Select,
@@ -26,13 +27,7 @@ export default function AddTask({ open, setOpen }: {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
 
-    type TaskForm = {
-        title: string;
-        status: string | null;
-        due_date: string | null;
-    }
-
-    const { data, setData, post, processing, reset, errors } = useForm<TaskForm>({
+    const { data, setData, post, processing, reset, errors } = useForm<Task>({
         title: '',
         status: null,
         due_date: null,

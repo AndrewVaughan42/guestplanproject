@@ -1,6 +1,6 @@
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type Task } from '@/types';
-import { Head } from '@inertiajs/react';
+import AddTask from '@/components/tasks/AddTask';
+import DeleteTask from '@/components/tasks/DeleteTask';
+import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -8,12 +8,12 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import AddTask from '@/components/tasks/AddTask';
-import DeleteTask from '@/components/tasks/DeleteTask';
+import AppLayout from '@/layouts/app-layout';
 import tasks from '@/routes/tasks';
+import { type BreadcrumbItem, Task } from '@/types';
+import { Head } from '@inertiajs/react';
 import { Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -32,7 +32,7 @@ const dateFormatter = (date: string | null) => {
     }).format(new Date(date));
 };
 
-export default function TaskList({tasks}: {tasks: Task[]}) {
+export default function TaskList({ tasks }: { tasks: Task[] }) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -84,7 +84,9 @@ export default function TaskList({tasks}: {tasks: Task[]}) {
                                             {task.status}
                                         </TableCell>
                                         <TableCell align={'right'}>
-                                            <span>{dateFormatter(task.due_date)}</span>
+                                            <span>
+                                                {dateFormatter(task.due_date)}
+                                            </span>
                                         </TableCell>
                                         <TableCell
                                             className={
