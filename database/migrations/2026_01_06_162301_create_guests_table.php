@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('guests', function (Blueprint $table) {
+        Schema::create('guests', static function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('wedding_id');
+            $table->foreignId('wedding_id')->references('id')->on('weddings')->cascadeOnDelete();
             $table->string('mealChoice')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();

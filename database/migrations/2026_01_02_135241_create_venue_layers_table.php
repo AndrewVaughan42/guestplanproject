@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('venue_layers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('venue_id');
+            $table->foreignId('venue_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id');
             $table->integer('tableAmount');
             $table->jsonb('tableLayout');
