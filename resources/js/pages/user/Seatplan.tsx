@@ -1,9 +1,9 @@
-import { Head } from '@inertiajs/react'
-import { seatPlan} from '@/routes';
 import AppLayout from '@/layouts/app-layout';
+import { seatPlan } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
-import { Circle, Layer, Stage } from 'react-konva';
+import { Head } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
+import { Circle, Layer, Stage } from 'react-konva';
 
 export default function Seatplan() {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -13,14 +13,14 @@ export default function Seatplan() {
         },
     ];
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const [size, setSize] = useState({width: 0, height: 0});
+    const [size, setSize] = useState({ width: 0, height: 0 });
 
     const shapeSize = 100;
     useEffect(() => {
         if (!containerRef.current) return;
         const observer = new ResizeObserver(([entry]) => {
-            const {width, height} = entry.contentRect;
-            setSize({width, height});
+            const { width, height } = entry.contentRect;
+            setSize({ width, height });
         });
 
         observer.observe(containerRef.current);
@@ -53,7 +53,8 @@ export default function Seatplan() {
                                                     size.width - shapeSize,
                                                 ),
                                             ),
-                                            y: Math.max(0,
+                                            y: Math.max(
+                                                0,
                                                 Math.min(
                                                     pos.y,
                                                     size.height - shapeSize,
