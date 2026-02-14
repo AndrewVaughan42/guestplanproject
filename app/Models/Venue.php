@@ -26,6 +26,11 @@ class Venue extends Model
     {
         return $this->hasMany(Wedding::class);
     }
+
+    public function venueCoordinators(): HasMany
+    {
+        return $this->hasMany(VenueCoordinator::class);
+    }
 }
 
 
