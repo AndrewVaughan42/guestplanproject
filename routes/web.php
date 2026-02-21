@@ -18,7 +18,7 @@ Route::get('/', static function () {
 //User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', static function () {
-            return Inertia::render('user/Dashboard');
+            return Inertia::render('user/dashboard');
     })->name('dashboard');
 
     Route::resource('tasks', TaskController::class)->except('show');
@@ -26,23 +26,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::get('guest-manager', static function () {
-        return Inertia::render('user/GuestManager');
+        return Inertia::render('user/guest-manager');
     })->name('guest-manager');
     Route::resource('guests', GuestController::class);
 
     Route::get('seat-plan', static function () {
-        return Inertia::render('user/SeatPlan');
+        return Inertia::render('user/seat-plan');
     })->name('seat-plan');
 
     //Admin-only routes
     Route::middleware(['CheckAdmin'])->group(function () {
         Route::get('venue-manager', static function () {
-            return Inertia::render('admin/VenueManager');
+            return Inertia::render('admin/venue-manager');
         })->name('venue-manager');
         Route::resource('venues', VenueController::class);
 
         Route::get('layout-editor', static function () {
-            return Inertia::render('admin/LayoutEditor');
+            return Inertia::render('admin/layout-editor');
         })->name('layout-editor');
     });
 });
