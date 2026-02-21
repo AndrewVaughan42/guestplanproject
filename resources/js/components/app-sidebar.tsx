@@ -11,7 +11,6 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import {
-    adminDashboard,
     dashboard,
     guestManager,
     layoutEditor,
@@ -55,8 +54,8 @@ const mainNavItems: NavItem[] = [
 ];
 const adminNavItems: NavItem[] = [
     {
-        title: 'Admin Dashboard',
-        href: adminDashboard().url,
+        title: 'Dashboard',
+        href: dashboard().url,
         icon: LayoutGrid,
     },
     {

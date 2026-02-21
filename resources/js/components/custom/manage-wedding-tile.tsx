@@ -2,9 +2,9 @@ import { usePage } from '@inertiajs/react';
 import { SharedData } from '@/types';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import CreateWedding from '@/components/weddings/CreateWedding';
+import CreateWedding from '@/components/weddings/create-wedding';
 
-export default function WeddingTile() {
+export default function ManageWeddingTile() {
 
     const { auth } = usePage<SharedData>().props;
     const hasWedding = auth.user?.wedding;

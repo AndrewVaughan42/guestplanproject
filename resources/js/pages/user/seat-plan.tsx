@@ -5,10 +5,10 @@ import { Head } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { Circle, Layer, Stage } from 'react-konva';
 
-export default function Seatplan() {
+export default function SeatPlan() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'My Seatplan',
+            title: 'My SeatPlan',
             href: seatPlan.url(),
         },
     ];
@@ -29,7 +29,7 @@ export default function Seatplan() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Seatplan" />
+            <Head title="SeatPlan" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
                 <div
                     className="flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"

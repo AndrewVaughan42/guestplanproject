@@ -69,7 +69,7 @@ export interface Wedding {
 export interface Guest {
     id?: number;
     name: string;
-    wedding_id: number;
+    wedding_id?: number;
     mealChoice: string | null;
     notes: string | null;
 }

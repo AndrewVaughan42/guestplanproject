@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\VenueController;
+use App\Http\Controllers\WeddingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
-//Welcome Page
+//The Welcome Page
 Route::get('/', static function () {
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
@@ -19,23 +22,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('tasks', TaskController::class)->except('show');
+    Route::resource('weddings', WeddingController::class);
+
 
     Route::get('guest-manager', static function () {
         return Inertia::render('user/GuestManager');
     })->name('guest-manager');
+    Route::resource('guests', GuestController::class);
 
     Route::get('seat-plan', static function () {
-        return Inertia::render('user/Seatplan');
+        return Inertia::render('user/SeatPlan');
     })->name('seat-plan');
 
     //Admin-only routes
-    Route::middleware(['auth', 'verified', 'CheckAdmin'])->group(function () {
-        Route::get('admin-dashboard', static function () {
-            return Inertia::render('admin/AdminDashboard');
-        })->name('admin-dashboard');
+    Route::middleware(['CheckAdmin'])->group(function () {
         Route::get('venue-manager', static function () {
             return Inertia::render('admin/VenueManager');
         })->name('venue-manager');
+        Route::resource('venues', VenueController::class);
+
         Route::get('layout-editor', static function () {
             return Inertia::render('admin/LayoutEditor');
         })->name('layout-editor');
