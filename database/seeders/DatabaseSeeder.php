@@ -24,5 +24,15 @@ class DatabaseSeeder extends Seeder
                 'isAdmin' => true
             ]
         );
+
+        User::firstOrCreate(
+            ['email' => 'user@laravel.com'],
+            [
+                'name' => 'Ube Serr',
+                'password' => 'asdfghjkl',
+                'email_verified_at' => now(),
+                'isAdmin' => false
+            ]
+        );
     }
 }
