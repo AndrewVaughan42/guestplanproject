@@ -42,3 +42,35 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Task {
+    id?: number;
+    title: string;
+    status: string | null;
+    due_date: string | null;
+}
+
+export interface Venue {
+    id?: number;
+    name: string;
+    minimumCapacity: number;
+    maximumCapacity: number;
+    minimumTableAmount: number;
+    maximumTableAmount: number;
+}
+
+export interface Wedding {
+    id?: number;
+    name: string;
+    date: string;
+    venue_id: number;
+}
+
+export interface Guest {
+    id?: number;
+    name: string;
+    wedding_id?: number;
+    mealChoice: string | null;
+    notes: string | null;
+}
+

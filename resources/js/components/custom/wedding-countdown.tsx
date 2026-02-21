@@ -13,7 +13,7 @@ function getDays(weddingDate: string | Date) {
 }
 
 
-export default function Countdown({weddingDate, onComplete} : CountdownProps) {
+export default function WeddingCountdown({weddingDate, onComplete} : CountdownProps) {
 
     const [daysLeft, setDaysLeft] = useState<number>(() => getDays(weddingDate));
 

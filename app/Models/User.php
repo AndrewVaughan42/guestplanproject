@@ -71,4 +71,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Seatplan::class);
     }
+
+    public function venueCoordinator() :HasMany
+    {
+        return $this->hasMany(VenueCoordinator::class);
+    }
 }

@@ -10,8 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import React from 'react';
-import tasks from '@/routes/tasks';
-
 import {
     Select,
     SelectContent,
@@ -21,27 +19,28 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Venue } from '@/types';
+import weddings from '@/routes/weddings/index';
 
-export default function AddTask({ open, setOpen }: {
+// import weddings from '@/routes/weddings';
+
+export default function CreateWedding({ open, setOpen, venuesList }: {
     open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    venuesList: Venue[];
+}) {
 
-    type TaskForm = {
-        title: string;
-        status: string | null;
-        due_date: string | null;
-    }
 
-    const { data, setData, post, processing, reset, errors } = useForm<TaskForm>({
-        title: '',
-        status: null,
-        due_date: null,
+    const { data, setData, post, processing, reset, errors } = useForm({
+        name: '',
+        date: '',
+        venue_id: '' as string | number,
     });
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        post(tasks.store().url,
+        post(weddings.store().url,
             {
                 onSuccess: () => {
                     reset();
@@ -50,76 +49,77 @@ export default function AddTask({ open, setOpen }: {
             });
     }
 
+
     return (
         <Dialog open={open} onOpenChange={(value) => setOpen(value)}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>Add New Task</DialogTitle>
+                    <DialogTitle>Create New Wedding</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="title">Task Title</Label>
-                        {/* Task Title */}
+                        <Label htmlFor="name">Wedding Name</Label>
                         <Input
-                            id="title"
+                            id="name"
                             required
                             aria-required="true"
                             type="text"
-                            value={data.title}
-                            placeholder="Enter task name"
-                            onChange={(e) => setData('title', e.target.value)}
+                            value={data.name}
+                            placeholder="e.g. Smith & Jones Wedding"
+                            onChange={(e) => setData('name', e.target.value)}
                         />
-                        {errors.title && (
+                        {errors.name && (
                             <span className="text-sm text-destructive">
-                                {errors.title}
+                                {errors.name}
                             </span>
                         )}
                     </div>
-                    {/* Task Status */}
+
                     <div className="grid gap-2">
-                        <Label htmlFor="status">Status</Label>
+                        <Label htmlFor="date">Wedding Date</Label>
+                        <Input
+                            id="date"
+                            required
+                            type="date"
+                            value={data.date}
+                            onChange={(e) => setData('date', e.target.value)}
+                        />
+                        {errors.date && (
+                            <span className="text-sm text-destructive">
+                                {errors.date}
+                            </span>
+                        )}
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="venue_id">Venue</Label>
                         <Select
-                            value={data.status ?? undefined}
-                            onValueChange={(value) =>
-                                setData('status', value || null)
-                            }
+                            value={data.venue_id?.toString()}
+                            onValueChange={(value) => {
+                                setData('venue_id', parseInt(value));
+                            }}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Status (Optional)" />
+                                <SelectValue placeholder="Select a venue" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectLabel>Status</SelectLabel>
-                                    <SelectItem value="pending">
-                                        Pending
-                                    </SelectItem>
-                                    <SelectItem value="in progress">
-                                        In Progress
-                                    </SelectItem>
-                                    <SelectItem value="completed">
-                                        Completed
-                                    </SelectItem>
+                                    <SelectLabel>Venues</SelectLabel>
+                                    {venuesList.map((venue) => (
+                                        <SelectItem key={venue.id} value={venue.id?.toString() || ''}>
+                                            {venue.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
-                    </div>
-                    {/* Task Due Date */}
-                    <div className="grid gap-2">
-                        <Label htmlFor="due_date">Due Date</Label>
-                        <Input
-                            id="due_date"
-                            type="date"
-                            value={data.due_date || ''}
-                            onChange={(e) =>
-                                setData('due_date', e.target.value)
-                            }
-                        />
-                        {errors.due_date && (
+                        {errors.venue_id && (
                             <span className="text-sm text-destructive">
-                                {errors.due_date}
+                                {errors.venue_id}
                             </span>
                         )}
                     </div>
+
 
                     <DialogFooter className="mt-4">
                         <Button
@@ -133,7 +133,7 @@ export default function AddTask({ open, setOpen }: {
                             Cancel
                         </Button>
                         <Button type="submit" disabled={processing}>
-                            {processing ? 'Adding...' : 'Add Task'}
+                            {processing ? 'Creating...' : 'Create Wedding'}
                         </Button>
                     </DialogFooter>
                 </form>

@@ -15,8 +15,7 @@ class WeddingController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'venue_id' => ['required', 'exists:venues'],
-            'venue_layer_id' => ['required', 'exists:venue_layers'],
+            'venue_id' => ['required', 'exists:venues,id'],
             'name' => ['required'],
             'date' => ['required', 'date'],
         ]);
@@ -32,8 +31,7 @@ class WeddingController extends Controller
     public function update(Request $request, Wedding $wedding)
     {
         $data = $request->validate([
-            'venue_id' => ['required', 'exists:venues'],
-            'venue_layer_id' => ['required', 'exists:venue_layers'],
+            'venue_id' => ['required', 'exists:venues,id'],
             'name' => ['required'],
             'date' => ['required', 'date'],
         ]);

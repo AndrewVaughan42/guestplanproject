@@ -12,6 +12,8 @@ class Venue extends Model
 
     protected $fillable = [
         'name',
+        'minimumTableAmount',
+        'maximumTableAmount',
         'minimumCapacity',
         'maximumCapacity',
     ];
@@ -23,6 +25,11 @@ class Venue extends Model
     public function weddings(): HasMany
     {
         return $this->hasMany(Wedding::class);
+    }
+
+    public function venueCoordinators(): HasMany
+    {
+        return $this->hasMany(VenueCoordinator::class);
     }
 }
 

@@ -1,26 +1,26 @@
-import { Head } from '@inertiajs/react'
-import { seatPlan} from '@/routes';
 import AppLayout from '@/layouts/app-layout';
+import { seatPlan } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
-import { Circle, Layer, Stage } from 'react-konva';
+import { Head } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
+import { Circle, Layer, Stage } from 'react-konva';
 
-export default function Seatplan() {
+export default function SeatPlan() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'My Seatplan',
+            title: 'My SeatPlan',
             href: seatPlan.url(),
         },
     ];
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const [size, setSize] = useState({width: 0, height: 0});
+    const [size, setSize] = useState({ width: 0, height: 0 });
 
     const shapeSize = 100;
     useEffect(() => {
         if (!containerRef.current) return;
         const observer = new ResizeObserver(([entry]) => {
-            const {width, height} = entry.contentRect;
-            setSize({width, height});
+            const { width, height } = entry.contentRect;
+            setSize({ width, height });
         });
 
         observer.observe(containerRef.current);
@@ -29,7 +29,7 @@ export default function Seatplan() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Seatplan" />
+            <Head title="SeatPlan" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
                 <div
                     className="flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
@@ -53,7 +53,8 @@ export default function Seatplan() {
                                                     size.width - shapeSize,
                                                 ),
                                             ),
-                                            y: Math.max(0,
+                                            y: Math.max(
+                                                0,
                                                 Math.min(
                                                     pos.y,
                                                     size.height - shapeSize,

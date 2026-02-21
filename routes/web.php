@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\VenueController;
+use App\Http\Controllers\WeddingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
-//Welcome Page
+//The Welcome Page
 Route::get('/', static function () {
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
@@ -15,29 +18,31 @@ Route::get('/', static function () {
 //User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', static function () {
-            return Inertia::render('user/Dashboard');
+            return Inertia::render('user/dashboard');
     })->name('dashboard');
 
     Route::resource('tasks', TaskController::class)->except('show');
+    Route::resource('weddings', WeddingController::class);
+
 
     Route::get('guest-manager', static function () {
-        return Inertia::render('user/GuestManager');
+        return Inertia::render('user/guest-manager');
     })->name('guest-manager');
+    Route::resource('guests', GuestController::class);
 
     Route::get('seat-plan', static function () {
-        return Inertia::render('user/Seatplan');
+        return Inertia::render('user/seat-plan');
     })->name('seat-plan');
 
     //Admin-only routes
-    Route::middleware(['auth', 'verified', 'CheckAdmin'])->group(function () {
-        Route::get('admin-dashboard', static function () {
-            return Inertia::render('admin/AdminDashboard');
-        })->name('admin-dashboard');
+    Route::middleware(['CheckAdmin'])->group(function () {
         Route::get('venue-manager', static function () {
-            return Inertia::render('admin/VenueManager');
+            return Inertia::render('admin/venue-manager');
         })->name('venue-manager');
+        Route::resource('venues', VenueController::class);
+
         Route::get('layout-editor', static function () {
-            return Inertia::render('admin/LayoutEditor');
+            return Inertia::render('admin/layout-editor');
         })->name('layout-editor');
     });
 });

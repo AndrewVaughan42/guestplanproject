@@ -7,18 +7,16 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('venue_layers', function (Blueprint $table) {
+        Schema::create('venue_coordinators', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('venue_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id');
-            $table->integer('tableAmount');
-            $table->jsonb('tableLayout');
+            $table->foreignId('venue_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('venue_layers');
+        Schema::dropIfExists('venue_coordinators');
     }
 };
