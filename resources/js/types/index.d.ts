@@ -27,6 +27,7 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    venues?: Venue[];
     [key: string]: unknown;
 }
 
@@ -44,7 +45,7 @@ export interface User {
 }
 
 export interface Task {
-    id?: number;
+    id: number;
     title: string;
     status: string | null;
     due_date: string | null;

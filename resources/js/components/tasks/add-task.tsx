@@ -27,10 +27,11 @@ export default function AddTask({ open, setOpen }: {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
 
-    const { data, setData, post, processing, reset, errors } = useForm<Task>({
+    const { data, setData, post, processing, reset, errors } = useForm<Partial<Task>>({
         title: '',
         status: null,
         due_date: null,
+
     });
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {

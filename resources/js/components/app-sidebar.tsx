@@ -54,11 +54,6 @@ const mainNavItems: NavItem[] = [
 ];
 const adminNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard().url,
-        icon: LayoutGrid,
-    },
-    {
         title: 'Venue Manager',
         href: venueManager().url,
         icon: LayoutGrid,
@@ -68,12 +63,9 @@ const adminNavItems: NavItem[] = [
         href: layoutEditor().url,
         icon: LayoutGrid,
     },
-    {
-        title: 'Task List',
-        href: tasks.index().url,
-        icon: ListTodo,
-    },
 ];
+
+const allNavItems: NavItem[] = [...mainNavItems, ...adminNavItems];
 
 const footerNavItems: NavItem[] = [
     {
@@ -92,7 +84,7 @@ export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     const isAdmin = auth.user.isAdmin;
 
-    const items = isAdmin ? adminNavItems : mainNavItems;
+    const items = isAdmin ? allNavItems : mainNavItems;
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

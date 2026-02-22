@@ -1,7 +1,10 @@
 import tasks from '@/routes/tasks';
 import { router } from '@inertiajs/react';
 
-export default function deleteTask(id: number) {
+export default function deleteTask(id: number | undefined) {
+    if (!id) {
+        return;
+    }
     if (confirm('Are you sure you want to delete this task?')) {
         router.delete(tasks.destroy(id).url);
     }
