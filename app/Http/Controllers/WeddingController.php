@@ -20,7 +20,9 @@ class WeddingController extends Controller
             'date' => ['required', 'date'],
         ]);
 
-        return Wedding::create($data);
+        data_set($data, 'user_id', auth()->id()); //Check this works
+        Wedding::create($data);
+        return redirect()->back()->with('success', 'Task created successfully.');
     }
 
     public function show(Wedding $wedding)

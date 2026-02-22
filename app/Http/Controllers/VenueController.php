@@ -22,7 +22,11 @@ class VenueController extends Controller
             'maximumCapacity' => ['required'],
         ]);
 
-        return Venue::create($data);
+        $venue = Venue::create($data);
+
+        $venue->venueCoordinators()->create(['user_id' => auth()->id()]);
+
+        return $venue;
     }
 
     public function show(Venue $venue)

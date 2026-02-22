@@ -10,6 +10,11 @@ class VenueCoordinator extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'venue_id',
+        'user_id',
+    ];
+
     public function venue(): BelongsTo
     {
         return $this->belongsTo(Venue::class);

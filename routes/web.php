@@ -4,6 +4,7 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\WeddingController;
+use App\Models\Venue;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -18,7 +19,9 @@ Route::get('/', static function () {
 //User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', static function () {
-            return Inertia::render('user/dashboard');
+            return Inertia::render('user/dashboard', [
+                'venues' => Venue::all(),
+            ]);
     })->name('dashboard');
 
     Route::resource('tasks', TaskController::class)->except('show');

@@ -57,6 +57,7 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
                     <DialogTitle>Create New Wedding</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+                    {/* Wedding Name */}
                     <div className="grid gap-2">
                         <Label htmlFor="name">Wedding Name</Label>
                         <Input
@@ -74,7 +75,7 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
                             </span>
                         )}
                     </div>
-
+                    {/* Wedding Date */}
                     <div className="grid gap-2">
                         <Label htmlFor="date">Wedding Date</Label>
                         <Input
@@ -90,7 +91,7 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
                             </span>
                         )}
                     </div>
-
+                    {/* Wedding Venue */}
                     <div className="grid gap-2">
                         <Label htmlFor="venue_id">Venue</Label>
                         <Select
@@ -106,7 +107,10 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
                                 <SelectGroup>
                                     <SelectLabel>Venues</SelectLabel>
                                     {venuesList.map((venue) => (
-                                        <SelectItem key={venue.id} value={venue.id?.toString() || ''}>
+                                        <SelectItem
+                                            key={venue.id}
+                                            value={venue.id?.toString() || ''}
+                                        >
                                             {venue.name}
                                         </SelectItem>
                                     ))}
@@ -119,7 +123,6 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
                             </span>
                         )}
                     </div>
-
 
                     <DialogFooter className="mt-4">
                         <Button
