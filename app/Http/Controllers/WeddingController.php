@@ -14,6 +14,10 @@ class WeddingController extends Controller
 
     public function store(Request $request)
     {
+        if (Wedding::where('user_id', auth()->id())->exists()) {
+            return redirect()->back()->with('error', 'You already have a wedding.');
+        }
+
         $data = $request->validate([
             'venue_id' => ['required', 'exists:venues,id'],
             'name' => ['required'],
@@ -23,6 +27,8 @@ class WeddingController extends Controller
         data_set($data, 'user_id', auth()->id()); //Check this works
         Wedding::create($data);
         return redirect()->back()->with('success', 'Task created successfully.');
+
+
     }
 
     public function show(Wedding $wedding)

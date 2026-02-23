@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Guest;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class GuestController extends Controller
 {
     public function index()
     {
-        return Guest::all();
+        return Inertia::render('user/guest-manager', [
+            'guests' => Guest::where('wedding_id', request('wedding_id'))->get(),
+        ]);
     }
 
     public function store(Request $request)
@@ -21,7 +24,8 @@ class GuestController extends Controller
             'notes' => ['nullable'],
         ]);
 
-        return Guest::create($data);
+        Guest::create($data);
+        return redirect()->back()->with('success', 'Guest created successfully.');
     }
 
     public function show(Guest $guest)
@@ -40,13 +44,13 @@ class GuestController extends Controller
 
         $guest->update($data);
 
-        return $guest;
+        return redirect()->back()->with('success', 'Guest updated successfully.');
     }
 
     public function destroy(Guest $guest)
     {
         $guest->delete();
 
-        return response()->json();
+        return redirect()->back()->with('success', 'Guest deleted successfully.');
     }
 }

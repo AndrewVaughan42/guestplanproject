@@ -8,11 +8,10 @@ import { Plus } from 'lucide-react';
 export default function ManageWeddingTile() {
 
     const { auth, venues } = usePage<SharedData>().props;
-    const hasWedding = auth.user?.wedding;
 
     const [open, setOpen] = useState(false);
 
-    if (!hasWedding) {
+    if (!auth?.user?.wedding) {
         return (
             <div className="flex h-full flex-col items-center justify-center bg-neutral-50 p-6 text-center transition-colors hover:bg-neutral-100 dark:bg-neutral-900 dark:hover:bg-neutral-800">
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
