@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\GuestController;
+use App\Http\Controllers\SeatplanController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\VenueController;
+use App\Http\Controllers\VenueLayerController;
 use App\Http\Controllers\WeddingController;
 use App\Models\Venue;
 use Illuminate\Support\Facades\Route;
@@ -24,32 +26,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
     })->name('dashboard');
 
+    //Renders task-list page
     Route::resource('tasks', TaskController::class)->except('show');
+    //Check if needed?
     Route::resource('weddings', WeddingController::class);
-
-
-    Route::get('guest-manager', static function () {
-        return Inertia::render('user/guest-manager');
-    })->name('guest-manager');
-
+    //Renders guest-manager page
     Route::resource('guests', GuestController::class);
 
-    Route::get('seat-plan', static function () {
-        return Inertia::render('user/seat-plan');
-    })->name('seat-plan');
+    Route::resource('seat-plans', SeatplanController::class);
+
+
 
     //Admin-only routes
     Route::middleware(['CheckAdmin'])->group(function () {
 
-        Route::get('venue-manager', static function () {
-            return Inertia::render('admin/venue-manager');
-        })->name('venue-manager');
-
-        Route::resource('venues', VenueController::class);
-
-        Route::get('layout-editor', static function () {
-            return Inertia::render('admin/layout-editor');
-        })->name('layout-editor');
+        Route::resource('venues', VenueController::class)->names('venues');
+        Route::resource('venue-layers', VenueLayerController::class);
     });
 });
 require __DIR__.'/settings.php';

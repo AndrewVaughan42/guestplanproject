@@ -1,13 +1,12 @@
 import { Head } from '@inertiajs/react'
-import { guestManager } from '@/routes';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import guests from '@/routes/guests';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Guest Manager',
-        href: guestManager.url(),
-    },
+        href: guests.index().url},
 ];
 export default function GuestManager() {
     return (

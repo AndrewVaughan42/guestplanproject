@@ -12,10 +12,6 @@ import {
 } from '@/components/ui/sidebar';
 import {
     dashboard,
-    guestManager,
-    layoutEditor,
-    seatPlan,
-    venueManager,
 } from '@/routes';
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
@@ -29,6 +25,12 @@ import {
 } from 'lucide-react';
 import AppLogo from './app-logo';
 import tasks from '@/routes/tasks';
+import guests from '@/routes/guests';
+
+import venues from '@/routes/venues';
+import seatPlans from '@/routes/seat-plans';
+import venueLayers from '@/routes/venue-layers';
+
 
 const mainNavItems: NavItem[] = [
     {
@@ -38,12 +40,12 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Guest Manager',
-        href: guestManager().url,
+        href: guests.index().url,
         icon: FileUser,
     },
     {
         title: 'My SeatPlan',
-        href: seatPlan().url,
+        href: seatPlans.index().url,
         icon: Wine,
     },
     {
@@ -55,12 +57,12 @@ const mainNavItems: NavItem[] = [
 const adminNavItems: NavItem[] = [
     {
         title: 'Venue Manager',
-        href: venueManager().url,
+        href: venues.index().url,
         icon: LayoutGrid,
     },
     {
         title: 'Layout Editor',
-        href: layoutEditor().url,
+        href: venueLayers.index().url,
         icon: LayoutGrid,
     },
 ];

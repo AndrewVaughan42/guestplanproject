@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\VenueLayer;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class VenueLayerController extends Controller
 {
     public function index()
     {
-        return VenueLayer::all();
+        return Inertia::render('admin/layout-editor', [
+            'venueLayers' => VenueLayer::all(),
+        ]);
     }
 
     public function store(Request $request)

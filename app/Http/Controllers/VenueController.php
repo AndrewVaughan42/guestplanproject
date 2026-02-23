@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Venue;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class VenueController extends Controller
 {
     public function index()
     {
-        return Venue::all();
+        return Inertia::render('admin/venue-manager', [
+            'venues' => Venue::all(),
+        ]);
     }
 
     public function store(Request $request)

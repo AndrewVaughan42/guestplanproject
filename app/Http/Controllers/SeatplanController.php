@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Seatplan;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Laravel\Wayfinder\Route;
 
 class SeatplanController extends Controller
 {
     public function index()
     {
-        return Seatplan::all();
+        return Inertia::render('user/seat-plan', [
+            'seatplans' => Seatplan::where('wedding_id', request('wedding_id'))->get(),
+        ]);
     }
 
     public function store(Request $request)
