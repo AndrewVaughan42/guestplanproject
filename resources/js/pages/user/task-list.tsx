@@ -5,6 +5,7 @@ import {
     Table,
     TableBody,
     TableCell,
+    TableHead,
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
@@ -57,25 +58,22 @@ export default function TaskList({ tasks }: { tasks: Task[] }) {
                         <Table className={'mt-4'}>
                             <TableHeader>
                                 <TableRow>
-                                    <TableCell
-                                        align={'left'}
-                                        className={'font-bold'}
-                                    >
-                                        <b className={'text-2xl'}>Task</b>
-                                    </TableCell>
-                                    <TableCell align={'center'}>
-                                        <b className={'text-2xl'}>Status</b>
-                                    </TableCell>
-                                    <TableCell align={'right'}>
-                                        <b className={'text-2xl'}>Due Date</b>
-                                    </TableCell>
-                                    <TableCell align={'right'}>
-                                        <b className={'text-2xl'}>Actions</b>
-                                    </TableCell>
+                                    <TableHead className="text-left font-bold">
+                                        <span className="text-2xl">Task</span>
+                                    </TableHead>
+                                    <TableHead className="text-center font-bold">
+                                        <span className="text-2xl">Status</span>
+                                    </TableHead>
+                                    <TableHead className="text-right font-bold">
+                                        <span className="text-2xl">Due Date</span>
+                                    </TableHead>
+                                    <TableHead className="text-right font-bold">
+                                        <span className="text-2xl">Actions</span>
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {tasks.map((task) => (
+                                {tasks.length > 0 ? tasks.map((task) => (
                                     <TableRow key={task.id}>
                                         <TableCell align={'left'}>
                                             {task.title}
@@ -104,7 +102,13 @@ export default function TaskList({ tasks }: { tasks: Task[] }) {
                                             </Button>
                                         </TableCell>
                                     </TableRow>
-                                ))}
+                                )) : (
+                                    <TableRow>
+                                        <TableCell colSpan={4} className="h-24 text-center">
+                                            No tasks found.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                     </div>

@@ -11,7 +11,7 @@ class GuestController extends Controller
     public function index()
     {
         return Inertia::render('user/guest-manager', [
-            'guests' => Guest::where('wedding_id', request('wedding_id'))->get(),
+            'guests' => auth()->user()->wedding->guests ?? [],
         ]);
     }
 
@@ -19,10 +19,11 @@ class GuestController extends Controller
     {
         $data = $request->validate([
             'name' => ['required'],
-            'wedding_id' => ['required', 'exists:weddings'],
             'mealChoice' => ['nullable'],
             'notes' => ['nullable'],
         ]);
+
+        $data['wedding_id'] = auth()->user()->wedding->id;
 
         Guest::create($data);
         return redirect()->back()->with('success', 'Guest created successfully.');
@@ -37,7 +38,6 @@ class GuestController extends Controller
     {
         $data = $request->validate([
             'name' => ['required'],
-            'wedding_id' => ['required', 'exists:weddings'],
             'mealChoice' => ['nullable'],
             'notes' => ['nullable'],
         ]);
