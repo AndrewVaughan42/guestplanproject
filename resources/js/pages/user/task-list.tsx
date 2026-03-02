@@ -40,7 +40,7 @@ export default function TaskList({ tasks }: { tasks: Task[] }) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Task List" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
-                <div className="flex-1 rounded-xl border border-sidebar-border/70 p-4 dark:border-sidebar-border">
+                <div className="flex-1 rounded-xl border border-sidebar-border/70 p-4 dark:border-sidebar-border relative">
                     <h2 className="mb-4 text-xl font-semibold">
                         My Wedding Task List
                     </h2>

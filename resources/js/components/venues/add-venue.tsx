@@ -14,7 +14,7 @@ import venues from '@/routes/venues';
 import { Button } from '@/components/ui/button';
 import { Venue } from '@/types';
 
-export default function CreateVenue({ open, setOpen }: {
+export default function AddVenue({ open, setOpen }: {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {

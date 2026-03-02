@@ -30,7 +30,9 @@ class TaskController extends Controller
         $data['user_id'] = auth()->id();
 
         Task::create($data);
-        return redirect()->back()->with('success', 'Task created successfully.');
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Task created successfully.']);
     }
 
     public function show(Task $task): Task
@@ -49,13 +51,17 @@ class TaskController extends Controller
 
         $task->update($data);
 
-        return redirect()->back()->with('success', 'Task updated successfully.');
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Task updated successfully.']);
     }
 
     public function destroy(Task $task): RedirectResponse
     {
         $task->delete();
 
-        return redirect()->back()->with('success', 'Task deleted successfully.');
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Task deleted successfully.']);
     }
 }

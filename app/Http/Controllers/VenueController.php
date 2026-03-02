@@ -10,9 +10,13 @@ class VenueController extends Controller
 {
     public function index()
     {
+        $venues = Venue::whereHas('venueCoordinators', function ($query) {
+            $query->where('user_id', auth()->id());
+        })->with('venueMenuItems')->get();
         return Inertia::render('admin/venue-manager', [
-            'venues' => Venue::all(),
+            'venues' => $venues,
         ]);
+
     }
 
     public function store(Request $request)
@@ -29,11 +33,14 @@ class VenueController extends Controller
 
         $venue->venueCoordinators()->create(['user_id' => auth()->id()]);
 
-        return $venue;
+        return redirect()->back()->with('success', 'Venue created successfully.');
     }
 
     public function show(Venue $venue)
     {
+        if (!auth()->user()->venues->contains($venue->id)) {
+            abort(403);
+        }
         return $venue;
     }
 
