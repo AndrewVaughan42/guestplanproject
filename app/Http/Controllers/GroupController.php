@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\RelationshipStatus;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
+use Inertia\Inertia;
 
 class GroupController extends Controller
 {
@@ -13,9 +14,17 @@ class GroupController extends Controller
     {
         $wedding = auth()->user()->wedding;
         if (!$wedding) {
-            return [];
+            return redirect()->route('dashboard')->with('flash', [
+                'type' => 'error',
+                'message' => 'Please set up your wedding first.',
+            ]);
         }
-        return Group::where('wedding_id', $wedding->id)->get();
+
+        return Inertia::render('user/guest-groupings', [
+            'groups' => Group::where('wedding_id', $wedding->id)
+                ->withCount('guests')->get()
+        ]);
+
     }
 
     public function store(Request $request)
@@ -35,7 +44,12 @@ class GroupController extends Controller
 
         $data['wedding_id'] = $wedding->id;
 
-        return Group::create($data);
+        Group::create($data);
+
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Group created successfully.'
+        ]);
     }
 
     public function show(Group $group)
@@ -65,7 +79,10 @@ class GroupController extends Controller
 
         $group->update($data);
 
-        return $group;
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Group updated successfully.'
+        ]);
     }
 
     public function destroy(Group $group)
@@ -79,6 +96,9 @@ class GroupController extends Controller
 
         $group->delete();
 
-        return response()->json();
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Group deleted successfully.'
+        ]);
     }
 }

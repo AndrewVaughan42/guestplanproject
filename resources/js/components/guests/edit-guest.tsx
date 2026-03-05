@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -6,49 +6,65 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import guests from '@/routes/guests';
 import { Guest } from '@/types';
-import React from 'react';
+import { useForm } from '@inertiajs/react';
+import React, { useEffect } from 'react';
 import { Textarea } from '@headlessui/react';
 
-
-export default function CreateGuest({ open, setOpen }: {
+export default function EditGuest({
+    open,
+    setOpen,
+    guest,
+}: {
     open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setOpen: (open: boolean) => void;
+    guest: Guest | null;
 }) {
-
-    const { data, setData, post, processing, reset, errors } = useForm<Guest>({
-        name: '',
-        mealChoice: '',
-        notes: '',
+    const { data, setData, put, processing, reset, errors } = useForm<Guest>({
+        id: guest?.id || 0,
+        name: guest?.name || '',
+        mealChoice: guest?.mealChoice || '',
+        notes: guest?.notes || '',
     });
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    useEffect(() => {
+        if (guest) {
+            setData({
+                id: guest.id,
+                name: guest.name,
+                mealChoice: guest.mealChoice || '',
+                notes: guest.notes || '',
+            });
+        }
+    }, [guest, setData]);
+
+    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        post(guests.store().url,
-            {
-                onSuccess: () => {
-                    reset();
-                    setOpen(false);
-                },
-            });
+        if (!guest?.id) return;
+
+        put(guests.update(guest.id).url, {
+            onSuccess: () => {
+                reset();
+                setOpen(false);
+            },
+        });
     }
 
     return (
         <Dialog open={open} onOpenChange={(value) => setOpen(value)}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>Add New Guest</DialogTitle>
+                    <DialogTitle>Edit Guest</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Guest Name</Label>
+                        <Label htmlFor="edit-name">Guest Name</Label>
                         <Input
-                            id="name"
+                            id="edit-name"
                             required
                             aria-required="true"
                             type="text"
@@ -64,9 +80,9 @@ export default function CreateGuest({ open, setOpen }: {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="mealChoice">Meal Choice</Label>
+                        <Label htmlFor="edit-mealChoice">Meal Choice</Label>
                         <Input
-                            id="mealChoice"
+                            id="edit-mealChoice"
                             type="text"
                             value={data.mealChoice || ''}
                             placeholder="e.g. Beef, Vegan, etc."
@@ -82,9 +98,9 @@ export default function CreateGuest({ open, setOpen }: {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="notes">Notes</Label>
+                        <Label htmlFor="edit-notes">Notes</Label>
                         <Textarea
-                            id="notes"
+                            id="edit-notes"
                             value={data.notes || ''}
                             placeholder="Allergies, special requirements, etc."
                             onChange={(e: {
@@ -103,14 +119,14 @@ export default function CreateGuest({ open, setOpen }: {
                             variant="outline"
                             type="button"
                             onClick={() => {
-                                reset();
                                 setOpen(false);
+                                reset();
                             }}
                         >
                             Cancel
                         </Button>
                         <Button type="submit" disabled={processing}>
-                            {processing ? 'Adding...' : 'Add Guest'}
+                            {processing ? 'Saving...' : 'Save Changes'}
                         </Button>
                     </DialogFooter>
                 </form>

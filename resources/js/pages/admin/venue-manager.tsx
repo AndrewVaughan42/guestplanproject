@@ -37,9 +37,9 @@ export default function VenueManager({ venues }: Props) {
 
                                 <div className="mt-4">
                                     <h4 className="font-semibold text-sm mb-2">Menu Items</h4>
-                                    {venue.venue_menu_items && venue.venue_menu_items.length > 0 ? (
+                                    {venue.menu_items && venue.menu_items.length > 0 ? (
                                         <ul className="list-disc pl-5 text-sm space-y-1">
-                                            {venue.venue_menu_items.map((item) => (
+                                            {venue.menu_items.map((item) => (
                                                 <li key={item.id}>
                                                     <span className="font-medium">{item.name}</span>
                                                     {item.is_plant_based && (

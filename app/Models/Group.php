@@ -11,6 +11,8 @@ class Group extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name', 'relationship', 'wedding_id'];
+
     public function wedding(): BelongsTo
     {
         return $this->belongsTo(Wedding::class);

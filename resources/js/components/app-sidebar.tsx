@@ -30,6 +30,7 @@ import guests from '@/routes/guests';
 import venues from '@/routes/venues';
 import seatPlans from '@/routes/seat-plans';
 import venueLayers from '@/routes/venue-layers';
+import groups from '@/routes/groups';
 
 
 const mainNavItems: NavItem[] = [
@@ -41,6 +42,11 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Guest Manager',
         href: guests.index().url,
+        icon: FileUser,
+    },
+    {
+        title: 'Guest Groupings',
+        href: groups.index().url,
         icon: FileUser,
     },
     {

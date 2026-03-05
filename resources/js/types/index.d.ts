@@ -83,4 +83,10 @@ export interface Guest {
     mealChoice: string | null;
     notes: string | null;
 }
-
+export interface Group {
+    id: number;
+    name: string;
+    relationship: 'together' | 'close' | 'away' | 'far' | '';
+    wedding_id?: number;
+    guests_count: number;
+}
