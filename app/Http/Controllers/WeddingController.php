@@ -9,7 +9,7 @@ class WeddingController extends Controller
 {
     public function index()
     {
-        return Wedding::all();
+        return auth()->user()->wedding;
     }
 
     public function store(Request $request)
@@ -33,11 +33,24 @@ class WeddingController extends Controller
 
     public function show(Wedding $wedding)
     {
+        if ($wedding->user_id !== auth()->id()) {
+            return redirect()->back()->with('flash', [
+                'type' => 'error',
+                'message' => 'You are not authorized to view this wedding.',
+            ]);
+        }
         return $wedding;
     }
 
     public function update(Request $request, Wedding $wedding)
     {
+        if ($wedding->user_id !== auth()->id()) {
+            return redirect()->back()->with('flash', [
+                'type' => 'error',
+                'message' => 'You are not authorized to edit this wedding.',
+            ]);
+        }
+
         $data = $request->validate([
             'venue_id' => ['required', 'exists:venues,id'],
             'name' => ['required'],
@@ -51,6 +64,13 @@ class WeddingController extends Controller
 
     public function destroy(Wedding $wedding)
     {
+        if ($wedding->user_id !== auth()->id()) {
+            return redirect()->back()->with('flash', [
+                'type' => 'error',
+                'message' => 'You are not authorized to delete this wedding.',
+            ]);
+        }
+
         $wedding->delete();
 
         return response()->json();

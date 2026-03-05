@@ -7,6 +7,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Venue;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,25 +19,48 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         //Admin Account For Testing
-        User::firstOrCreate(
+        $adminUser = User::firstOrCreate(
             ['email' => 'andrew@laravel.com'],
             [
                 'name' => 'Andrew Vaughan',
-                'password' => 'qwertyuiop',
+                'password' => Hash::make('qwertyuiop'),
                 'email_verified_at' => now(),
                 'isAdmin' => true
             ]
         );
         //User Account For Testing
-        User::firstOrCreate(
+        $regularUser = User::firstOrCreate(
             ['email' => 'user@laravel.com'],
             [
                 'name' => 'Ube Serr',
-                'password' => 'asdfghjkl',
+                'password' => Hash::make('asdfghjkl'),
                 'email_verified_at' => now(),
                 'isAdmin' => false
             ]
         );
+
+        $venue1 = Venue::firstOrCreate(
+            ['name' => 'Fairyhill'],
+            [
+                'minimumTableAmount' => 1,
+                'maximumTableAmount' => 10,
+                'minimumCapacity' => 1,
+                'maximumCapacity' => 100,
+            ]
+        );
+
+        $venue2 = Venue::firstOrCreate(
+            ['name' => 'Sant Ffraed House'],
+            [
+                'minimumTableAmount' => 1,
+                'maximumTableAmount' => 10,
+                'minimumCapacity' => 1,
+                'maximumCapacity' => 100,
+            ]
+        );
+
+        $adminUser->venues()->syncWithoutDetaching([$venue1->id, $venue2->id]);
+
 
 
     }

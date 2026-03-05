@@ -58,6 +58,15 @@ export interface Venue {
     maximumCapacity: number;
     minimumTableAmount: number;
     maximumTableAmount: number;
+    menu_items?: MenuItem[];
+}
+
+export interface MenuItem {
+    id: number;
+    venue_id: number;
+    name: string;
+    description: string | null;
+    is_plant_based: boolean;
 }
 
 export interface Wedding {

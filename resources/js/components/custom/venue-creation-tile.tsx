@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import CreateVenue from '@/components/venues/create-venue';
+import AddVenue from '@/components/venues/add-venue';
 
 export default function VenueCreationTile(){
     const [open, setOpen] = useState(false);
@@ -21,7 +21,7 @@ export default function VenueCreationTile(){
                 <Plus className="mr-2 h-5 w-5" />
                 Create Venue
             </Button>
-            <CreateVenue
+            <AddVenue
                 open={open}
                 setOpen={setOpen}
             />

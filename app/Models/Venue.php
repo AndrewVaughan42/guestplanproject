@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Venue extends Model
@@ -27,9 +28,14 @@ class Venue extends Model
         return $this->hasMany(Wedding::class);
     }
 
-    public function venueCoordinators(): HasMany
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(VenueCoordinator::class);
+        return $this->belongsToMany(User::class, 'venue_coordinators');
+    }
+
+    public function venueMenuItems(): HasMany
+    {
+        return $this->hasMany(MenuItem::class);
     }
 }
 

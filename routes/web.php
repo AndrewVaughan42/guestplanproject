@@ -23,10 +23,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', static function () {
             return Inertia::render('user/dashboard', [
                 'venues' => Venue::all(),
+                //All Venues for now
             ]);
     })->name('dashboard');
 
-    //Renders task-list page
+    //Renders task-list page via index
     Route::resource('tasks', TaskController::class)->except('show');
     //Check if needed?
     Route::resource('weddings', WeddingController::class);
