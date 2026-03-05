@@ -7,24 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Guest extends Model
+class Group extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'name',
-        'wedding_id',
-        'mealChoice',
-        'notes',
-    ];
 
     public function wedding(): BelongsTo
     {
         return $this->belongsTo(Wedding::class);
     }
 
-    public function groups(): BelongsToMany
+    public function guests(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class, 'group_guest', 'guest_id', 'group_id');
+        return $this->belongsToMany(Guest::class, 'group_guest', 'group_id', 'guest_id');
     }
 }

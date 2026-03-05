@@ -52,11 +52,24 @@ class GuestController extends Controller
 
     public function show(Guest $guest)
     {
+        if ($guest->wedding_id !== auth()->user()->wedding?->id) {
+            return redirect()->back()->with('flash', [
+                'type' => 'error',
+                'message' => 'You are not authorized to view this guest.',
+            ]);
+        }
         return $guest;
     }
 
     public function update(Request $request, Guest $guest)
     {
+        $wedding = auth()->user()->wedding;
+        if (!$wedding || $guest->wedding_id !== $wedding->id) {
+            return redirect()->back()->with('flash', [
+                'type' => 'error',
+                'message' => 'You are not authorized to edit this guest.',
+            ]);
+        }
         $data = $request->validate([
             'name' => ['required'],
             'mealChoice' => ['nullable'],
@@ -73,6 +86,13 @@ class GuestController extends Controller
 
     public function destroy(Guest $guest)
     {
+        if ($guest->wedding_id !== auth()->user()->wedding?->id) {
+            return redirect()->back()->with('flash', [
+                'type' => 'error',
+                'message' => 'You are not authorized to delete this guest.',
+            ]);
+        }
+
         $guest->delete();
 
         return redirect()->back()->with('flash', [
