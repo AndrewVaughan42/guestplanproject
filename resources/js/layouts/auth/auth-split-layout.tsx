@@ -3,7 +3,7 @@ import { home } from '@/routes';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
-import loginImage from '../../pages/images/login-image.jpg';
+import loginImage from '../../../../public/images/login-image.jpg';
 
 interface AuthLayoutProps {
     title?: string;

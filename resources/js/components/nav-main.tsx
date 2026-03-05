@@ -19,6 +19,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                             asChild
+                            variant="brand"
                             isActive={page.url.startsWith(
                                 resolveUrl(item.href),
                             )}

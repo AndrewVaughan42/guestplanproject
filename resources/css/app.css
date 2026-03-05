@@ -59,6 +59,10 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+
+    /*Oldwalls/Guestplan Colours */
+    --color-guestplan: var(--guestplan);
+    --color-guestplan-foreground: var(--guestplan-foreground);
 }
 
 :root {
@@ -95,6 +99,10 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.87 0 0);
+
+    /*Oldwalls/Guestplan Light Colours */
+    --guestplan: oklch(0.72 0.06 85);
+    --guestplan-foreground: oklch(0.2 0.02 85);
 }
 
 .dark {
@@ -130,6 +138,9 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(0.269 0 0);
     --sidebar-ring: oklch(0.439 0 0);
+    /*Oldwalls/Guestplan Dark Colours */
+    --guestplan: oklch(0.78 0.06 85);
+    --guestplan-foreground: oklch(0.15 0.02 85);
 }
 
 @layer base {
