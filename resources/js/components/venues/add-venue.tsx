@@ -22,10 +22,10 @@ export default function AddVenue({ open, setOpen }: {
     const { data, setData, post, processing, reset, errors } =
         useForm<Venue>({
             name: '',
-            minimumCapacity: 0,
-            maximumCapacity: 0,
-            minimumTableAmount: 0,
-            maximumTableAmount: 0,
+            minimum_capacity: 0,
+            maximum_capacity: 0,
+            minimum_table_amount: 0,
+            maximum_table_amount: 0,
         });
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
@@ -66,93 +66,93 @@ export default function AddVenue({ open, setOpen }: {
                     </div>
                     {/* Venue Minimum Capacity */}
                     <div className="grid gap-2">
-                        <Label htmlFor="minimumCapacity">
+                        <Label htmlFor="minimum_capacity">
                             Minimum Capacity
                         </Label>
                         <Input
-                            id={'minimumCapacity'}
+                            id={'minimum_capacity'}
                             required
                             type={'number'}
-                            value={data.minimumCapacity}
+                            value={data.minimum_capacity}
                             onChange={(e) =>
                                 setData(
-                                    'minimumCapacity',
+                                    'minimum_capacity',
                                     parseInt(e.target.value),
                                 )
                             }
                         />
-                        {errors.minimumCapacity && (
+                        {errors.minimum_capacity && (
                             <span className="text-sm text-destructive">
-                                {errors.minimumCapacity}
+                                {errors.minimum_capacity}
                             </span>
                         )}
                     </div>
                     {/* Venue Maximum Capacity */}
                     <div className="grid gap-2">
-                        <Label htmlFor="maximumCapacity">
+                        <Label htmlFor="maximum_capacity">
                             Maximum Capacity
                         </Label>
                         <Input
-                            id={'maximumCapacity'}
+                            id={'maximum_capacity'}
                             required
                             type={'number'}
-                            value={data.maximumCapacity}
+                            value={data.maximum_capacity}
                             onChange={(e) =>
                                 setData(
-                                    'maximumCapacity',
+                                    'maximum_capacity',
                                     parseInt(e.target.value),
                                 )
                             }
                         />
-                        {errors.maximumCapacity && (
+                        {errors.maximum_capacity && (
                             <span className="text-sm text-destructive">
-                                {errors.maximumCapacity}
+                                {errors.maximum_capacity}
                             </span>
                         )}
                     </div>
                     {/* Venue Minimum Table Amount */}
                     <div className="grid gap-2">
-                        <Label htmlFor="minimumTableAmount">
+                        <Label htmlFor="minimum_table_amount">
                             Minimum Amount of Tables
                         </Label>
                         <Input
-                            id={'minimumTableAmount'}
+                            id={'minimum_table_amount'}
                             required
                             type={'number'}
-                            value={data.minimumTableAmount}
+                            value={data.minimum_table_amount}
                             onChange={(e) =>
                                 setData(
-                                    'minimumTableAmount',
+                                    'minimum_table_amount',
                                     parseInt(e.target.value),
                                 )
                             }
                         />
-                        {errors.minimumTableAmount && (
+                        {errors.minimum_table_amount && (
                             <span className="text-sm text-destructive">
-                                {errors.minimumTableAmount}
+                                {errors.minimum_table_amount}
                             </span>
                         )}
                     </div>
                     {/* Venue Maximum Table Amount */}
                     <div className="grid gap-2">
-                        <Label htmlFor="maximumTableAmount">
+                        <Label htmlFor="maximum_table_amount">
                             Minimum Capacity
                         </Label>
                         <Input
-                            id={'maximumTableAmount'}
+                            id={'maximum_table_amount'}
                             required
                             type={'number'}
-                            value={data.maximumTableAmount}
+                            value={data.maximum_table_amount}
                             onChange={(e) =>
                                 setData(
-                                    'maximumTableAmount',
+                                    'maximum_table_amount',
                                     parseInt(e.target.value),
                                 )
                             }
                         />
-                        {errors.maximumTableAmount && (
+                        {errors.maximum_table_amount && (
                             <span className="text-sm text-destructive">
-                                {errors.maximumTableAmount}
+                                {errors.maximum_table_amount}
                             </span>
                         )}
                     </div>

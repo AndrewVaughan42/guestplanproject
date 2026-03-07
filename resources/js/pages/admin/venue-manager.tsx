@@ -31,8 +31,8 @@ export default function VenueManager({ venues }: Props) {
                                 <h3 className="text-lg font-bold">{venue.name}</h3>
 
                                 <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                                    <p>Capacity: {venue.minimumCapacity} - {venue.maximumCapacity} guests</p>
-                                    <p>Tables: {venue.minimumTableAmount} - {venue.maximumTableAmount} tables</p>
+                                    <p>Capacity: {venue.minimum_capacity} - {venue.maximum_capacity} guests</p>
+                                    <p>Tables: {venue.minimum_table_amount} - {venue.maximum_table_amount} tables</p>
                                 </div>
 
                                 <div className="mt-4">

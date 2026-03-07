@@ -10,9 +10,9 @@ return new class extends Migration {
         Schema::create('venue_layers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('venue_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id');
-            $table->integer('tableAmount');
-            $table->jsonb('tableLayout');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->integer('table_amount');
+            $table->jsonb('table_layout');
             $table->timestamps();
         });
     }

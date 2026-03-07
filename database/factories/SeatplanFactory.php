@@ -15,7 +15,7 @@ class SeatplanFactory extends Factory
     public function definition(): array
     {
         return [
-            'Layout' => $this->faker->words(),
+            'layout' => [],
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
 

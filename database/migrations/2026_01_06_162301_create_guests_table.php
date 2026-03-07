@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->foreignId('wedding_id')->references('id')->on('weddings')->cascadeOnDelete();
-            $table->string('mealChoice')->nullable();
+            $table->string('meal_choice')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

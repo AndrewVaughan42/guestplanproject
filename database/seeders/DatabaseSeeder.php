@@ -42,20 +42,20 @@ class DatabaseSeeder extends Seeder
         $venue1 = Venue::firstOrCreate(
             ['name' => 'Fairyhill'],
             [
-                'minimumTableAmount' => 1,
-                'maximumTableAmount' => 10,
-                'minimumCapacity' => 1,
-                'maximumCapacity' => 100,
+                'minimum_table_amount' => 1,
+                'maximum_table_amount' => 10,
+                'minimum_capacity' => 1,
+                'maximum_capacity' => 100,
             ]
         );
 
         $venue2 = Venue::firstOrCreate(
             ['name' => 'Sant Ffraed House'],
             [
-                'minimumTableAmount' => 1,
-                'maximumTableAmount' => 10,
-                'minimumCapacity' => 1,
-                'maximumCapacity' => 100,
+                'minimum_table_amount' => 1,
+                'maximum_table_amount' => 10,
+                'minimum_capacity' => 1,
+                'maximum_capacity' => 100,
             ]
         );
 

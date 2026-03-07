@@ -45,9 +45,9 @@ class Wedding extends Model
         return $this->hasMany(Seatplan::class);
     }
 
-    public function venueMenuItems(): BelongsToMany
+    public function menuItems(): BelongsToMany
     {
-        return $this->belongsToMany(MenuItem::class, 'venue_menu_item_wedding', 'wedding_id', 'venue_menu_item_id');
+        return $this->belongsToMany(MenuItem::class, 'menu_item_wedding', 'wedding_id', 'menu_item_id');
     }
 
     protected function casts(): array

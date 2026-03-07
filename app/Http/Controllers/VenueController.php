@@ -23,10 +23,10 @@ class VenueController extends Controller
     {
         $data = $request->validate([
             'name' => ['required'],
-            'minimumTableAmount' => ['required', 'integer'],
-            'maximumTableAmount' => ['required'],
-            'minimumCapacity' => ['required', 'integer'],
-            'maximumCapacity' => ['required'],
+            'minimum_table_amount' => ['required', 'integer'],
+            'maximum_table_amount' => ['required'],
+            'minimum_capacity' => ['required', 'integer'],
+            'maximum_capacity' => ['required'],
         ]);
 
         $venue = Venue::create($data);
@@ -61,10 +61,10 @@ class VenueController extends Controller
 
         $data = $request->validate([
             'name' => ['required'],
-            'minimumTableAmount' => ['required', 'integer'],
-            'maximumTableAmount' => ['required'],
-            'minimumCapacity' => ['required', 'integer'],
-            'maximumCapacity' => ['required'],
+            'minimum_table_amount' => ['required', 'integer'],
+            'maximum_table_amount' => ['required'],
+            'minimum_capacity' => ['required', 'integer'],
+            'maximum_capacity' => ['required'],
         ]);
 
         $venue->update($data);

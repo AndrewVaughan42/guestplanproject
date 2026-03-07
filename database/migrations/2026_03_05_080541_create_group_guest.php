@@ -8,8 +8,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('group_guest', function (Blueprint $table) {
-            $table->foreignId('group_id');
-            $table->foreignId('guest_id');
+            $table->foreignId('group_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('guest_id')->constrained()->cascadeOnDelete();
+            $table->primary(['group_id', 'guest_id']);
         });
     }
 

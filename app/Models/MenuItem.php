@@ -25,7 +25,7 @@ class MenuItem extends Model
 
     public function weddings(): BelongsToMany
     {
-        return $this->belongsToMany(Wedding::class, 'venue_menu_item_wedding', 'venue_menu_item_id', 'wedding_id');
+        return $this->belongsToMany(Wedding::class, 'menu_item_wedding', 'menu_item_id', 'wedding_id');
     }
 
     protected function casts(): array

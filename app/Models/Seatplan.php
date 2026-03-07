@@ -13,7 +13,7 @@ class Seatplan extends Model
     protected $fillable = [
         'wedding_id',
         'user_id',
-        'Layout',
+        'layout',
     ];
 
     public function wedding(): BelongsTo
@@ -29,7 +29,7 @@ class Seatplan extends Model
     protected function casts(): array
     {
         return [
-            'Layout' => 'array',
+            'layout' => 'array',
         ];
     }
 }

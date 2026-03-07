@@ -54,10 +54,10 @@ export interface Task {
 export interface Venue {
     id?: number;
     name: string;
-    minimumCapacity: number;
-    maximumCapacity: number;
-    minimumTableAmount: number;
-    maximumTableAmount: number;
+    minimum_capacity: number;
+    maximum_capacity: number;
+    minimum_table_amount: number;
+    maximum_table_amount: number;
     menu_items?: MenuItem[];
 }
 
@@ -80,7 +80,7 @@ export interface Guest {
     id?: number;
     name: string;
     wedding_id?: number;
-    mealChoice: string | null;
+    meal_choice: string | null;
     notes: string | null;
 }
 export interface Group {

@@ -25,7 +25,7 @@ class SeatplanController extends Controller
         }
 
         $data = $request->validate([
-            'Layout' => ['required'],
+            'layout' => ['required'],
         ]);
 
         $data['wedding_id'] = $wedding->id;
@@ -54,7 +54,7 @@ class SeatplanController extends Controller
         }
 
         $data = $request->validate([
-            'Layout' => ['required'],
+            'layout' => ['required'],
         ]);
 
         $seatplan->update($data);

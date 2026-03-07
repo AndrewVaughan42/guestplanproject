@@ -14,12 +14,13 @@ class VenueLayerFactory extends Factory
     public function definition(): array
     {
         return [
-            'tableAmount' => $this->faker->randomNumber(),
-            'tableLayout' => $this->faker->words(),
+            'table_amount' => $this->faker->numberBetween(5, 20),
+            'table_layout' => [],
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
 
             'venue_id' => Venue::factory(),
+            'user_id' => \App\Models\User::factory(),
         ];
     }
 }

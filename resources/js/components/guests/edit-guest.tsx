@@ -26,7 +26,7 @@ export default function EditGuest({
     const { data, setData, put, processing, reset, errors } = useForm<Guest>({
         id: guest?.id || 0,
         name: guest?.name || '',
-        mealChoice: guest?.mealChoice || '',
+        meal_choice: guest?.meal_choice || '',
         notes: guest?.notes || '',
     });
 
@@ -35,7 +35,7 @@ export default function EditGuest({
             setData({
                 id: guest.id,
                 name: guest.name,
-                mealChoice: guest.mealChoice || '',
+                meal_choice: guest.meal_choice || '',
                 notes: guest.notes || '',
             });
         }
@@ -80,19 +80,19 @@ export default function EditGuest({
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="edit-mealChoice">Meal Choice</Label>
+                        <Label htmlFor="edit-meal_choice">Meal Choice</Label>
                         <Input
-                            id="edit-mealChoice"
+                            id="edit-meal_choice"
                             type="text"
-                            value={data.mealChoice || ''}
+                            value={data.meal_choice || ''}
                             placeholder="e.g. Beef, Vegan, etc."
                             onChange={(e) =>
-                                setData('mealChoice', e.target.value)
+                                setData('meal_choice', e.target.value)
                             }
                         />
-                        {errors.mealChoice && (
+                        {errors.meal_choice && (
                             <span className="text-sm text-destructive">
-                                {errors.mealChoice}
+                                {errors.meal_choice}
                             </span>
                         )}
                     </div>

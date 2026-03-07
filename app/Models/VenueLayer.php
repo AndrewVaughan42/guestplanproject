@@ -14,8 +14,8 @@ class VenueLayer extends Model
     protected $fillable = [
         'venue_id',
         'user_id',
-        'tableAmount',
-        'tableLayout',
+        'table_amount',
+        'table_layout',
     ];
 
     public function venue(): BelongsTo
@@ -36,7 +36,7 @@ class VenueLayer extends Model
     protected function casts(): array
     {
         return [
-            'tableLayout' => 'array',
+            'table_layout' => 'array',
         ];
     }
 }

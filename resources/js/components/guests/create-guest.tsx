@@ -22,11 +22,11 @@ export default function CreateGuest({ open, setOpen }: {
 
     const { data, setData, post, processing, reset, errors } = useForm<Guest>({
         name: '',
-        mealChoice: '',
+        meal_choice: '',
         notes: '',
     });
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
         post(guests.store().url,
@@ -64,19 +64,19 @@ export default function CreateGuest({ open, setOpen }: {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="mealChoice">Meal Choice</Label>
+                        <Label htmlFor="meal_choice">Meal Choice</Label>
                         <Input
-                            id="mealChoice"
+                            id="meal_choice"
                             type="text"
-                            value={data.mealChoice || ''}
+                            value={data.meal_choice || ''}
                             placeholder="e.g. Beef, Vegan, etc."
                             onChange={(e) =>
-                                setData('mealChoice', e.target.value)
+                                setData('meal_choice', e.target.value)
                             }
                         />
-                        {errors.mealChoice && (
+                        {errors.meal_choice && (
                             <span className="text-sm text-destructive">
-                                {errors.mealChoice}
+                                {errors.meal_choice}
                             </span>
                         )}
                     </div>

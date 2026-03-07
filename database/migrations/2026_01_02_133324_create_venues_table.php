@@ -10,10 +10,10 @@ return new class extends Migration {
         Schema::create('venues', static function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('minimumTableAmount');
-            $table->integer('maximumTableAmount');
-            $table->integer('minimumCapacity');
-            $table->integer('maximumCapacity');
+            $table->integer('minimum_table_amount');
+            $table->integer('maximum_table_amount');
+            $table->integer('minimum_capacity');
+            $table->integer('maximum_capacity');
             $table->timestamps();
         });
     }

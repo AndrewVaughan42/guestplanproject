@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guest;
+use App\Models\Group;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -21,6 +22,7 @@ class GuestController extends Controller
 
         return Inertia::render('user/guest-manager', [
             'guests' => $wedding->guests,
+            'groups' => Group::where('wedding_id', $wedding->id)->get(),
         ]);
     }
 
@@ -37,7 +39,7 @@ class GuestController extends Controller
 
         $data = $request->validate([
             'name' => ['required'],
-            'mealChoice' => ['nullable'],
+            'meal_choice' => ['nullable'],
             'notes' => ['nullable'],
         ]);
 
@@ -72,7 +74,7 @@ class GuestController extends Controller
         }
         $data = $request->validate([
             'name' => ['required'],
-            'mealChoice' => ['nullable'],
+            'meal_choice' => ['nullable'],
             'notes' => ['nullable'],
         ]);
 

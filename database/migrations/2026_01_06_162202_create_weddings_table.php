@@ -10,8 +10,8 @@ return new class extends Migration {
         Schema::create('weddings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('venue_id');
-            $table->foreignId('venue_layer_id')->nullable();
+            $table->foreignId('venue_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('venue_layer_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name');
             $table->date('date');
             $table->timestamps();

@@ -10,8 +10,8 @@ return new class extends Migration {
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('relationship');
-            $table->foreignId('wedding_id');
+            $table->integer('priority')->default(5);
+            $table->foreignId('wedding_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -15,8 +15,8 @@ class GuestFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'mealChoice' => $this->faker->word(),
-            'notes' => $this->faker->word(),
+            'meal_choice' => $this->faker->word(),
+            'notes' => $this->faker->sentence(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
 

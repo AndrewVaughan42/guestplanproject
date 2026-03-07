@@ -24,8 +24,8 @@ class VenueLayerController extends Controller
     {
         $data = $request->validate([
             'venue_id' => ['required', 'exists:venues,id'],
-            'tableAmount' => ['required', 'integer'],
-            'tableLayout' => ['required'],
+            'table_amount' => ['required', 'integer'],
+            'table_layout' => ['required'],
         ]);
 
         $venue = Venue::findOrFail($data['venue_id']);
@@ -61,8 +61,8 @@ class VenueLayerController extends Controller
 
         $data = $request->validate([
             'venue_id' => ['required', 'exists:venues,id'],
-            'tableAmount' => ['required', 'integer'],
-            'tableLayout' => ['required'],
+            'table_amount' => ['required', 'integer'],
+            'table_layout' => ['required'],
         ]);
 
         $venueLayer->update($data);

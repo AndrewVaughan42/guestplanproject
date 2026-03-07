@@ -15,6 +15,7 @@ import groups from '@/routes/groups';
 import { BreadcrumbItem, Group } from '@/types';
 import { Head } from '@inertiajs/react';
 import React from 'react';
+import { Edit, Trash2 } from 'lucide-react';
 
 export default function GuestGroupings({ groups: groupList }: { groups: Group[] }) {
     const [open, setOpen] = React.useState(false);
@@ -55,7 +56,9 @@ export default function GuestGroupings({ groups: groupList }: { groups: Group[] 
                                     <TableHead>Name</TableHead>
                                     <TableHead>Relationship</TableHead>
                                     <TableHead>Guest Count</TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
+                                    <TableHead className="text-right">
+                                        Actions
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -82,19 +85,23 @@ export default function GuestGroupings({ groups: groupList }: { groups: Group[] 
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <Button
-                                                    variant="ghost"
+                                                    variant="brand"
                                                     size="sm"
-                                                    onClick={() => handleEdit(group)}
+                                                    onClick={() =>
+                                                        handleEdit(group)
+                                                    }
                                                 >
-                                                    Edit
+                                                    <Edit />
                                                 </Button>
                                                 <Button
-                                                    variant="ghost"
+                                                    variant="brand"
                                                     size="sm"
                                                     className="text-destructive"
-                                                    onClick={() => DeleteGroup(group.id)}
+                                                    onClick={() =>
+                                                        DeleteGroup(group.id)
+                                                    }
                                                 >
-                                                    Delete
+                                                    <Trash2 />
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

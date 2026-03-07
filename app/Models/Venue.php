@@ -13,10 +13,10 @@ class Venue extends Model
 
     protected $fillable = [
         'name',
-        'minimumTableAmount',
-        'maximumTableAmount',
-        'minimumCapacity',
-        'maximumCapacity',
+        'minimum_table_amount',
+        'maximum_table_amount',
+        'minimum_capacity',
+        'maximum_capacity',
     ];
 
     public function venueLayers(): HasMany {

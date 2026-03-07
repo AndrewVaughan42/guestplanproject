@@ -14,7 +14,7 @@ class Guest extends Model
     protected $fillable = [
         'name',
         'wedding_id',
-        'mealChoice',
+        'meal_choice',
         'notes',
     ];
 

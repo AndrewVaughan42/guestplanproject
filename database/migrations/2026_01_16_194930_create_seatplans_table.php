@@ -9,9 +9,9 @@ return new class extends Migration {
     {
         Schema::create('seatplans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('wedding_id');
-            $table->foreignId('user_id');
-            $table->jsonb('Layout');
+            $table->foreignId('wedding_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->jsonb('layout');
             $table->timestamps();
         });
     }
