@@ -17,17 +17,18 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useForm } from '@inertiajs/react';
+import groups from '@/routes/groups';
 
 export default function AddGuestToGroup({
     open,
     setOpen,
     guest,
-    groups,
+    group,
 }: {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     guest: Guest | null;
-    groups: Group[];
+    group: Group[];
 }) {
     const { data, setData, post, processing, reset } = useForm({
         group_id: '',
@@ -37,10 +38,7 @@ export default function AddGuestToGroup({
         e.preventDefault();
         if (!guest?.id || !data.group_id) return;
 
-        // Assuming there is a route to handle this, for now using a placeholder logic
-        // or the user might need to implement this endpoint.
-        // Given the instructions, I will set up the UI.
-        post(`/guests/${guest.id}/groups`, {
+        post(groups.store().url, {
             onSuccess: () => {
                 setOpen(false);
                 reset();
@@ -65,7 +63,7 @@ export default function AddGuestToGroup({
                                 <SelectValue placeholder="Select a group" />
                             </SelectTrigger>
                             <SelectContent>
-                                {groups.map((group) => (
+                                {group.map((group) => (
                                     <SelectItem key={group.id} value={group.id.toString()}>
                                         {group.name}
                                     </SelectItem>
