@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
 use App\Models\Venue;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class MenuItemController extends Controller
@@ -15,7 +16,7 @@ class MenuItemController extends Controller
         })->get();
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'venue_id' => ['required', 'exists:venues,id'],
@@ -31,22 +32,26 @@ class MenuItemController extends Controller
                 'message' => 'You are not authorized to create menu items for this venue.',
             ]);
         }
+        MenuItem::create($data);
 
-        return MenuItem::create($data);
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Menu item created successfully.'
+        ]);
     }
 
-    public function show(MenuItem $venueMenuItem)
-    {
-        if (!$venueMenuItem->venue->users()->where('user_id', auth()->id())->exists()) {
+    public function show(MenuItem $menuItem)
+    { //Remove???
+        if (!$menuItem->venue->users()->where('user_id', auth()->id())->exists()) {
             return redirect()->back()->with('flash', [
                 'type' => 'error',
                 'message' => 'You are not authorized to view this menu item.',
             ]);
         }
-        return $venueMenuItem;
+        return $menuItem;
     }
 
-    public function update(Request $request, MenuItem $venueMenuItem)
+    public function update(Request $request, MenuItem $venueMenuItem): RedirectResponse
     {
         if (!$venueMenuItem->venue->users()->where('user_id', auth()->id())->exists()) {
             return redirect()->back()->with('flash', [
@@ -64,20 +69,26 @@ class MenuItemController extends Controller
 
         $venueMenuItem->update($data);
 
-        return $venueMenuItem;
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Menu item updated successfully.'
+        ]);
     }
 
-    public function destroy(MenuItem $venueMenuItem)
+    public function destroy(MenuItem $menuItem): RedirectResponse
     {
-        if (!$venueMenuItem->venue->users()->where('user_id', auth()->id())->exists()) {
+        if (!$menuItem->venue || !$menuItem->venue->users()->where('user_id', auth()->id())->exists()) {
             return redirect()->back()->with('flash', [
                 'type' => 'error',
                 'message' => 'You are not authorized to delete this menu item.',
             ]);
         }
 
-        $venueMenuItem->delete();
+        $menuItem->delete();
 
-        return response()->json();
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Menu item deleted successfully.'
+        ]);
     }
 }

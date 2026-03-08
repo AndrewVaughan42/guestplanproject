@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Group;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -25,7 +26,7 @@ class GroupController extends Controller
 
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $wedding = auth()->user()->wedding;
         if (!$wedding) {
@@ -62,7 +63,7 @@ class GroupController extends Controller
         return $group;
     }
 
-    public function update(Request $request, Group $group)
+    public function update(Request $request, Group $group): RedirectResponse
     {
         if ($group->wedding_id !== auth()->user()->wedding?->id) {
             return redirect()->back()->with('flash', [
@@ -85,7 +86,7 @@ class GroupController extends Controller
         ]);
     }
 
-    public function destroy(Group $group)
+    public function destroy(Group $group): RedirectResponse
     {
         if ($group->wedding_id !== auth()->user()->wedding?->id) {
             return redirect()->back()->with('flash', [

@@ -33,7 +33,7 @@ class Venue extends Model
         return $this->belongsToMany(User::class, 'venue_coordinators');
     }
 
-    public function venueMenuItems(): HasMany
+    public function menuItems(): HasMany
     {
         return $this->hasMany(MenuItem::class);
     }

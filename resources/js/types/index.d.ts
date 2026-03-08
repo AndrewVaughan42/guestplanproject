@@ -72,9 +72,13 @@ export interface MenuItem {
 
 export interface Wedding {
     id?: number;
-    name: string;
+    partnerA_firstname: string;
+    partnerA_lastname: string;
+    partnerB_firstname: string;
+    partnerB_lastname: string;
     date: string;
     venue_id: number;
+    groupTemplates: boolean;
 }
 
 export interface Guest {

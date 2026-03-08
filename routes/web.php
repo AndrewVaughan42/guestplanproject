@@ -3,6 +3,7 @@
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GuestConflictsController;
 use App\Http\Controllers\GuestController;
+use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\SeatplanController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\VenueController;
@@ -39,6 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('groups', GroupController::class);
     //Renders Conflicts page via index
     Route::resource('conflicts', GuestConflictsController::class);
+    //Meal Choices, no Page, part of Venue Management
+    Route::resource('menu-items', MenuItemController::class);
     //Renders seat plan page via index
     Route::resource('seat-plans', SeatplanController::class);
 
@@ -48,7 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Admin-only routes
     Route::middleware(['CheckAdmin'])->group(function () {
 
-        Route::resource('venues', VenueController::class)->names('venues');
+        Route::resource('venues', VenueController::class);
         Route::resource('venue-layers', VenueLayerController::class);
     });
 });

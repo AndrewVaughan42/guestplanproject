@@ -3,30 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Venue;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class VenueController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $venues = Venue::whereHas('users', function ($query) {
             $query->where('user_id', auth()->id());
-        })->with('venueMenuItems')->get();
+        })->with('menuItems')->get();
         return Inertia::render('admin/venue-manager', [
             'venues' => $venues,
         ]);
 
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'name' => ['required'],
             'minimum_table_amount' => ['required', 'integer'],
-            'maximum_table_amount' => ['required'],
+            'maximum_table_amount' => ['required', 'integer'],
             'minimum_capacity' => ['required', 'integer'],
-            'maximum_capacity' => ['required'],
+            'maximum_capacity' => ['required', 'integer'],
         ]);
 
         $venue = Venue::create($data);
@@ -50,7 +52,7 @@ class VenueController extends Controller
         return $venue;
     }
 
-    public function update(Request $request, Venue $venue)
+    public function update(Request $request, Venue $venue): RedirectResponse
     {
         if (!$venue->users()->where('user_id', auth()->id())->exists()) {
             return redirect()->back()->with('flash', [
@@ -62,9 +64,9 @@ class VenueController extends Controller
         $data = $request->validate([
             'name' => ['required'],
             'minimum_table_amount' => ['required', 'integer'],
-            'maximum_table_amount' => ['required'],
+            'maximum_table_amount' => ['required', 'integer'],
             'minimum_capacity' => ['required', 'integer'],
-            'maximum_capacity' => ['required'],
+            'maximum_capacity' => ['required', 'integer'],
         ]);
 
         $venue->update($data);
@@ -75,7 +77,7 @@ class VenueController extends Controller
         ]);
     }
 
-    public function destroy(Venue $venue)
+    public function destroy(Venue $venue): RedirectResponse
     {
         if (!$venue->users()->where('user_id', auth()->id())->exists()) {
             return redirect()->back()->with('flash', [
@@ -86,6 +88,9 @@ class VenueController extends Controller
 
         $venue->delete();
 
-        return response()->json();
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Venue deleted successfully.'
+        ]);
     }
 }

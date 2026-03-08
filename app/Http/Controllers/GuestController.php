@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Guest;
 use App\Models\Group;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -26,7 +27,7 @@ class GuestController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $wedding = auth()->user()->wedding;
 
@@ -63,7 +64,7 @@ class GuestController extends Controller
         return $guest;
     }
 
-    public function update(Request $request, Guest $guest)
+    public function update(Request $request, Guest $guest): RedirectResponse
     {
         $wedding = auth()->user()->wedding;
         if (!$wedding || $guest->wedding_id !== $wedding->id) {
@@ -86,7 +87,7 @@ class GuestController extends Controller
         ]);
     }
 
-    public function destroy(Guest $guest)
+    public function destroy(Guest $guest): RedirectResponse
     {
         if ($guest->wedding_id !== auth()->user()->wedding?->id) {
             return redirect()->back()->with('flash', [

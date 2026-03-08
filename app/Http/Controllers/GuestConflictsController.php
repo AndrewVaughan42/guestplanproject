@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GuestConflict;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -22,7 +23,7 @@ class GuestConflictsController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'guest_a_id' => ['required', 'exists:guests'],
@@ -43,7 +44,7 @@ class GuestConflictsController extends Controller
         return $guestConflicts;
     }
 
-    public function update(Request $request, GuestConflict $guestConflicts)
+    public function update(Request $request, GuestConflict $guestConflicts): RedirectResponse
     {
         $data = $request->validate([
             'guest_a_id' => ['required', 'exists:guests'],
@@ -59,7 +60,7 @@ class GuestConflictsController extends Controller
         ]);
     }
 
-    public function destroy(GuestConflict $guestConflicts)
+    public function destroy(GuestConflict $guestConflicts): RedirectResponse
     {
         $guestConflicts->delete();
 
