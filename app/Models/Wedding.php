@@ -21,6 +21,9 @@ class Wedding extends Model
         'partnerB_firstname',
         'partnerB_lastname',
         'date',
+        'name',
+        'priority',
+        'description',
     ];
 
     public function venue(): BelongsTo
@@ -43,6 +46,11 @@ class Wedding extends Model
         return $this->hasMany(Guest::class);
     }
 
+    public function groups(): HasMany
+    {
+        return $this->hasMany(Group::class);
+    }
+
     public function seatplans(): HasMany
     {
         return $this->hasMany(Seatplan::class);
@@ -51,6 +59,11 @@ class Wedding extends Model
     public function menuItems(): BelongsToMany
     {
         return $this->belongsToMany(MenuItem::class, 'menu_item_wedding', 'wedding_id', 'menu_item_id');
+    }
+
+    public function guestConflicts(): HasMany
+    {
+        return $this->hasMany(GuestConflict::class);
     }
 
     protected function casts(): array

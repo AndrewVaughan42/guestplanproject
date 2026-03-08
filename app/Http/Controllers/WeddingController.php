@@ -25,10 +25,31 @@ class WeddingController extends Controller
             'partnerB_firstname' => ['required'],
             'partnerB_lastname' => ['required'],
             'date' => ['required', 'date'],
+            'groupTemplates' => ['nullable', 'boolean'],
         ]);
 
         data_set($data, 'user_id', auth()->id()); //Check this works, it does
-        Wedding::create($data);
+        $wedding = Wedding::create($data);
+
+        if ($data['groupTemplates']) {
+            $template = [
+                ['name' => "$wedding->partnerA_lastname Family", 'priority' => 1, 'description' => "Family of $wedding->partnerA_firstname $wedding->partnerA_lastname, automatically created by Guestplan."],
+                ['name' => "$wedding->partnerB_lastname Family", 'priority' => 1, 'description' => "Family of $wedding->partnerB_firstname $wedding->partnerB_lastname, automatically created by Guestplan."],
+                ['name' => "Groomsmen", 'priority' => 1],
+                ['name' => "Bridesmaids", 'priority' => 1],
+                ['name' => "Friends of $wedding->partnerA_firstname", 'priority' => 2],
+                ['name' => "Friends of $wedding->partnerB_firstname", 'priority' => 2],
+
+            ];
+            foreach ($template as $group) {
+                $wedding->groups()->create([
+                    'name' => $group['name'],
+                    'priority' => $group['priority'],
+                    'description' => $group['description'] ?? null,
+                ]);
+            }
+
+        }
         return redirect()->back()->with('success', 'Task created successfully.');
 
 

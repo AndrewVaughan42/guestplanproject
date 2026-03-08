@@ -40,7 +40,7 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
         partnerB_lastname: '',
         date: '',
         venue_id: '' as string | number,
-        terms: false,
+        groupTemplates: false,
     });
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
@@ -197,9 +197,9 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
                     <div className="flex items-center space-x-2 py-2">
                         <Checkbox
                             id="terms"
-                            checked={data.terms}
+                            checked={data.groupTemplates}
                             onCheckedChange={(checked: boolean) =>
-                                setData('terms', checked)
+                                setData('groupTemplates', checked)
                             }
                         />
                         <div className="grid gap-1.5 leading-none">
@@ -215,9 +215,9 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
                                 commonly used.
                             </p>
                         </div>
-                        {errors.terms && (
+                        {errors.groupTemplates && (
                             <span className="text-sm text-destructive">
-                                {errors.terms}
+                                {errors.groupTemplates}
                             </span>
                         )}
                     </div>

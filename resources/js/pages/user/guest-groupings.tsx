@@ -53,9 +53,18 @@ export default function GuestGroupings({ groups: groupList }: { groups: Group[] 
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Name</TableHead>
-                                    <TableHead>Relationship</TableHead>
-                                    <TableHead>Guest Count</TableHead>
+                                    <TableHead className="text-xl font-bold">
+                                        Group Name
+                                    </TableHead>
+                                    <TableHead className="text-xl font-bold">
+                                        Priority
+                                    </TableHead>
+                                    <TableHead className="text-xl font-bold">
+                                        Description
+                                    </TableHead>
+                                    <TableHead className="text-xl font-bold">
+                                        Guest Count
+                                    </TableHead>
                                     <TableHead className="text-right">
                                         Actions
                                     </TableHead>
@@ -78,7 +87,10 @@ export default function GuestGroupings({ groups: groupList }: { groups: Group[] 
                                                 {group.name}
                                             </TableCell>
                                             <TableCell className="capitalize">
-                                                {group.relationship}
+                                                {group.priority}
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground">
+                                                {group.description}
                                             </TableCell>
                                             <TableCell className="capitalize">
                                                 {group.guests_count}
@@ -110,7 +122,6 @@ export default function GuestGroupings({ groups: groupList }: { groups: Group[] 
                             </TableBody>
                         </Table>
                     </div>
-
                     <CreateGroup open={open} setOpen={setOpen} />
                     <EditGroup
                         open={editOpen}

@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Group;
-use App\RelationshipStatus;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
 class GroupController extends Controller
@@ -39,7 +37,8 @@ class GroupController extends Controller
 
         $data = $request->validate([
             'name' => ['required'],
-            'relationship' => ['required', new Enum(RelationshipStatus::class)],
+            'priority' => ['required', 'integer', 'min:1', 'max:10'],
+            'description' => ['nullable']
         ]);
 
         $data['wedding_id'] = $wedding->id;
@@ -74,7 +73,8 @@ class GroupController extends Controller
 
         $data = $request->validate([
             'name' => ['required'],
-            'relationship' => ['required', new Enum(RelationshipStatus::class)],
+            'priority' => ['required', 'integer', 'min:1', 'max:10'],
+            'description' => ['nullable']
         ]);
 
         $group->update($data);

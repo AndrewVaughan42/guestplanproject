@@ -87,7 +87,8 @@ export interface Guest {
 export interface Group {
     id: number;
     name: string;
-    relationship: 'together' | 'close' | 'away' | 'far' | '';
+    priority: number;
+    description: string | null;
     wedding_id?: number;
     guests_count: number;
 }

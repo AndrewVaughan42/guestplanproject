@@ -8,17 +8,11 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import groups from '@/routes/groups';
 import { Group } from '@/types';
 import { useForm } from '@inertiajs/react';
 import React from 'react';
+import { Textarea } from '@headlessui/react';
 
 export default function CreateGroup({
     open,
@@ -30,7 +24,7 @@ export default function CreateGroup({
     const { data, setData, post, processing, reset, errors } = useForm<Partial<Group>
     >({
         name: '',
-        relationship: '',
+        priority: 0,
     });
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
@@ -70,28 +64,36 @@ export default function CreateGroup({
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="relationship">Relationship</Label>
-                        <Select
-                            value={data.relationship}
-                            onValueChange={(value: Group['relationship']) =>
-                                setData('relationship', value)
-                            }
-                        >
-                            <SelectTrigger id="relationship">
-                                <SelectValue placeholder="Select seating mode" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="together">
-                                    Must Be Sat Together
-                                </SelectItem>
-                                <SelectItem value="close">
-                                    Keep Sat Close
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        {errors.relationship && (
+                        <Label htmlFor="relationship">Seating Priority</Label>
+                            <Input
+                                type={'number'}
+                                required
+                                aria-required="true"
+                                value={data.priority}
+                                name="priority"
+                                min={1}
+                                max={10}
+                                placeholder="Enter priority (From 1 to 10)"
+                                onChange={(e) => setData('priority', parseInt(e.target.value))}
+                            />
+                        {errors.priority && (
                             <span className="text-sm text-destructive">
-                                {errors.relationship}
+                                {errors.priority}
+                            </span>
+                        )}
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="description">Description</Label>
+                        <Textarea
+                            id="description"
+                            value={data.description || ''}
+                            onChange={(e: {
+                                target: { value: string | null };
+                            }) => setData('description', e.target.value)}
+                        />
+                        {errors.description && (
+                            <span className="text-sm text-destructive">
+                                {errors.description}
                             </span>
                         )}
                     </div>
