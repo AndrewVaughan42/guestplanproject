@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Wedding;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class WeddingController extends Controller
@@ -12,7 +13,7 @@ class WeddingController extends Controller
         return auth()->user()->wedding;
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         if (Wedding::where('user_id', auth()->id())->exists()) {
             return redirect()->back()->with('error', 'You already have a wedding.');
@@ -92,7 +93,7 @@ class WeddingController extends Controller
         return $wedding;
     }
 
-    public function destroy(Wedding $wedding)
+    public function destroy(Wedding $wedding): RedirectResponse
     {
         if ($wedding->user_id !== auth()->id()) {
             return redirect()->back()->with('flash', [
