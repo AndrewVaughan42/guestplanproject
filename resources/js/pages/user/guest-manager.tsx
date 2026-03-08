@@ -28,9 +28,9 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
     const [createOpen, setCreateOpen] = useState(false);
     //Edit Guest Dialog
     const [editOpen, setEditOpen] = useState(false);
-    //Selection of Guest For Edit, Adding to Groups
+    //Selection of Guest For EditING, Adding to Groups
     const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
-    //Adding to Group
+    //Adding to Group UseState
     const [guestToPositiveOpen, setGuestToPositiveOpen] = useState(false);
 
     const handleEdit = (guest: Guest) => {
@@ -72,9 +72,9 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
                             />
                             TODO Import List
                         </div>
-                        <Table className={'mt-4'}>
+                        <Table className='mt-4'>
                             <TableHeader>
-                                <TableRow className={'text-guestplan'}>
+                                <TableRow className='text-guestplan'>
                                     <TableHead className="text-left font-bold">
                                         <span className="text-xl">Name</span>
                                     </TableHead>
@@ -87,7 +87,7 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
                                         <span className="text-xl">Notes</span>
                                     </TableHead>
                                     <TableHead
-                                        className={'text-center font-bold'}
+                                        className='text-center font-bold'
                                     >
                                         <span className="text-xl">
                                             Grouping Actions
@@ -134,8 +134,8 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <Button
-                                                        variant={'brand'}
-                                                        size={'icon'}
+                                                        variant='brand'
+                                                        size='icon'
                                                         onClick={() =>
                                                             handleEdit(guest)
                                                         }
@@ -143,8 +143,8 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
                                                         <Edit />
                                                     </Button>
                                                     <Button
-                                                        variant={'brand'}
-                                                        size={'icon'}
+                                                        variant='brand'
+                                                        size='icon'
                                                         onClick={() =>
                                                             DeleteGuest(
                                                                 guest.id,

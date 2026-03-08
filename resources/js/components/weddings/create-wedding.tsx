@@ -19,7 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Venue } from '@/types';
+import { Venue, Wedding } from '@/types';
 import weddings from '@/routes/weddings/index';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -33,13 +33,13 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
 }) {
 
 
-    const { data, setData, post, processing, reset, errors } = useForm({
+    const { data, setData, post, processing, reset, errors } = useForm<Wedding>({
         partnerA_firstname: '',
         partnerA_lastname: '',
         partnerB_firstname: '',
         partnerB_lastname: '',
         date: '',
-        venue_id: '' as string | number,
+        venue_id: 0,
         groupTemplates: false,
     });
 

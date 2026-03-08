@@ -20,7 +20,7 @@ export default function EditGuest({
     guest,
 }: {
     open: boolean;
-    setOpen: (open: boolean) => void;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     guest: Guest | null;
 }) {
     const { data, setData, put, processing, reset, errors } = useForm<Guest>({

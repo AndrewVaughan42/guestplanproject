@@ -8,17 +8,11 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import groups from '@/routes/groups';
 import { Group } from '@/types';
 import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
+import { Textarea } from '@headlessui/react';
 
 export default function EditGroup({
     open,
@@ -26,26 +20,28 @@ export default function EditGroup({
     group,
 }: {
     open: boolean;
-    setOpen: (open: boolean) => void;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     group: Group | null;
 }) {
     const { data, setData, put, processing, reset, errors } = useForm<
         Partial<Group>
     >({
         name: group?.name || '',
-        relationship: group?.relationship || '',
+        description: group?.description || '',
+        priority: group?.priority || 0,
     });
 
     useEffect(() => {
         if (group) {
             setData({
                 name: group.name,
-                relationship: group.relationship,
+                description: group.description || '',
+                priority: group.priority,
             });
         }
     }, [group, setData]);
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
         if (!group?.id) return;
@@ -53,7 +49,7 @@ export default function EditGroup({
         put(groups.update(group.id).url, {
             onSuccess: () => {
                 setOpen(false);
-                reset()
+                reset();
             },
         });
     }
@@ -84,32 +80,38 @@ export default function EditGroup({
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="edit-relationship">Relationship</Label>
-                        <Select
-                            value={data.relationship}
-                            onValueChange={(value: Group['relationship']) =>
-                                setData('relationship', value)
+                        <Label htmlFor="edit-priority">Seating Priority</Label>
+                        <Input
+                            type={'number'}
+                            required
+                            aria-required="true"
+                            value={data.priority}
+                            name="priority"
+                            min={1}
+                            max={10}
+                            placeholder="Enter priority (From 1 to 10)"
+                            onChange={(e) =>
+                                setData('priority', parseInt(e.target.value))
                             }
-                        >
-                            <SelectTrigger id="edit-relationship">
-                                <SelectValue placeholder="Select relationship status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="together">
-                                    Keep Together
-                                </SelectItem>
-                                <SelectItem value="close">
-                                    Keep Close
-                                </SelectItem>
-                                <SelectItem value="away">
-                                    Keep Away
-                                </SelectItem>
-                                <SelectItem value="far">Keep Far Away</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        {errors.relationship && (
+                        />
+                        {errors.priority && (
                             <span className="text-sm text-destructive">
-                                {errors.relationship}
+                                {errors.priority}
+                            </span>
+                        )}
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="edit-description">Description</Label>
+                        <Textarea
+                            id="edit-description"
+                            value={data.description || ''}
+                            onChange={(e: {
+                                target: { value: string | null };
+                            }) => setData('description', e.target.value)}
+                        />
+                        {errors.description && (
+                            <span className="text-sm text-destructive">
+                                {errors.description}
                             </span>
                         )}
                     </div>
@@ -120,7 +122,7 @@ export default function EditGroup({
                             type="button"
                             onClick={() => {
                                 setOpen(false);
-                                reset()
+                                reset();
                             }}
                         >
                             Cancel
