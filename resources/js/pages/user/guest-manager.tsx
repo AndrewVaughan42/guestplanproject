@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react'
 import AppLayout from '@/layouts/app-layout';
-import  { BreadcrumbItem, Guest } from '@/types';
+import  { BreadcrumbItem, Guest, Group } from '@/types';
 import guests from '@/routes/guests';
 import { Trash2, Edit } from 'lucide-react';
 import {
@@ -16,18 +16,22 @@ import { useState } from 'react';
 import DeleteGuest from '@/components/guests/delete-guest';
 import CreateGuest from '@/components/guests/create-guest';
 import EditGuest from '@/components/guests/edit-guest';
-import AddGuestToPositiveGroup from '@/components/guest-group/add-guest-to-positive-group';
-import AddGuestToNegativeGroup from '@/components/guest-group/add-guest-to-negative-group';
+import AddGuestToGroup from '@/components/guest-group/add-guest-to-group';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Guest Manager',
         href: guests.index().url},
 ];
-export default function GuestManager({ guests = [] }: { guests: Guest[] }) {
-    const [open, setOpen] = useState(false);
+export default function GuestManager({ guests = [], groups = [] }: { guests: Guest[], groups: Group[] }) {
+    //New Guest Dialog
+    const [createOpen, setCreateOpen] = useState(false);
+    //Edit Guest Dialog
     const [editOpen, setEditOpen] = useState(false);
+    //Selection of Guest For Edit, Adding to Groups
     const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
+    //Adding to Group
+    const [guestToPositiveOpen, setGuestToPositiveOpen] = useState(false);
 
     const handleEdit = (guest: Guest) => {
         setSelectedGuest(guest);
@@ -45,13 +49,22 @@ export default function GuestManager({ guests = [] }: { guests: Guest[] }) {
                         {/*Guest Table Buttons*/}
                         <div id={'guestManagerButtons'}>
                             <Button
-                                className={'mb-4'}
+                                className={'mb-4 hover:text-guestplan'}
                                 variant={'outline'}
-                                onClick={() => setOpen(true)}
+                                onClick={() => setCreateOpen(true)}
                             >
                                 Create New Guest
                             </Button>
-                            <CreateGuest open={open} setOpen={setOpen} />
+                            <CreateGuest
+                                open={createOpen}
+                                setOpen={setCreateOpen}
+                            />
+                            <Button
+                                className={'mb-4 hover:text-guestplan'}
+                                variant={'outline'}
+                            >
+                                Import Guests via File
+                            </Button>
                             <EditGuest
                                 open={editOpen}
                                 setOpen={setEditOpen}
@@ -61,22 +74,27 @@ export default function GuestManager({ guests = [] }: { guests: Guest[] }) {
                         </div>
                         <Table className={'mt-4'}>
                             <TableHeader>
-                                <TableRow>
+                                <TableRow className={'text-guestplan'}>
                                     <TableHead className="text-left font-bold">
-                                        <span className="text-2xl">Name</span>
+                                        <span className="text-xl">Name</span>
                                     </TableHead>
                                     <TableHead className="text-center font-bold">
-                                        <span className="text-2xl">
+                                        <span className="text-xl">
                                             Meal Choice
                                         </span>
                                     </TableHead>
                                     <TableHead className="text-right font-bold">
-                                        <span className="text-2xl">Notes</span>
+                                        <span className="text-xl">Notes</span>
+                                    </TableHead>
+                                    <TableHead
+                                        className={'text-center font-bold'}
+                                    >
+                                        <span className="text-xl">
+                                            Grouping Actions
+                                        </span>
                                     </TableHead>
                                     <TableHead className="text-right font-bold">
-                                        <span className="text-2xl">
-                                            Actions
-                                        </span>
+                                        <span className="text-xl">Actions</span>
                                     </TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -84,52 +102,58 @@ export default function GuestManager({ guests = [] }: { guests: Guest[] }) {
                                 {guests.length > 0 ? (
                                     guests.map((guest) => (
                                         <TableRow key={guest.id}>
-                                            <TableCell align={'left'}>
+                                            <TableCell className="text-left">
                                                 {guest.name}
                                             </TableCell>
-                                            <TableCell align={'center'}>
-                                                {guest.mealChoice}
+                                            <TableCell className="text-center">
+                                                {guest.meal_choice}
                                             </TableCell>
-                                            <TableCell align={'right'}>
+                                            <TableCell className="text-center ">
                                                 {guest.notes}
                                             </TableCell>
-                                            <TableCell
-                                                className={
-                                                    'flex items-center justify-end gap-2'
-                                                }
-                                            >
-                                                <Button
-                                                    onClick={() =>
-                                                        AddGuestToPositiveGroup(
-                                                            guest.id,
-                                                        )
-                                                    }
-                                                ></Button>
-                                                <Button
-                                                    onClick={() =>
-                                                        AddGuestToNegativeGroup(
-                                                            guest.id,
-                                                        )
-                                                    }
-                                                ></Button>
-                                                <Button
-                                                    variant={'ghost'}
-                                                    size={'icon'}
-                                                    onClick={() =>
-                                                        handleEdit(guest)
-                                                    }
-                                                >
-                                                    <Edit />
-                                                </Button>
-                                                <Button
-                                                    variant={'ghost'}
-                                                    size={'icon'}
-                                                    onClick={() =>
-                                                        DeleteGuest(guest.id)
-                                                    }
-                                                >
-                                                    <Trash2 />
-                                                </Button>
+                                            <TableCell className="text-center">
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <Button
+                                                        className={
+                                                            'mb-4 hover:text-guestplan'
+                                                        }
+                                                        variant={'outline'}
+                                                        onClick={() => {
+                                                            setSelectedGuest(
+                                                                guest,
+                                                            );
+                                                            setGuestToPositiveOpen(
+                                                                true,
+                                                            );
+                                                        }}
+                                                    >
+                                                        Add to Seating Group
+                                                    </Button>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <div className="flex justify-end gap-2">
+                                                    <Button
+                                                        variant={'brand'}
+                                                        size={'icon'}
+                                                        onClick={() =>
+                                                            handleEdit(guest)
+                                                        }
+                                                    >
+                                                        <Edit />
+                                                    </Button>
+                                                    <Button
+                                                        variant={'brand'}
+                                                        size={'icon'}
+                                                        onClick={() =>
+                                                            DeleteGuest(
+                                                                guest.id,
+                                                            )
+                                                        }
+                                                    >
+                                                        <Trash2 />
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -145,6 +169,12 @@ export default function GuestManager({ guests = [] }: { guests: Guest[] }) {
                                 )}
                             </TableBody>
                         </Table>
+                        <AddGuestToGroup
+                            open={guestToPositiveOpen}
+                            setOpen={setGuestToPositiveOpen}
+                            guest={selectedGuest}
+                            groups={groups}
+                        />
                     </div>
                 </div>
             </div>

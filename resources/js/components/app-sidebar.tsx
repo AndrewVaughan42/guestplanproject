@@ -16,12 +16,15 @@ import {
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
+    AngryIcon,
+    ArmchairIcon,
     BookOpen,
-    FileUser,
     Folder,
+    GroupIcon,
     LayoutGrid,
     ListTodo,
-    Wine,
+    PersonStandingIcon,
+
 } from 'lucide-react';
 import AppLogo from './app-logo';
 import tasks from '@/routes/tasks';
@@ -31,6 +34,7 @@ import venues from '@/routes/venues';
 import seatPlans from '@/routes/seat-plans';
 import venueLayers from '@/routes/venue-layers';
 import groups from '@/routes/groups';
+import conflicts from '@/routes/conflicts';
 
 
 const mainNavItems: NavItem[] = [
@@ -40,22 +44,27 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Guest Manager',
+        title: 'Guests',
         href: guests.index().url,
-        icon: FileUser,
+        icon: PersonStandingIcon,
     },
     {
-        title: 'Guest Groupings',
+        title: 'Seating Groups',
         href: groups.index().url,
-        icon: FileUser,
+        icon: GroupIcon,
     },
     {
-        title: 'My SeatPlan',
+        title: 'Guest Conflicts',
+        href: conflicts.index().url,
+        icon: AngryIcon,
+    },
+    {
+        title: 'SeatPlan',
         href: seatPlans.index().url,
-        icon: Wine,
+        icon: ArmchairIcon,
     },
     {
-        title: 'Task List',
+        title: 'Tasks',
         href: tasks.index().url,
         icon: ListTodo,
     },
@@ -74,7 +83,7 @@ const adminNavItems: NavItem[] = [
 ];
 
 const allNavItems: NavItem[] = [...mainNavItems, ...adminNavItems];
-
+//Remove when no longer needed
 const footerNavItems: NavItem[] = [
     {
         title: 'Repository',

@@ -12,7 +12,10 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('venue_id')->constrained()->cascadeOnDelete();
             $table->foreignId('venue_layer_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('name');
+            $table->string('partnerA_firstname');
+            $table->string('partnerA_lastname');
+            $table->string('partnerB_firstname');
+            $table->string('partnerB_lastname');
             $table->date('date');
             $table->timestamps();
         });

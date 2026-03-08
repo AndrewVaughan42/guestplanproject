@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Guest extends Model
 {
@@ -26,5 +27,17 @@ class Guest extends Model
     public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class, 'group_guest', 'guest_id', 'group_id');
+    }
+
+    public function conflictAsA(): HasMany {
+        return $this->hasMany(Guest::class, 'guest_conflict', 'guest_a_id');
+    }
+
+    public function conflictAsB(): HasMany {
+        return $this->hasMany(Guest::class, 'guest_conflict', 'guest_a_id');
+    }
+
+    public function conflictWith() {
+        return $this->conflictAsA->merge($this->conflictAsB);
     }
 }

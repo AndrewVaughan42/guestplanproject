@@ -16,7 +16,10 @@ class Wedding extends Model
         'user_id',
         'venue_id',
         'venue_layer_id',
-        'name',
+        'partnerA_firstname',
+        'partnerA_lastname',
+        'partnerB_firstname',
+        'partnerB_lastname',
         'date',
     ];
 

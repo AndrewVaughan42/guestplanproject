@@ -41,7 +41,7 @@ export default function Dashboard() {
                 </div>
             </AppLayout>
         );
-    }else {
+    }else if (user?.wedding){
         return (
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Dashboard" />
@@ -52,7 +52,7 @@ export default function Dashboard() {
                         </div>
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                             <WeddingCountdown
-                                weddingDate={'2026-7-6'}
+                                weddingDate={user.wedding.date}
                             ></WeddingCountdown>
                         </div>
 
@@ -66,6 +66,19 @@ export default function Dashboard() {
                 </div>
             </AppLayout>
         );
+    } else {
+        return (
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="Dashboard" />
+                <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                    <div className="grid auto-rows-min gap-4 ">
+                        <div className="relative min-h-200 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                            <ManageWeddingTile />
+                        </div>
+                    </div>
+                </div>
+            </AppLayout>
+        )
     }
 
 }

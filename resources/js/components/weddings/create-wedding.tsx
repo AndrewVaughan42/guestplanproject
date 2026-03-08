@@ -21,6 +21,8 @@ import {
 } from '@/components/ui/select';
 import { Venue } from '@/types';
 import weddings from '@/routes/weddings/index';
+import { Checkbox } from '@/components/ui/checkbox';
+
 
 // import weddings from '@/routes/weddings';
 
@@ -32,9 +34,13 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
 
 
     const { data, setData, post, processing, reset, errors } = useForm({
-        name: '',
+        partnerA_firstname: '',
+        partnerA_lastname: '',
+        partnerB_firstname: '',
+        partnerB_lastname: '',
         date: '',
         venue_id: '' as string | number,
+        terms: false,
     });
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
@@ -57,23 +63,88 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
                     <DialogTitle>Create New Wedding</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-                    {/* Wedding Name */}
+                    {/* PartnerA First Name */}
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Wedding Name</Label>
-                        <Input
-                            id="name"
-                            required
-                            aria-required="true"
-                            type="text"
-                            value={data.name}
-                            placeholder="e.g. Smith & Jones Wedding"
-                            onChange={(e) => setData('name', e.target.value)}
-                        />
-                        {errors.name && (
-                            <span className="text-sm text-destructive">
-                                {errors.name}
-                            </span>
-                        )}
+                        <Label>Partner (A)</Label>
+                        <div className={'grid grid-cols-2 gap-2'}>
+                            <Input
+                                id="partnerA_firstname"
+                                required
+                                aria-required="true"
+                                type="text"
+                                value={data.partnerA_firstname}
+                                placeholder="First Name"
+                                onChange={(e) =>
+                                    setData(
+                                        'partnerA_firstname',
+                                        e.target.value,
+                                    )
+                                }
+                            />
+                            <Input
+                                id="partnerA_lastname"
+                                required
+                                aria-required="true"
+                                type="text"
+                                value={data.partnerA_lastname}
+                                placeholder="Last Name"
+                                onChange={(e) =>
+                                    setData('partnerA_lastname', e.target.value)
+                                }
+                            />
+                            {errors.partnerA_firstname && (
+                                <span className="text-sm text-destructive">
+                                    {errors.partnerA_firstname}
+                                </span>
+                            )}
+                            {errors.partnerA_lastname && (
+                                <span className="text-sm text-destructive">
+                                    {errors.partnerA_lastname}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* PartnerB First Name */}
+                    <div className="grid gap-2">
+                        <Label htmlFor="partnerA_firstname">Partner (B)</Label>
+                        <div className={'grid grid-cols-2 gap-2'}>
+                            <Input
+                                id="partnerA_firstname"
+                                required
+                                aria-required="true"
+                                type="text"
+                                value={data.partnerB_firstname}
+                                placeholder="First Name"
+                                onChange={(e) =>
+                                    setData(
+                                        'partnerB_firstname',
+                                        e.target.value,
+                                    )
+                                }
+                            />
+                            <Input
+                                id="partnerA_lastname"
+                                required
+                                aria-required="true"
+                                type="text"
+                                value={data.partnerB_lastname}
+                                placeholder="Last Name"
+                                onChange={(e) =>
+                                    setData('partnerB_lastname', e.target.value)
+                                }
+                            />
+                            {errors.partnerB_firstname && (
+                                <span className="text-sm text-destructive">
+                                    {errors.partnerB_firstname}
+                                </span>
+                            )}
+                            {errors.partnerB_lastname && (
+                                <span className="text-sm text-destructive">
+                                    {errors.partnerB_lastname}
+                                </span>
+                            )}
+                        </div>
                     </div>
                     {/* Wedding Date */}
                     <div className="grid gap-2">
@@ -120,6 +191,33 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
                         {errors.venue_id && (
                             <span className="text-sm text-destructive">
                                 {errors.venue_id}
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex items-center space-x-2 py-2">
+                        <Checkbox
+                            id="terms"
+                            checked={data.terms}
+                            onCheckedChange={(checked: boolean) =>
+                                setData('terms', checked)
+                            }
+                        />
+                        <div className="grid gap-1.5 leading-none">
+                            <Label
+                                htmlFor="template-groups"
+                                className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                                Set Up Template Groups?
+                            </Label>
+                            <p className="text-sm text-muted-foreground">
+                                By clicking this checkbox, Guestplan will create
+                                several guest groups that are
+                                commonly used.
+                            </p>
+                        </div>
+                        {errors.terms && (
+                            <span className="text-sm text-destructive">
+                                {errors.terms}
                             </span>
                         )}
                     </div>

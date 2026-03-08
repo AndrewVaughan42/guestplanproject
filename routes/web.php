@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\GuestConflictsController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\SeatplanController;
 use App\Http\Controllers\TaskController;
@@ -36,6 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('guests', GuestController::class);
     //Renders Group Management via Index
     Route::resource('groups', GroupController::class);
+    //Renders Conflicts page via index
+    Route::resource('conflicts', GuestConflictsController::class);
     //Renders seat plan page via index
     Route::resource('seat-plans', SeatplanController::class);
 

@@ -20,11 +20,14 @@ class WeddingController extends Controller
 
         $data = $request->validate([
             'venue_id' => ['required', 'exists:venues,id'],
-            'name' => ['required'],
+            'partnerA_firstname' => ['required'],
+            'partnerA_lastname' => ['required'],
+            'partnerB_firstname' => ['required'],
+            'partnerB_lastname' => ['required'],
             'date' => ['required', 'date'],
         ]);
 
-        data_set($data, 'user_id', auth()->id()); //Check this works
+        data_set($data, 'user_id', auth()->id()); //Check this works, it does
         Wedding::create($data);
         return redirect()->back()->with('success', 'Task created successfully.');
 
@@ -53,9 +56,15 @@ class WeddingController extends Controller
 
         $data = $request->validate([
             'venue_id' => ['required', 'exists:venues,id'],
-            'name' => ['required'],
+            'partnerA_firstname' => ['required'],
+            'partnerA_lastname' => ['required'],
+            'partnerB_firstname' => ['required'],
+            'partnerB_lastname' => ['required'],
             'date' => ['required', 'date'],
         ]);
+
+        data_set($data, 'partnerA', $data['partnerA_firstname'] . ' ' . $data['partnerA_lastname']);
+        data_set($data, 'partnerB', $data['partnerB_firstname'] . ' ' . $data['partnerB_lastname']);
 
         $wedding->update($data);
 
@@ -73,6 +82,9 @@ class WeddingController extends Controller
 
         $wedding->delete();
 
-        return response()->json();
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Wedding deleted successfully.',
+        ]);
     }
 }
