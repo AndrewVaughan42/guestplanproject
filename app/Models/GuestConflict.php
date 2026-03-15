@@ -14,6 +14,7 @@ class GuestConflict extends Model
         'guest_a_id',
         'guest_b_id',
         'wedding_id',
+        'conflict_reason'
     ];
 
     public function guestA(): BelongsTo

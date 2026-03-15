@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guest;
 use App\Models\GuestConflict;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,15 +21,17 @@ class GuestConflictsController extends Controller
         }
         return Inertia::render('user/guest-conflicts', [
             'guest-conflicts' => GuestConflict::where('wedding_id', $wedding->id)->get(),
+            'guests' => Guest::where('wedding_id', $wedding->id)->orderBy('name')->get(),
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'guest_a_id' => ['required', 'exists:guests'],
-            'guest_b_id' => ['required', 'exists:guests'],
-            'wedding_id' => ['required', 'exists:weddings'],
+            'guest_a_id' => ['required', 'exists:guests,id'],
+            'guest_b_id' => ['required', 'exists:guests,id'],
+            'wedding_id' => ['required', 'exists:weddings,id'],
+            'conflict_reason'=> ['nullable']
         ]);
 
         GuestConflict::create($data);
@@ -47,9 +50,10 @@ class GuestConflictsController extends Controller
     public function update(Request $request, GuestConflict $guestConflicts): RedirectResponse
     {
         $data = $request->validate([
-            'guest_a_id' => ['required', 'exists:guests'],
-            'guest_b_id' => ['required', 'exists:guests'],
-            'wedding_id' => ['required', 'exists:weddings'],
+            'guest_a_id' => ['required', 'exists:guests,id'],
+            'guest_b_id' => ['required', 'exists:guests,id'],
+            'wedding_id' => ['required', 'exists:weddings,id'],
+            'conflict_reason'=> ['nullable']
         ]);
 
         $guestConflicts->update($data);

@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->foreignId('guest_a_id')->constrained('guests')->cascadeOnDelete();
             $table->foreignId('guest_b_id')->constrained('guests')->cascadeOnDelete();
             $table->foreignId('wedding_id')->constrained()->cascadeOnDelete();
+            $table->text('conflict_reason')->nullable();
 
             $table->unique(['guest_a_id', 'guest_b_id']);
             $table->timestamps();

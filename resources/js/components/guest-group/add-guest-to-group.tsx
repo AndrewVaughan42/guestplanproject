@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Guest, Group } from '@/types';
 import {
     Dialog,
@@ -17,28 +17,32 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useForm } from '@inertiajs/react';
-import groups from '@/routes/groups';
 
 export default function AddGuestToGroup({
     open,
     setOpen,
     guest,
-    group,
+    groups,
 }: {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     guest: Guest | null;
-    group: Group[];
+    groups: Group[];
 }) {
     const { data, setData, post, processing, reset } = useForm({
         group_id: '',
+        guest_id: guest?.id,
     });
 
-    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    useEffect(() => {
+        if (guest) setData('guest_id', guest.id)
+    }, [guest, setData]);
+
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         if (!guest?.id || !data.group_id) return;
 
-        post(groups.store().url, {
+        post(`groups/${data.group_id}/guests`, {
             onSuccess: () => {
                 setOpen(false);
                 reset();
@@ -63,7 +67,7 @@ export default function AddGuestToGroup({
                                 <SelectValue placeholder="Select a group" />
                             </SelectTrigger>
                             <SelectContent>
-                                {group.map((group) => (
+                                {groups.map((group) => (
                                     <SelectItem key={group.id} value={group.id.toString()}>
                                         {group.name}
                                     </SelectItem>

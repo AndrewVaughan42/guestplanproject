@@ -1,8 +1,12 @@
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem } from '@/types';
+import { BreadcrumbItem, Guest, GuestConflict } from '@/types';
 import conflicts from '@/routes/conflicts';
 import { Head } from '@inertiajs/react';
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import CreateGuestConflict from '@/components/custom/guest-conflicts/create-guest-conflict';
+import { Table, TableHeader, TableRow } from '@/components/ui/table';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -11,19 +15,52 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: conflicts.index.url(),
     },
 ];
-export default function GuestConflicts() {
+
+interface Props {
+    'guest-conflicts': GuestConflict[];
+    guests: Guest[];
+}
+
+export default function GuestConflicts({ 'guest-conflicts': guestConflicts, guests }: Props) {
+    const [open, setOpen] = React.useState(false);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Guest Conflicts" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-semibold">Guest Conflicts</h2>
+                    <Button onClick={() => setOpen(true)}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Conflict
+                    </Button>
+                </div>
                 <div className="flex-1 rounded-xl border border-sidebar-border/70 p-4 dark:border-sidebar-border">
-                    <h2 className="mb-4 text-xl font-semibold">Guest Conflicts</h2>
-                    <p className="text-muted-foreground">
-                        This is where the guest conflicts will appear.
-                    </p>
+                    {guestConflicts.length === 0 ? (
+                        <p className="text-muted-foreground">
+                            No guest conflicts found.
+                        </p>
+                    ) : (
+                        <div className="grid gap-4">
+                            <Table>
+                                <TableRow>
+                                    <TableHeader>Guest 1</TableHeader>
+                                    <TableHeader>Guest 2</TableHeader>
+                                    <TableHeader>
+                                        Reason for Conflict
+                                    </TableHeader>
+                                </TableRow>
+                            </Table>
+                        </div>
+                    )}
                 </div>
             </div>
-        </AppLayout>
 
-    )
+            <CreateGuestConflict
+                open={open}
+                setOpen={setOpen}
+                guests={guests}
+            />
+        </AppLayout>
+    );
 }

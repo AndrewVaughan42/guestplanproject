@@ -102,4 +102,28 @@ class GroupController extends Controller
             'message' => 'Group deleted successfully.'
         ]);
     }
+
+    public function attachGuest(Request $request, Group $group): RedirectResponse
+    {
+        $data = $request->validate([
+            'guest_id' => ['required', 'exists:guests,id'],
+        ]);
+
+        $group->guests()->syncWithoutDetaching($data['guest_id']);
+
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Guest added to group successfully.'
+        ]);
+    }
+
+    public function detachGuest(Request $request, Group $group): RedirectResponse
+    {
+        $group->guests()->detach($request->guest_id);
+
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Guest removed from group successfully.'
+        ]);
+    }
 }

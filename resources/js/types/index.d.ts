@@ -96,3 +96,10 @@ export interface Group {
     wedding_id?: number;
     guests_count: number;
 }
+export interface GuestConflict {
+    id: number;
+    guest_a_id: number;
+    guest_b_id: number;
+    conflict_reason: string | null;
+    wedding_id?: number;
+}
