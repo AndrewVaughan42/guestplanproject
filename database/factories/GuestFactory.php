@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Guest;
+use App\Models\MenuItem;
 use App\Models\Wedding;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
@@ -15,7 +16,7 @@ class GuestFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'meal_choice' => $this->faker->word(),
+            'menu_item_id' => MenuItem::factory(),
             'notes' => $this->faker->sentence(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

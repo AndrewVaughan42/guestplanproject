@@ -85,7 +85,7 @@ export interface Guest {
     id?: number;
     name: string;
     wedding_id?: number;
-    meal_choice: string | null;
+    menu_item_id: number | null;
     notes: string | null;
 }
 export interface Group {
@@ -102,4 +102,6 @@ export interface GuestConflict {
     guest_b_id: number;
     conflict_reason: string | null;
     wedding_id?: number;
+    guest_a?: Guest;
+    guest_b?: Guest;
 }

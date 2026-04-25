@@ -14,7 +14,7 @@ class GuestController extends Controller
     {
         $wedding = auth()->user()->wedding;
 
-        if (!$wedding) {
+        if (!$wedding && !auth()->user()->isAdmin) {
             return redirect()->route('dashboard')->with('flash', [
                 'type' => 'error',
             'message' => 'Please set up your wedding first.'
@@ -24,6 +24,7 @@ class GuestController extends Controller
         return Inertia::render('user/guest-manager', [
             'guests' => $wedding->guests,
             'groups' => Group::where('wedding_id', $wedding->id)->get(),
+            'menuItems' => $wedding->menuItems,
         ]);
     }
 
@@ -40,7 +41,7 @@ class GuestController extends Controller
 
         $data = $request->validate([
             'name' => ['required'],
-            'meal_choice' => ['nullable'],
+            'menu_item_id' => ['nullable', 'exists:menu_items,id'],
             'notes' => ['nullable'],
         ]);
 
@@ -75,7 +76,7 @@ class GuestController extends Controller
         }
         $data = $request->validate([
             'name' => ['required'],
-            'meal_choice' => ['nullable'],
+            'menu_item_id' => ['nullable'],
             'notes' => ['nullable'],
         ]);
 

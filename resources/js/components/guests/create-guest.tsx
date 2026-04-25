@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -6,36 +6,45 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import guests from '@/routes/guests';
-import { Guest } from '@/types';
-import React from 'react';
+import { Guest, MenuItem } from '@/types';
 import { Textarea } from '@headlessui/react';
+import { useForm } from '@inertiajs/react';
+import React from 'react';
 
-
-export default function CreateGuest({ open, setOpen }: {
+export default function CreateGuest({
+    open,
+    setOpen,
+    menuItems = [],
+}: {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    menuItems: MenuItem[];
 }) {
-
     const { data, setData, post, processing, reset, errors } = useForm<Guest>({
         name: '',
-        meal_choice: '',
+        menu_item_id: null,
         notes: '',
     });
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        post(guests.store().url,
-            {
-                onSuccess: () => {
-                    reset();
-                    setOpen(false);
-                },
-            });
+        post(guests.store().url, {
+            onSuccess: () => {
+                reset();
+                setOpen(false);
+            },
+        });
     }
 
     return (
@@ -63,23 +72,47 @@ export default function CreateGuest({ open, setOpen }: {
                         )}
                     </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="meal_choice">Meal Choice</Label>
-                        <Input
-                            id="meal_choice"
-                            type="text"
-                            value={data.meal_choice || ''}
-                            placeholder="e.g. Beef, Vegan, etc."
-                            onChange={(e) =>
-                                setData('meal_choice', e.target.value)
-                            }
-                        />
-                        {errors.meal_choice && (
-                            <span className="text-sm text-destructive">
-                                {errors.meal_choice}
-                            </span>
-                        )}
-                    </div>
+                    {menuItems.length > 0 ? (
+                        <div className="grid gap-2">
+                            <Label htmlFor="menu_item_id">Meal Choice</Label>
+
+                            <Select
+                                value={data.menu_item_id?.toString() ?? ''}
+                                onValueChange={(value) =>
+                                    setData(
+                                        'menu_item_id',
+                                        value ? Number(value) : null,
+                                    )
+                                }
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a meal" />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                    {menuItems.map((item) => (
+                                        <SelectItem
+                                            key={item.id}
+                                            value={item.id.toString()}
+                                        >
+                                            {item.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            {errors.menu_item_id && (
+                                <span className="text-sm text-destructive">
+                                    {errors.menu_item_id}
+                                </span>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="text-sm text-muted-foreground">
+                            Meal choice unavailable. Please add your menu items
+                            first.
+                        </div>
+                    )}
 
                     <div className="grid gap-2">
                         <Label htmlFor="notes">Notes</Label>

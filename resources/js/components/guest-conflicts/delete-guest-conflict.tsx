@@ -5,7 +5,7 @@ export default function DeleteGuestConflict(id: number | undefined) {
     if (!id) {
         return;
     }
-    if (confirm('Are you sure you want to delete this group?')) {
+    if (confirm('Are you sure you want to delete this guest conflict?')) {
         router.delete(conflicts.destroy(id).url);
     }
 }

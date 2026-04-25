@@ -10,8 +10,8 @@ return new class extends Migration {
         Schema::create('menu_item_wedding', function (Blueprint $table) {
             $table->foreignId('menu_item_id')->constrained()->cascadeOnDelete();
             $table->foreignId('wedding_id')->constrained()->cascadeOnDelete();
-
             $table->primary(['menu_item_id', 'wedding_id']);
+            $table->timestamps();
         });
     }
 

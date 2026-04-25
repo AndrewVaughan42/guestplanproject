@@ -15,13 +15,18 @@ class Guest extends Model
     protected $fillable = [
         'name',
         'wedding_id',
-        'meal_choice',
+        'menu_item_id',
         'notes',
     ];
 
     public function wedding(): BelongsTo
     {
         return $this->belongsTo(Wedding::class);
+    }
+
+    public function menuItem(): BelongsTo
+    {
+        return $this->belongsTo(MenuItem::class);
     }
 
     public function groups(): BelongsToMany

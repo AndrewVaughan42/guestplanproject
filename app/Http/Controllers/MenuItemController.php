@@ -41,7 +41,7 @@ class MenuItemController extends Controller
     }
 
     public function show(MenuItem $menuItem)
-    { //Remove???
+    {
         if (!$menuItem->venue->users()->where('user_id', auth()->id())->exists()) {
             return redirect()->back()->with('flash', [
                 'type' => 'error',

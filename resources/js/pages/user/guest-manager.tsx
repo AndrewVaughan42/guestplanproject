@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react'
 import AppLayout from '@/layouts/app-layout';
-import  { BreadcrumbItem, Guest, Group } from '@/types';
+import  { BreadcrumbItem, Guest, Group, MenuItem } from '@/types';
 import guests from '@/routes/guests';
 import { Trash2, Edit } from 'lucide-react';
 import {
@@ -23,7 +23,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Guest Manager',
         href: guests.index().url},
 ];
-export default function GuestManager({ guests = [], groups = [] }: { guests: Guest[], groups: Group[] }) {
+export default function GuestManager({ guests = [], groups = [], menuItems = [] }: { guests: Guest[], groups: Group[], menuItems: MenuItem[] }) {
     //New Guest Dialog
     const [createOpen, setCreateOpen] = useState(false);
     //Edit Guest Dialog
@@ -32,6 +32,11 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
     const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
     //Adding to Group UseState
     const [guestToPositiveOpen, setGuestToPositiveOpen] = useState(false);
+
+
+    const getMenuItemName = (id: number | null | undefined) => {
+        return menuItems.find((item) => item.id === id)?.name ?? '—';
+    };
 
     const handleEdit = (guest: Guest) => {
         setSelectedGuest(guest);
@@ -58,6 +63,7 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
                             <CreateGuest
                                 open={createOpen}
                                 setOpen={setCreateOpen}
+                                menuItems={menuItems}
                             />
                             <Button
                                 className={'mb-4 hover:text-guestplan'}
@@ -72,9 +78,9 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
                             />
                             TODO Import List
                         </div>
-                        <Table className='mt-4'>
+                        <Table className="mt-4">
                             <TableHeader>
-                                <TableRow className='text-guestplan'>
+                                <TableRow className="text-guestplan">
                                     <TableHead className="text-left font-bold">
                                         <span className="text-xl">Name</span>
                                     </TableHead>
@@ -86,9 +92,7 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
                                     <TableHead className="text-right font-bold">
                                         <span className="text-xl">Notes</span>
                                     </TableHead>
-                                    <TableHead
-                                        className='text-center font-bold'
-                                    >
+                                    <TableHead className="text-center font-bold">
                                         <span className="text-xl">
                                             Grouping Actions
                                         </span>
@@ -106,9 +110,11 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
                                                 {guest.name}
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                {guest.meal_choice}
+                                                {getMenuItemName(
+                                                    guest.menu_item_id,
+                                                )}
                                             </TableCell>
-                                            <TableCell className="text-center ">
+                                            <TableCell className="text-center">
                                                 {guest.notes}
                                             </TableCell>
                                             <TableCell className="text-center">
@@ -134,8 +140,8 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <Button
-                                                        variant='brand'
-                                                        size='icon'
+                                                        variant="brand"
+                                                        size="icon"
                                                         onClick={() =>
                                                             handleEdit(guest)
                                                         }
@@ -143,8 +149,8 @@ export default function GuestManager({ guests = [], groups = [] }: { guests: Gue
                                                         <Edit />
                                                     </Button>
                                                     <Button
-                                                        variant='brand'
-                                                        size='icon'
+                                                        variant="brand"
+                                                        size="icon"
                                                         onClick={() =>
                                                             DeleteGuest(
                                                                 guest.id,
