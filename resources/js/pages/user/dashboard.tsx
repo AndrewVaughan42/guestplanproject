@@ -1,12 +1,10 @@
-import WeddingCountdown from '@/components/custom/wedding-countdown';
 import ManageWeddingTile from '@/components/custom/manage-wedding-tile';
+import WeddingManagementCard from '@/components/dashboard/user-cards/WeddingManagementCard';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import VenueCreationTile from '@/components/custom/venue-creation-tile';
-
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -16,8 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Dashboard() {
-
-    const {auth} = usePage<SharedData>().props;
+    const { auth } = usePage<SharedData>().props;
     const user = auth.user;
 
     if (user.isAdmin) {
@@ -36,28 +33,25 @@ export default function Dashboard() {
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                             <p>Venue Manager Summary Here</p>
                         </div>
-
                     </div>
                 </div>
             </AppLayout>
         );
-    }else if (user?.wedding){
+    } else if (user?.wedding) {
         return (
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Dashboard" />
                 <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            <ManageWeddingTile />
+                            <WeddingManagementCard />
                         </div>
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            <WeddingCountdown
-                                weddingDate={user.wedding.date}
-                            ></WeddingCountdown>
+                            <p>More Components to be added</p>
                         </div>
 
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            <VenueCreationTile />
+                            <p>More Components to be added</p>
                         </div>
                     </div>
                     <div className="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
@@ -68,17 +62,17 @@ export default function Dashboard() {
         );
     } else {
         return (
+            // If is User and Hasn't Set Up Wedding, basically first login
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Dashboard" />
                 <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                    <div className="grid auto-rows-min gap-4 ">
+                    <div className="grid auto-rows-min gap-4">
                         <div className="relative min-h-200 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                             <ManageWeddingTile />
                         </div>
                     </div>
                 </div>
             </AppLayout>
-        )
+        );
     }
-
 }
