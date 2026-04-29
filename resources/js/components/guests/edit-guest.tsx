@@ -9,10 +9,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import guests from '@/routes/guests';
-import { Guest } from '@/types';
+import { Guest, GuestStatus } from '@/types';
 import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
 import { Textarea } from '@headlessui/react';
+import { Select, SelectItem, SelectTrigger } from '@radix-ui/react-select';
+import { SelectContent, SelectValue } from '@/components/ui/select';
 
 export default function EditGuest({
     open,
@@ -26,7 +28,8 @@ export default function EditGuest({
     const { data, setData, put, processing, reset, errors } = useForm<Guest>({
         id: guest?.id || 0,
         name: guest?.name || '',
-        meal_choice: guest?.meal_choice || '',
+        status: guest?.status || 'invited',
+        menu_item_id: guest?.menu_item_id || null,
         notes: guest?.notes || '',
     });
 
@@ -35,7 +38,8 @@ export default function EditGuest({
             setData({
                 id: guest.id,
                 name: guest.name,
-                meal_choice: guest.meal_choice || '',
+                status: guest.status,
+                menu_item_id: guest.menu_item_id || null,
                 notes: guest.notes || '',
             });
         }
@@ -80,19 +84,29 @@ export default function EditGuest({
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="edit-meal_choice">Meal Choice</Label>
-                        <Input
-                            id="edit-meal_choice"
-                            type="text"
-                            value={data.meal_choice || ''}
-                            placeholder="e.g. Beef, Vegan, etc."
-                            onChange={(e) =>
-                                setData('meal_choice', e.target.value)
+                        <Label htmlFor="edit-status">Status</Label>
+                        <Select
+                            value={data.status}
+                            onValueChange={(value: GuestStatus) =>
+                                setData('status', value)
                             }
-                        />
-                        {errors.meal_choice && (
+                        >
+                            <SelectTrigger id="edit-status">
+                                <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="invited">Invited</SelectItem>
+                                <SelectItem value="confirmed">
+                                    Confirmed
+                                </SelectItem>
+                                <SelectItem value="declined">
+                                    Declined
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        {errors.status && (
                             <span className="text-sm text-destructive">
-                                {errors.meal_choice}
+                                {errors.status}
                             </span>
                         )}
                     </div>

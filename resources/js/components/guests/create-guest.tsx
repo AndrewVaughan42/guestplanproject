@@ -16,7 +16,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import guests from '@/routes/guests';
-import { Guest, MenuItem } from '@/types';
+import { Guest, GuestStatus, MenuItem } from '@/types';
 import { Textarea } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import React from 'react';
@@ -33,6 +33,7 @@ export default function CreateGuest({
     const { data, setData, post, processing, reset, errors } = useForm<Guest>({
         name: '',
         menu_item_id: null,
+        status: 'invited',
         notes: '',
     });
 
@@ -113,6 +114,34 @@ export default function CreateGuest({
                             first.
                         </div>
                     )}
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="status">Status</Label>
+                        <Select
+                            value={data.status}
+                            onValueChange={(value: GuestStatus) =>
+                                setData('status', value)
+                            }
+                        >
+                            <SelectTrigger id="status">
+                                <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="invited">Invited</SelectItem>
+                                <SelectItem value="confirmed">
+                                    Confirmed
+                                </SelectItem>
+                                <SelectItem value="declined">
+                                    Declined
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        {errors.status && (
+                            <span className="text-sm text-destructive">
+                                {errors.status}
+                            </span>
+                        )}
+                    </div>
 
                     <div className="grid gap-2">
                         <Label htmlFor="notes">Notes</Label>

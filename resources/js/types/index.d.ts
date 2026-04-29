@@ -44,11 +44,12 @@ export interface User {
     wedding?: Wedding | null;
     [key: string]: unknown; // This allows for additional properties...
 }
+export type TaskStatus = 'pending' | 'in-progress' | 'complete';
 
 export interface Task {
     id: number;
     title: string;
-    status: string | null;
+    status: TaskStatus | null;
     due_date: string | null;
 }
 
@@ -79,15 +80,19 @@ export interface Wedding {
     date: string;
     venue_id: number;
     groupTemplates: boolean;
+    menu_items?: MenuItem[];
 }
 
+export type GuestStatus = 'invited' | 'confirmed' | 'declined';
 export interface Guest {
     id?: number;
     name: string;
     wedding_id?: number;
     menu_item_id: number | null;
+    status: GuestStatus;
     notes: string | null;
 }
+
 export interface Group {
     id: number;
     name: string;

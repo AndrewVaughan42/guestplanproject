@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\GuestStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +17,12 @@ class Guest extends Model
         'name',
         'wedding_id',
         'menu_item_id',
+        'status',
         'notes',
+    ];
+
+    protected $casts = [
+        'status' => GuestStatus::class,
     ];
 
     public function wedding(): BelongsTo

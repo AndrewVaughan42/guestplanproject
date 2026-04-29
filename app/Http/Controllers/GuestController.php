@@ -42,6 +42,7 @@ class GuestController extends Controller
         $data = $request->validate([
             'name' => ['required'],
             'menu_item_id' => ['nullable', 'exists:menu_items,id'],
+            'status' => ['required', 'in:invited,confirmed,declined'],
             'notes' => ['nullable'],
         ]);
 
@@ -77,6 +78,7 @@ class GuestController extends Controller
         $data = $request->validate([
             'name' => ['required'],
             'menu_item_id' => ['nullable'],
+            'status' => ['required', 'in:invited,confirmed,declined'],
             'notes' => ['nullable'],
         ]);
 

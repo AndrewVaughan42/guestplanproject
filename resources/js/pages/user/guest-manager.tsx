@@ -1,8 +1,8 @@
-import { Head } from '@inertiajs/react'
-import AppLayout from '@/layouts/app-layout';
-import  { BreadcrumbItem, Guest, Group, MenuItem } from '@/types';
-import guests from '@/routes/guests';
-import { Trash2, Edit } from 'lucide-react';
+import AddGuestToGroup from '@/components/guest-group/add-guest-to-group';
+import CreateGuest from '@/components/guests/create-guest';
+import DeleteGuest from '@/components/guests/delete-guest';
+import EditGuest from '@/components/guests/edit-guest';
+import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -11,19 +11,28 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/app-layout';
+import guests from '@/routes/guests';
+import { BreadcrumbItem, Group, Guest, MenuItem } from '@/types';
+import { Head } from '@inertiajs/react';
+import { Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import DeleteGuest from '@/components/guests/delete-guest';
-import CreateGuest from '@/components/guests/create-guest';
-import EditGuest from '@/components/guests/edit-guest';
-import AddGuestToGroup from '@/components/guest-group/add-guest-to-group';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Guest Manager',
-        href: guests.index().url},
+        href: guests.index().url,
+    },
 ];
-export default function GuestManager({ guests = [], groups = [], menuItems = [] }: { guests: Guest[], groups: Group[], menuItems: MenuItem[] }) {
+export default function GuestManager({
+    guests = [],
+    groups = [],
+    menuItems = [],
+}: {
+    guests: Guest[];
+    groups: Group[];
+    menuItems: MenuItem[];
+}) {
     //New Guest Dialog
     const [createOpen, setCreateOpen] = useState(false);
     //Edit Guest Dialog
@@ -32,7 +41,6 @@ export default function GuestManager({ guests = [], groups = [], menuItems = [] 
     const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
     //Adding to Group UseState
     const [guestToPositiveOpen, setGuestToPositiveOpen] = useState(false);
-
 
     const getMenuItemName = (id: number | null | undefined) => {
         return menuItems.find((item) => item.id === id)?.name ?? '—';
@@ -90,6 +98,9 @@ export default function GuestManager({ guests = [], groups = [], menuItems = [] 
                                         </span>
                                     </TableHead>
                                     <TableHead className="text-right font-bold">
+                                        <span className="text-xl">Status</span>
+                                    </TableHead>
+                                    <TableHead className="text-right font-bold">
                                         <span className="text-xl">Notes</span>
                                     </TableHead>
                                     <TableHead className="text-center font-bold">
@@ -113,6 +124,9 @@ export default function GuestManager({ guests = [], groups = [], menuItems = [] 
                                                 {getMenuItemName(
                                                     guest.menu_item_id,
                                                 )}
+                                            </TableCell>
+                                            <TableCell className="text-centre">
+                                                {guest.status}
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 {guest.notes}
