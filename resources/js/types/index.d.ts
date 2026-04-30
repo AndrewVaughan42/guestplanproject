@@ -85,7 +85,7 @@ export interface Wedding {
 
 export type GuestStatus = 'invited' | 'confirmed' | 'declined';
 export interface Guest {
-    id?: number;
+    id: number;
     name: string;
     wedding_id?: number;
     menu_item_id: number | null;

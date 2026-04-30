@@ -1,5 +1,5 @@
 import guests from '@/routes/guests';
-import { GuestStatus } from '@/types';
+import { Guest, GuestStatus } from '@/types';
 import { router } from '@inertiajs/react';
 
 import {
@@ -10,10 +10,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default function GuestStatusBadge({
-    guestID,
+    guest,
     status,
 }: {
-    guestID: number;
+    guest: Guest;
     status: GuestStatus;
 }) {
     const statusConfig = {
@@ -35,7 +35,7 @@ export default function GuestStatusBadge({
 
     const updateStatus = (newStatus: GuestStatus) => {
         if (status === newStatus) return;
-        router.patch(guests.update(guestID).url, { status: newStatus });
+        router.patch(guests.update(guest.id).url, { status: newStatus });
     };
 
     return (

@@ -17,6 +17,7 @@ import { BreadcrumbItem, Group, Guest, MenuItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import GuestStatusBadge from '@/components/guests/guest-status-badge';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -126,7 +127,10 @@ export default function GuestManager({
                                                 )}
                                             </TableCell>
                                             <TableCell className="text-centre">
-                                                {guest.status}
+                                                <GuestStatusBadge
+                                                    guest={guest}
+                                                    status={guest.status}
+                                                />
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 {guest.notes}
