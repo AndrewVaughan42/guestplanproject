@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\GuestStatus;
 use App\Models\Guest;
 use App\Models\Group;
 use Illuminate\Http\RedirectResponse;
@@ -22,9 +23,9 @@ class GuestController extends Controller
         }
 
         return Inertia::render('user/guest-manager', [
-            'guests' => $wedding->guests,
-            'groups' => Group::where('wedding_id', $wedding->id)->get(),
-            'menuItems' => $wedding->menuItems,
+            'myGuests' => $wedding->guests,
+            'myGroups' => Group::where('wedding_id', $wedding->id)->get(),
+            'myMenuItems' => $wedding->menuItems,
         ]);
     }
 
@@ -40,7 +41,7 @@ class GuestController extends Controller
         }
 
         $data = $request->validate([
-            'name' => ['required'],
+            'name' => ['required', 'string','max:255'],
             'menu_item_id' => ['nullable', 'exists:menu_items,id'],
             'status' => ['required', 'in:invited,confirmed,declined'],
             'notes' => ['nullable'],
@@ -76,7 +77,7 @@ class GuestController extends Controller
             ]);
         }
         $data = $request->validate([
-            'name' => ['required'],
+            'name' => ['required', 'string','max:255'],
             'menu_item_id' => ['nullable'],
             'status' => ['required', 'in:invited,confirmed,declined'],
             'notes' => ['nullable'],
@@ -104,6 +105,28 @@ class GuestController extends Controller
         return redirect()->back()->with('flash', [
             'type' => 'success',
             'message' => 'Guest deleted successfully.'
+        ]);
+    }
+
+    public function bulkStore(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'guests' => ['required', 'array'],
+            'guests.*.name' => ['required', 'string','max:255'],
+        ]);
+
+        $wedding = auth()->user()->wedding;
+
+        foreach ($data['guests'] as $guest) {
+            Guest::create([
+                'name' => $guest['name'],
+                'wedding_id' => $wedding->id,
+                'status' => GuestStatus::INVITED->value,
+            ]);
+    }
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Guest list uploaded successfully.'
         ]);
     }
 }

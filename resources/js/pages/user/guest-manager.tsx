@@ -2,6 +2,8 @@ import AddGuestToGroup from '@/components/guest-group/add-guest-to-group';
 import CreateGuest from '@/components/guests/create-guest';
 import DeleteGuest from '@/components/guests/delete-guest';
 import EditGuest from '@/components/guests/edit-guest';
+import GuestStatusBadge from '@/components/guests/guest-status-badge';
+import GuestlistUpload from '@/components/guests/guestlist-upload';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -14,10 +16,9 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import guests from '@/routes/guests';
 import { BreadcrumbItem, Group, Guest, MenuItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import GuestStatusBadge from '@/components/guests/guest-status-badge';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,13 +27,13 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 export default function GuestManager({
-    guests = [],
-    groups = [],
-    menuItems = [],
+    myGuests = [],
+    myGroups = [],
+    myMenuItems = [],
 }: {
-    guests: Guest[];
-    groups: Group[];
-    menuItems: MenuItem[];
+    myGuests: Guest[];
+    myGroups: Group[];
+    myMenuItems: MenuItem[];
 }) {
     //New Guest Dialog
     const [createOpen, setCreateOpen] = useState(false);
@@ -43,8 +44,11 @@ export default function GuestManager({
     //Adding to Group UseState
     const [guestToPositiveOpen, setGuestToPositiveOpen] = useState(false);
 
+
+    const [importOpen, setImportOpen] = useState(false);
+
     const getMenuItemName = (id: number | null | undefined) => {
-        return menuItems.find((item) => item.id === id)?.name ?? '—';
+        return myMenuItems.find((item) => item.id === id)?.name ?? '—';
     };
 
     const handleEdit = (guest: Guest) => {
@@ -72,20 +76,24 @@ export default function GuestManager({
                             <CreateGuest
                                 open={createOpen}
                                 setOpen={setCreateOpen}
-                                menuItems={menuItems}
+                                menuItems={myMenuItems}
                             />
                             <Button
                                 className={'mb-4 hover:text-guestplan'}
                                 variant={'outline'}
+                                onClick={() => setImportOpen(true)}
                             >
                                 Import Guests via File
                             </Button>
-                            <EditGuest
-                                open={editOpen}
-                                setOpen={setEditOpen}
-                                guest={selectedGuest}
+                            <GuestlistUpload
+                                onImport={(guestList) => {
+                                    router.post(guests.import.url(), {
+                                        guests: guestList,
+                                    });
+                                }}
+                                open={importOpen}
+                                setOpen={setImportOpen}
                             />
-                            TODO Import List
                         </div>
                         <Table className="mt-4">
                             <TableHeader>
@@ -115,8 +123,8 @@ export default function GuestManager({
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {guests.length > 0 ? (
-                                    guests.map((guest) => (
+                                {myGuests.length > 0 ? (
+                                    myGuests.map((guest) => (
                                         <TableRow key={guest.id}>
                                             <TableCell className="text-left">
                                                 {guest.name}
@@ -169,11 +177,13 @@ export default function GuestManager({
                                                     <Button
                                                         variant="brand"
                                                         size="icon"
-                                                        onClick={() =>
+                                                        onClick={() => {
+                                                            if (!guest.id)
+                                                                return;
                                                             DeleteGuest(
                                                                 guest.id,
-                                                            )
-                                                        }
+                                                            );
+                                                        }}
                                                     >
                                                         <Trash2 />
                                                     </Button>
@@ -197,7 +207,12 @@ export default function GuestManager({
                             open={guestToPositiveOpen}
                             setOpen={setGuestToPositiveOpen}
                             guest={selectedGuest}
-                            groups={groups}
+                            groups={myGroups}
+                        />
+                        <EditGuest
+                            open={editOpen}
+                            setOpen={setEditOpen}
+                            guest={selectedGuest}
                         />
                     </div>
                 </div>

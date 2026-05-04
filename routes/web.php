@@ -32,24 +32,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //Renders task-list page via index
     Route::resource('tasks', TaskController::class)->except('show');
+
     //Check if needed?
     Route::resource('weddings', WeddingController::class);
-    //Renders guest-manager page via index
+
+    //Renders guest-manager page via index, + additional post-route for importing guests via list
     Route::resource('guests', GuestController::class);
+    Route::post('guests/import', [GuestController::class, 'bulkStore'])->name('guests.import');
+
     //Renders Group Management via Index
     Route::resource('groups', GroupController::class);
+
     //Renders Conflicts page via index
     Route::post('groups/{group}/guests', [GroupController::class, 'attachGuest'])->name('groups.guests.attach');
     Route::delete('groups/{group}/guests', [GroupController::class, 'detachGuest'])->name('groups.guests.detach');
     Route::resource('conflicts', GuestConflictsController::class);
+
     //Meal Choices, no Page, part of Venue Management
     Route::resource('menu-items', MenuItemController::class);
+
     //Renders seat plan page via index
     Route::resource('seat-plans', SeatplanController::class);
-
-
-
-
 
     //Admin-only routes
     Route::middleware(['CheckAdmin'])->group(function () {
