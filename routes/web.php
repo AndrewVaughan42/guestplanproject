@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Renders guest-manager page via index, + additional post-route for importing guests via list
     Route::resource('guests', GuestController::class);
     Route::post('guests/import', [GuestController::class, 'bulkStore'])->name('guests.import');
+    Route::patch('guests/{guest}/update-status', [GuestController::class, 'updateStatus'])->name('guests.update-status');
 
     //Renders Group Management via Index
     Route::resource('groups', GroupController::class);

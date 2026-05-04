@@ -22,8 +22,13 @@ class GuestController extends Controller
             ]);
         }
 
+        $sortedGuests = $wedding->guests->sortBy(function ($guest) {
+            $parts = explode(' ', $guest->name);
+            return strtolower(end($parts));
+        })->values();
+
         return Inertia::render('user/guest-manager', [
-            'myGuests' => $wedding->guests,
+            'myGuests' => $sortedGuests,
             'myGroups' => Group::where('wedding_id', $wedding->id)->get(),
             'myMenuItems' => $wedding->menuItems,
         ]);
@@ -106,6 +111,19 @@ class GuestController extends Controller
             'type' => 'success',
             'message' => 'Guest deleted successfully.'
         ]);
+    }
+
+    public function updateStatus(Request $request, Guest $guest): RedirectResponse
+    {
+        request()->validate([
+            'status' => ['required', 'in:invited,confirmed,declined'],
+        ]);
+        $guest->update(['status' => $request->status]);
+
+        return redirect()->back()->with(
+            'flash',
+            ['type' => 'success', 'message' => 'Guest status updated successfully.']
+        );
     }
 
     public function bulkStore(Request $request): RedirectResponse

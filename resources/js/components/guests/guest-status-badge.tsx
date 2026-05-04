@@ -35,7 +35,8 @@ export default function GuestStatusBadge({
 
     const updateStatus = (newStatus: GuestStatus) => {
         if (status === newStatus) return;
-        router.patch(guests.update(guest.id).url, { status: newStatus });
+        if (!guest.id) return;
+        router.patch(guests.updateStatus(guest.id).url, { status: newStatus });
     };
 
     return (
