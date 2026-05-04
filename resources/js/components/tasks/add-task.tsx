@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -6,12 +6,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import React from 'react';
 import tasks from '@/routes/tasks';
-import { Task } from '@/types';
+import { Task, TaskStatus } from '@/types';
+import { useForm } from '@inertiajs/react';
+import React from 'react';
 
 import {
     Select,
@@ -23,27 +23,30 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
-export default function AddTask({ open, setOpen }: {
+export default function AddTask({
+    open,
+    setOpen,
+}: {
     open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
-
-    const { data, setData, post, processing, reset, errors } = useForm<Partial<Task>>({
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+    const { data, setData, post, processing, reset, errors } = useForm<
+        Partial<Task>
+    >({
         title: '',
         status: null,
         due_date: null,
-
     });
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        post(tasks.store().url,
-            {
-                onSuccess: () => {
-                    reset();
-                    setOpen(false);
-                },
-            });
+        post(tasks.store().url, {
+            onSuccess: () => {
+                reset();
+                setOpen(false);
+            },
+        });
     }
 
     return (
@@ -76,8 +79,8 @@ export default function AddTask({ open, setOpen }: {
                         <Label htmlFor="status">Status</Label>
                         <Select
                             value={data.status ?? undefined}
-                            onValueChange={(value) =>
-                                setData('status', value || null)
+                            onValueChange={(value: TaskStatus) =>
+                                setData('status', value)
                             }
                         >
                             <SelectTrigger className="w-full">

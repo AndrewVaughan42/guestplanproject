@@ -30,7 +30,7 @@ export default function CreateGuest({
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     menuItems: MenuItem[];
 }) {
-    const { data, setData, post, processing, reset, errors } = useForm<Guest>({
+    const { data, setData, post, processing, reset, errors } = useForm<Partial<Guest>>({
         name: '',
         menu_item_id: null,
         status: 'invited',

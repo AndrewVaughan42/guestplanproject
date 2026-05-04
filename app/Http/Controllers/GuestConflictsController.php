@@ -13,14 +13,14 @@ class GuestConflictsController extends Controller
     public function index()
     {
         $wedding = auth()->user()->wedding;
-        if (!$wedding) {
+        if (!$wedding && !auth()->user()->isAdmin) {
             return redirect()->route('dashboard')->with('flash', [
                 'type' => 'error',
                 'message' => 'Please set up your wedding first.'
             ]);
         }
         return Inertia::render('user/guest-conflicts', [
-            'guest-conflicts' => GuestConflict::where('wedding_id', $wedding->id)->get(),
+            'guest-conflicts' => GuestConflict::with(['guestA', 'guestB'])->where('wedding_id', $wedding->id)->get(),
             'guests' => Guest::where('wedding_id', $wedding->id)->orderBy('name')->get(),
         ]);
     }
@@ -42,12 +42,12 @@ class GuestConflictsController extends Controller
         ]);
     }
 
-    public function show(GuestConflict $guestConflicts)
+    public function show(GuestConflict $conflict)
     {
-        return $guestConflicts;
+        return $conflict;
     }
 
-    public function update(Request $request, GuestConflict $guestConflicts): RedirectResponse
+    public function update(Request $request, GuestConflict $conflict): RedirectResponse
     {
         $data = $request->validate([
             'guest_a_id' => ['required', 'exists:guests,id'],
@@ -56,7 +56,7 @@ class GuestConflictsController extends Controller
             'conflict_reason'=> ['nullable']
         ]);
 
-        $guestConflicts->update($data);
+        $conflict->update($data);
 
         return redirect()->back()->with('flash', [
             'type' => 'success',
@@ -64,9 +64,9 @@ class GuestConflictsController extends Controller
         ]);
     }
 
-    public function destroy(GuestConflict $guestConflicts): RedirectResponse
+    public function destroy(GuestConflict $conflict): RedirectResponse
     {
-        $guestConflicts->delete();
+        $conflict->delete();
 
         return redirect()->back()->with('flash', [
             'type' => 'success',

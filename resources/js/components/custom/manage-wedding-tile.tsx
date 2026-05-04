@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import CreateWedding from '@/components/weddings/create-wedding';
 import { Plus } from 'lucide-react';
+import WeddingManagementCard from '@/components/dashboard/user-cards/wedding-management-card';
 
 export default function ManageWeddingTile() {
 
@@ -12,7 +13,7 @@ export default function ManageWeddingTile() {
     const [open, setOpen] = useState(false);
 
     if (!auth?.user?.wedding) {
-        return (
+        return ( // Render the tile if no wedding is set up
             <div className="flex h-full w-full flex-col items-center justify-center bg-neutral-50 p-6 text-center transition-colors hover:bg-neutral-100 dark:bg-neutral-900 dark:hover:bg-neutral-800">
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-guestplan">
                     <Plus className="h-8 w-8" />
@@ -35,12 +36,9 @@ export default function ManageWeddingTile() {
             </div>
         );
     } else {
-        return (
-            <div className="flex h-full flex-col items-center justify-center bg-neutral-100 p-4 text-center dark:bg-neutral-800">
-                <span className="text-4xl font-bold text-neutral-900 dark:text-neutral-100">
-                    You should see this if you've set up a wedding.
-                    //TODO View Wedding
-                </span>
+        return ( // Render the tile if a wedding is set up
+            <div className="relative aspect-video">
+                <WeddingManagementCard/>
             </div>
         );
     }

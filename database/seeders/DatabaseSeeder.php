@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Wedding;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Venue;
@@ -60,6 +61,18 @@ class DatabaseSeeder extends Seeder
         );
 
         $adminUser->venues()->syncWithoutDetaching([$venue1->id, $venue2->id]);
+
+        Wedding::firstOrCreate(
+            ['user_id' => $regularUser->id],
+            [
+                'venue_id' => $venue1->id,
+                'partnerA_firstname' => 'Ube',
+                'partnerA_lastname' => 'Serr',
+                'partnerB_firstname' => 'Ada',
+                'partnerB_lastname' => 'Minn',
+                'date' => now()->addMonths(6),
+            ]
+        );
 
 
 
