@@ -14,7 +14,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import guests from '@/routes/guests';
+import guestRoutes from '@/routes/guests';
 import { BreadcrumbItem, Group, Guest, MenuItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { Edit, Trash2 } from 'lucide-react';
@@ -23,16 +23,16 @@ import { useState } from 'react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Guest Manager',
-        href: guests.index().url,
+        href: guestRoutes.index().url,
     },
 ];
 export default function GuestManager({
-    myGuests = [],
-    myGroups = [],
+    guests = [],
+    groups = [],
     myMenuItems = [],
 }: {
-    myGuests: Guest[];
-    myGroups: Group[];
+    guests: Guest[];
+    groups: Group[];
     myMenuItems: MenuItem[];
 }) {
     //New Guest Dialog
@@ -44,7 +44,7 @@ export default function GuestManager({
     //Adding to Group UseState
     const [guestToPositiveOpen, setGuestToPositiveOpen] = useState(false);
 
-
+    //Import Guests in bulk
     const [importOpen, setImportOpen] = useState(false);
 
     const getMenuItemName = (id: number | null | undefined) => {
@@ -87,7 +87,7 @@ export default function GuestManager({
                             </Button>
                             <GuestlistUpload
                                 onImport={(guestList) => {
-                                    router.post(guests.import.url(), {
+                                    router.post(guestRoutes.import().url, {
                                         guests: guestList,
                                     });
                                 }}
@@ -123,8 +123,8 @@ export default function GuestManager({
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {myGuests.length > 0 ? (
-                                    myGuests.map((guest) => (
+                                {guests.length > 0 ? (
+                                    guests.map((guest) => (
                                         <TableRow key={guest.id}>
                                             <TableCell className="text-left">
                                                 {guest.name}
@@ -207,7 +207,7 @@ export default function GuestManager({
                             open={guestToPositiveOpen}
                             setOpen={setGuestToPositiveOpen}
                             guest={selectedGuest}
-                            groups={myGroups}
+                            groups={groups}
                         />
                         <EditGuest
                             open={editOpen}

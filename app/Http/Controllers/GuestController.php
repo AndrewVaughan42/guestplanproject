@@ -28,9 +28,9 @@ class GuestController extends Controller
         })->values();
 
         return Inertia::render('user/guest-manager', [
-            'myGuests' => $sortedGuests,
-            'myGroups' => Group::where('wedding_id', $wedding->id)->get(),
-            'myMenuItems' => $wedding->menuItems,
+            'guests' => $sortedGuests,
+            'groups' => Group::where('wedding_id', $wedding->id)->get(),
+            'menuItems' => $wedding->menuItems,
         ]);
     }
 
