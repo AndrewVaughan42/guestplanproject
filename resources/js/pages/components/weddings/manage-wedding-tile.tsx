@@ -1,10 +1,10 @@
 import { usePage } from '@inertiajs/react';
-import { SharedData } from '@/types';
-import { Button } from '@/components/ui/button';
+import { SharedData } from 'resources/js/types';
 import { useState } from 'react';
-import CreateWedding from '../components/weddings/create-wedding';
+import CreateWedding from './create-wedding';
 import { Plus } from 'lucide-react';
-import WeddingManagementCard from '../dashboard/user-cards/wedding-management-card';
+import WeddingManagementCard from '../../dashboard/user-cards/wedding-management-card';
+import { Button } from '@headlessui/react';
 
 export default function ManageWeddingTile() {
 
@@ -25,8 +25,7 @@ export default function ManageWeddingTile() {
                     Ready to start planning your big day?
                 </p>
                 <Button
-                    size="lg"
-                    className="cursor-pointer font-bold shadow-md transition-transform hover:scale-105"
+                    className= {"cursor-pointer font-bold shadow-md transition-transform hover:scale-105"}
                     onClick={() => setOpen(true)}
                 >
                     <Plus className="mr-2 h-5 w-5 text-guestplan"/>

@@ -14,8 +14,8 @@ class VenueLayer extends Model
     protected $fillable = [
         'venue_id',
         'user_id',
-        'table_amount',
-        'table_layout',
+        'name',
+        'table_data',
     ];
 
     public function venue(): BelongsTo
@@ -23,20 +23,20 @@ class VenueLayer extends Model
         return $this->belongsTo(Venue::class);
     }
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function weddings(): HasMany
     {
         return $this->hasMany(Wedding::class);
     }
 
+    public function users(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     protected function casts(): array
     {
         return [
-            'table_layout' => 'array',
+            'table_data' => 'array',
         ];
     }
 }

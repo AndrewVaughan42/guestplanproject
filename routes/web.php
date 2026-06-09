@@ -36,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Check if needed?
     Route::resource('weddings', WeddingController::class);
 
-    //Renders guest-manager page via index, + additional post-route for importing guests via list
+    //Renders guest-manager page via index, + additional post-routes for importing guests via list and updating guest statuses
     Route::resource('guests', GuestController::class);
     Route::post('guests/import', [GuestController::class, 'bulkStore'])->name('guests.import');
     Route::patch('guests/{guest}/update-status', [GuestController::class, 'updateStatus'])->name('guests.update-status');
@@ -53,7 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('menu-items', MenuItemController::class);
 
     //Renders seat plan page via index
-    Route::resource('seat-plans', SeatplanController::class);
+    Route::resource('seat-plans', SeatplanController::class)->only('index', 'update');
 
     //Admin-only routes
     Route::middleware(['CheckAdmin'])->group(function () {

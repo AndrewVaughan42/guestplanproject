@@ -37,6 +37,7 @@ class Venue extends Model
     {
         return $this->hasMany(MenuItem::class);
     }
+
 }
 
 

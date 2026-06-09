@@ -1,9 +1,9 @@
-import AddGuestToGroup from '@/components/guest-group/add-guest-to-group';
-import CreateGuest from '@/components/guests/create-guest';
-import DeleteGuest from '@/components/guests/delete-guest';
-import EditGuest from '@/components/guests/edit-guest';
-import GuestStatusBadge from '@/components/guests/guest-status-badge';
-import GuestlistUpload from '@/components/guests/guestlist-upload';
+import AddGuestToGroup from '../components/guest-group/add-guest-to-group';
+import CreateGuest from '../components/guests/create-guest';
+import DeleteGuest from '../components/guests/delete-guest';
+import EditGuest from '../components/guests/edit-guest';
+import GuestStatusBadge from '../components/guests/guest-status-badge';
+import GuestlistUpload from '../components/guests/guestlist-upload';
 import { Button } from '@/components/ui/button';
 import {
     Table,

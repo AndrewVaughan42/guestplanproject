@@ -3,12 +3,13 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, MenuItem, Venue } from '@/types';
 import venues from '@/routes/venues';
 import { Button } from '@/components/ui/button';
-import AddMenuItem from '@/components/menuItems/add-menu-item';
+import AddMenuItem from '../components/menuItems/add-menu-item';
 import { useState } from 'react';
-import EditMenuItem from '@/components/menuItems/edit-menu-item';
-import AddVenue from '@/components/venues/add-venue';
-import EditVenue from '@/components/venues/edit-venue';
-import DeleteMenuItem from '@/components/menuItems/delete-menu-item';
+import EditMenuItem from '../components/menuItems/edit-menu-item';
+import AddVenue from '../components/venues/add-venue';
+import EditVenue from '../components/venues/edit-venue';
+import DeleteMenuItem from '../components/menuItems/delete-menu-item';
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -23,13 +24,13 @@ interface Props {
 
 
 export default function VenueManager({ venues: initialVenues }: Props) {
-    //Menu Item Use States for Dialog HTML Operations
+
     const [addMenuItemOpen, setAddMenuItemOpen] = useState(false);
     const [editMenuItemOpen, setEditMenuItemOpen] = useState(false);
-    //Venue Use States for Dialog HTML Operations
+
     const [addVenueOpen, setAddVenueOpen] = useState(false);
     const [editVenueOpen, setEditVenueOpen] = useState(false);
-    //Use State for selecting a menu item to edit
+
     const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(
         null,
     );

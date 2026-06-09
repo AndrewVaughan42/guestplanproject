@@ -1,10 +1,12 @@
-import ManageWeddingTile from '@/components/custom/manage-wedding-tile';
-import WeddingManagementCard from '@/components/dashboard/user-cards/WeddingManagementCard';
+
+import WeddingManagementCard from '../dashboard/user-cards/wedding-management-card';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
-import { dashboard } from '@/routes';
+
 import { type BreadcrumbItem, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
+import ManageWeddingTile from '../components/weddings/manage-wedding-tile';
+import { dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -48,10 +50,12 @@ export default function Dashboard() {
                         </div>
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                             <p>More Components to be added</p>
+                            {/** <GuestManagementCard/> */}
                         </div>
 
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                             <p>More Components to be added</p>
+                            {/** <ManagementCard/> */}
                         </div>
                     </div>
                     <div className="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">

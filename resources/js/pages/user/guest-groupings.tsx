@@ -1,6 +1,6 @@
-import CreateGroup from '@/components/groups/create-group';
-import EditGroup from '@/components/groups/edit-group';
-import DeleteGroup from '@/components/groups/delete-group';
+import CreateGroup from '../components/groups/create-group';
+import EditGroup from '../components/groups/edit-group';
+import DeleteGroup from '../components/groups/delete-group';
 import { Button } from '@/components/ui/button';
 import {
     Table,

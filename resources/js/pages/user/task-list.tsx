@@ -1,5 +1,5 @@
-import AddTask from '@/components/tasks/add-task';
-import DeleteTask from '@/components/tasks/delete-task';
+import AddTask from '../components/tasks/add-task';
+import DeleteTask from '../components/tasks/delete-task';
 import { Button } from '@/components/ui/button';
 import {
     Table,

@@ -1,7 +1,7 @@
 import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
 import { type BreadcrumbItem } from '@/types';
 import { type ReactNode } from 'react';
-import FlashMessage from '@/components/custom/flash-message';
+import FlashMessage from '@/pages/custom/flash-message';
 
 interface AppLayoutProps {
     children: ReactNode;

@@ -42,7 +42,6 @@ export interface User {
     created_at: string;
     updated_at: string;
     wedding?: Wedding | null;
-    [key: string]: unknown; // This allows for additional properties...
 }
 export type TaskStatus = 'pending' | 'in-progress' | 'complete';
 
@@ -61,6 +60,13 @@ export interface Venue {
     minimum_table_amount: number;
     maximum_table_amount: number;
     menu_items?: MenuItem[];
+}
+
+export interface VenueSummary {
+    id: number;
+    name: string;
+    minimum_table_amount: number;
+    maximum_table_amount: number;
 }
 
 export interface MenuItem {
@@ -110,3 +116,41 @@ export interface GuestConflict {
     guest_a?: Guest;
     guest_b?: Guest;
 }
+
+export interface BaseTable {
+    id: string;
+    name: string | '';
+    x: number;
+    y: number;
+    rotation?: number;
+    locked?: boolean;
+}
+
+export interface RoundTable extends BaseTable {
+    type: 'round';
+    seat_minimum: number;
+    seat_maximum: number;
+    seat_count: number;
+}
+
+export interface TopTable extends BaseTable {
+    type: 'top';
+    seats_per_side: number;
+    width: number;
+    height: number;
+}
+export type Table = RoundTable | TopTable;
+
+export type Allocations = Record<string, Record<string, number | null>>;
+
+export type VenueLayer = {
+    id: number;
+    name: string | null;
+    table_data: Table[];
+};
+
+export interface VenueSummary {
+    id: number;
+    name: string;
+}
+

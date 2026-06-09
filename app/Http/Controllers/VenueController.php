@@ -16,7 +16,7 @@ class VenueController extends Controller
             $query->where('user_id', auth()->id());
         })->with('menuItems')->get();
         return Inertia::render('admin/venue-manager', [
-            'venues' => $venues,
+            'venues' => $venues->sortBy('name')->values(),
         ]);
 
     }

@@ -71,6 +71,11 @@ const mainNavItems: NavItem[] = [
 ];
 const adminNavItems: NavItem[] = [
     {
+        title: 'Dashboard',
+        href: dashboard().url,
+        icon: LayoutGrid,
+    },
+    {
         title: 'Venue Manager',
         href: venues.index().url,
         icon: LayoutGrid,
@@ -82,14 +87,12 @@ const adminNavItems: NavItem[] = [
     },
 ];
 
-const allNavItems: NavItem[] = [...mainNavItems, ...adminNavItems];
-//Remove when no longer needed
 const footerNavItems: NavItem[] = [
     {
         title: 'Repository',
         href: 'https://github.com/laravel/react-starter-kit',
         icon: Folder,
-    },
+    }, // TODO Delete when complete
     {
         title: 'Documentation',
         href: 'https://laravel.com/docs/starter-kits#react',
@@ -101,7 +104,7 @@ export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     const isAdmin = auth.user.isAdmin;
 
-    const items = isAdmin ? allNavItems : mainNavItems;
+    const items = isAdmin ? adminNavItems : mainNavItems;
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

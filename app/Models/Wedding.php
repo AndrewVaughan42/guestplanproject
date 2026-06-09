@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Wedding extends Model
 {
@@ -51,9 +52,9 @@ class Wedding extends Model
         return $this->hasMany(Group::class);
     }
 
-    public function seatplans(): HasMany
+    public function seatplan(): HasOne
     {
-        return $this->hasMany(Seatplan::class);
+        return $this->hasOne(Seatplan::class);
     }
 
     public function menuItems(): BelongsToMany

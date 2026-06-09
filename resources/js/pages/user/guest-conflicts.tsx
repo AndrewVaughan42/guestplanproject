@@ -5,8 +5,10 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import CreateGuestConflict from '@/components/custom/guest-conflicts/create-guest-conflict';
-import { Table, TableHeader, TableRow } from '@/components/ui/table';
+import CreateGuestConflict from '../components/guest-conflicts/create-guest-conflict';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import DeleteGuestConflict from '../components/guest-conflicts/delete-guest-conflict';
+import { Trash2 } from 'lucide-react';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -43,13 +45,39 @@ export default function GuestConflicts({ 'guest-conflicts': guestConflicts, gues
                     ) : (
                         <div className="grid gap-4">
                             <Table>
-                                <TableRow>
-                                    <TableHeader>Guest 1</TableHeader>
-                                    <TableHeader>Guest 2</TableHeader>
-                                    <TableHeader>
-                                        Reason for Conflict
-                                    </TableHeader>
-                                </TableRow>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Guest 1</TableHead>
+                                        <TableHead>Guest 2</TableHead>
+                                        <TableHead>Reason for Conflict</TableHead>
+                                        <TableHead className="w-12.5"></TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {guestConflicts.map((conflict) => (
+                                        <TableRow key={conflict.id}>
+                                            <TableCell>{conflict.guest_a?.name}</TableCell>
+                                            <TableCell>{conflict.guest_b?.name}</TableCell>
+                                            <TableCell>
+                                                {conflict.conflict_reason || (
+                                                    <span className="text-muted-foreground italic">
+                                                        No reason provided
+                                                    </span>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => DeleteGuestConflict(conflict.id)}
+                                                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
                             </Table>
                         </div>
                     )}

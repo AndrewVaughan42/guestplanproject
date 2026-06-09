@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('wedding_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('venue_layer_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
             $table->jsonb('layout');
             $table->timestamps();
         });
