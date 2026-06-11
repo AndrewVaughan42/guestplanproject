@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
-import { LayoutCanvas } from '@/pages/components/venueLayers/component/layout/LayoutCanvas';
+import { LayoutCanvas } from '@/pages/shared/LayoutCanvas';
+import { EditorTableGroup } from '@/pages/components/venueLayers/component/layout/EditorTableGroup';
 import { TableSidebar } from '@/pages/components/venueLayers/component/layout/TableSidebar';
 import { useVenueLayoutEditor } from '@/pages/components/venueLayers/hooks/useVenueLayerEditor';
 import venueLayers from '@/routes/venue-layers';
@@ -63,7 +64,7 @@ function LayerEditor({
                         </button>
                         <button
                             onClick={() => editor.update()}
-                            className="rounded-md bg-foreground px-3 py-1 text-sm text-background hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="rounded-md bg-foreground px-3 py-1 text-sm text-background hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-50"
                             disabled={!canUpdate}
                         >
                             Update
@@ -75,7 +76,7 @@ function LayerEditor({
                         )}
                         <button
                             onClick={() => editor.save()}
-                            className="rounded-md bg-foreground px-3 py-1 text-sm text-background hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="rounded-md bg-foreground px-3 py-1 text-sm text-background hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-50"
                             disabled={!canSaveAsNew}
                         >
                             Save to New Layer
@@ -124,8 +125,15 @@ function LayerEditor({
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        if (confirm('Are you sure you want to delete this layer?')) {
-                                            router.delete(venueLayers.destroy(layer.id).url);
+                                        if (
+                                            confirm(
+                                                'Are you sure you want to delete this layer?',
+                                            )
+                                        ) {
+                                            router.delete(
+                                                venueLayers.destroy(layer.id)
+                                                    .url,
+                                            );
                                         }
                                     }}
                                     className="absolute top-2 right-2 rounded-full bg-background p-1 hover:bg-accent"
@@ -133,35 +141,53 @@ function LayerEditor({
                                     <X className="h-4 w-4 text-destructive" />
                                 </button>
                             </div>
-
                         </div>
                     ))}
                 </div>
 
                 <div className="flex flex-1 flex-col overflow-hidden bg-muted/20">
-                    <LayoutCanvas
-                        tables={editor.tables}
-                        selectedId={editor.selectedId}
-                        onSelect={editor.setSelectedId}
-                        onMove={editor.moveTable}
-                        scale={editor.scale}
-                        position={editor.pos}
-                        setPosition={editor.setPos}
-                        setScale={editor.setScale}
-                    />
-                </div>
+                    <div className="relative flex-1">
+                        <LayoutCanvas
+                            tables={editor.tables}
+                            selectedId={editor.selectedId}
+                            onSelect={editor.setSelectedId}
+                            onMove={editor.moveTable}
+                            scale={editor.scale}
+                            pos={editor.pos}
+                            setPos={editor.setPos}
+                            setScale={editor.setScale}
+                            handleWithScrollWheel={editor.handleWithScrollWheel}
+                            centreTables={editor.centreTables}
+                            setPosition={editor.setPos}
+                        >
+                            {editor.tables.map((table) => (
+                                <EditorTableGroup
+                                    key={table.id}
+                                    table={table}
+                                    selected={table.id === editor.selectedId}
+                                    onSelect={() => editor.setSelectedId(table.id)}
+                                    onMove={editor.moveTable}
+                                />
+                            ))}
+                        </LayoutCanvas>
 
-                {editor.selectedTable && (
-                    <TableSidebar
-                        table={editor.selectedTable}
-                        onUpdate={(key, value) =>
-                            editor.updateTable(editor.selectedId!, {
-                                [key]: value,
-                            })
-                        }
-                        onDelete={() => editor.deleteTable(editor.selectedId!)}
-                    />
-                )}
+                        {editor.selectedTable && (
+                            <div className="absolute top-0 right-0 h-full bg-background shadow-lg z-10">
+                                <TableSidebar
+                                    table={editor.selectedTable}
+                                    onUpdate={(key, value) =>
+                                        editor.updateTable(editor.selectedId!, {
+                                            [key]: value,
+                                        })
+                                    }
+                                    onDelete={() =>
+                                        editor.deleteTable(editor.selectedId!)
+                                    }
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

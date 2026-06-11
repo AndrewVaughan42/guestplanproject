@@ -1,31 +1,30 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
-function useHistoryState<T>(initialValue: T) {
-    const [past, setPast] = useState<T[]>([initialValue]);
-    const [present, setPresent] = useState<T>(initialValue);
-    const [future, setFuture] = useState<T[]>([]);
+export function useHistoryState<T>(initialValue: T) {
+    const [history, setHistory] = useState<T[]>([initialValue]);
+    const [index, setIndex] = useState(0);
 
-    const set = (value: T) => {
-        setFuture([]);
-        setPast([...past, present]);
-        setPresent(value);
-    };
+    const present = history[index];
 
-    const undo = () => {
-        if (past.length > 1) {
-            setFuture([present, ...future]);
-            setPresent(past[past.length - 2]);
-            setPast(past.slice(0, -1));
+    const set = useCallback((value: T) => {
+        setHistory((prev) => {
+            const next = prev.slice(0, index + 1);
+            return [...next, value];
+        });
+        setIndex((prev) => prev + 1);
+    }, [index]);
+
+    const undo = useCallback(() => {
+        if (index > 0) {
+            setIndex((prev) => prev - 1);
         }
-    };
+    }, [index]);
 
-    const redo = () => {
-        if (future.length > 0) {
-            setPast([...past, present]);
-            setPresent(future[0]);
-            setFuture(future.slice(1));
+    const redo = useCallback(() => {
+        if (index < history.length - 1) {
+            setIndex((prev) => prev + 1);
         }
-    };
+    }, [index, history.length]);
 
-    return { present, set, undo, redo };
+    return { present, set, undo, redo, history, index };
 }

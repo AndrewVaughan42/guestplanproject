@@ -12,6 +12,8 @@ class Seatplan extends Model
 
     protected $fillable = [
         'wedding_id',
+        'venue_layer_id',
+        'name',
         'user_id',
         'layout',
     ];

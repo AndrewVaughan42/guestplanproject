@@ -117,8 +117,9 @@ class DatabaseSeeder extends Seeder
                 'x' => 150 + (($i - 1) % 3) * 325,
                 'y' => 350 + floor(($i - 1) / 3) * 325,
                 'rotation' => 0,
-                'seat_count' => 10,
+                'seat_count' => 8,
                 'seat_minimum' => 6,
+                'seat_maximum' => 10,
                 'locked' => true,
             ];
         }

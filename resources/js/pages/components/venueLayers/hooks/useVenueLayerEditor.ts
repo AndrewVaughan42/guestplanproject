@@ -1,11 +1,9 @@
+import { usePanZoom } from '@/pages/shared/hooks/usePanZoom';
 import venueLayers from '@/routes/venue-layers';
 import { Table, VenueLayer } from '@/types';
 import { router } from '@inertiajs/react';
-import { useCallback, useState } from 'react';
-
-interface EditorSnapshot {
-    tables: Table[];
-}
+import { useCallback, useState, useMemo } from 'react';
+import { useBaseCanvasEditor } from '@/pages/shared/hooks/useBaseCanvasEditor';
 
 function createTable(index: number, type: 'round' | 'top' = 'round'): Table {
     const base = {
@@ -35,45 +33,30 @@ function createTable(index: number, type: 'round' | 'top' = 'round'): Table {
     }
 }
 
-function createSnapshot(tables: Table[]): EditorSnapshot {
-    return {
-        tables: structuredClone(tables),
-    };
-}
-
 const gridSize = 20;
 
 export function useVenueLayoutEditor(
     initial: VenueLayer | null,
     venueId: number,
 ) {
-    const initTables: Table[] = initial?.table_data?.length
-        ? (initial.table_data as Table[])
-        : [createTable(0, 'top')];
+    const initTables: Table[] = useMemo(() => {
+        return initial?.table_data?.length
+            ? (initial.table_data as Table[])
+            : [createTable(0, 'top')];
+    }, [initial]);
 
-    const [tables, setTables] = useState<Table[]>(initTables);
+    const base = useBaseCanvasEditor(initTables);
+    const panZoom = usePanZoom();
 
     const [name, setName] = useState(initial?.name ?? 'New Layer');
     const [saving, setSaving] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
 
     const [snapEnabled, setSnapEnabled] = useState(true);
-    const [scale, setScale] = useState(1);
-    const [pos, setPos] = useState({ x: 0, y: 0 });
 
-    const [selectedTableIds, setSelectedTableIds] = useState<string[]>([]);
-    const selectedId = selectedTableIds[0] ?? null;
     const setSelectedId = useCallback((id: string | null) => {
-        setSelectedTableIds(id ? [id] : []);
-    }, []);
-
-    const selectedTable = tables.find((t) => t.id === selectedId) ?? null;
-
-    const [history, setHistory] = useState<EditorSnapshot[]>([
-        createSnapshot(initTables),
-    ]);
-
-    const [historyIndex, setHistoryIndex] = useState(0);
+        base.setSelectedTableIds(id ? [id] : []);
+    }, [base]);
 
     const snap = useCallback(
         (value: number) =>
@@ -81,79 +64,42 @@ export function useVenueLayoutEditor(
         [snapEnabled],
     );
 
-    const commit = useCallback(
-        (nextTables: Table[]) => {
-            setTables(nextTables);
-            setIsDirty(true);
-
-            const trimmed = history.slice(0, historyIndex + 1);
-            const nextHistory = [...trimmed, createSnapshot(nextTables)];
-
-            setHistory(nextHistory);
-            setHistoryIndex(nextHistory.length - 1);
-        },
-        [history, historyIndex],
-    );
-
     const addRoundTable = useCallback(() => {
-        const next = [...tables, createTable(tables.length, 'round')];
-        commit(next);
-    }, [tables, commit]);
+        base.setTables([...base.tables, createTable(base.tables.length, 'round')]);
+        setIsDirty(true);
+    }, [base]);
 
-    const deleteTable = useCallback(
-        (id: string) => {
-            const next = tables.filter((t) => t.id !== id);
-            commit(next);
-            setSelectedTableIds((p) => p.filter((x) => x !== id));
-        },
-        [tables, commit],
-    );
-
-    const moveTable = useCallback(
+    const moveTableWithSnap = useCallback(
         (id: string, x: number, y: number) => {
-            const next = tables.map((t) =>
-                t.id === id ? { ...t, x: snap(x), y: snap(y) } : t,
-            );
-            commit(next);
+            base.moveTable(id, x, y, snap);
+            setIsDirty(true);
         },
-        [tables, commit, snap],
+        [base, snap],
     );
 
-    const rotateTable = useCallback(
-        (id: string, deg = 90) => {
-            const next = tables.map((t) =>
-                t.id === id ? { ...t, rotation: (t.rotation ?? 0) + deg } : t,
-            );
-            commit(next);
-        },
-        [tables, commit],
-    );
-
-    const updateTable = useCallback(
+    const updateTableWithDirty = useCallback(
         (id: string, updates: Partial<Table>) => {
-            const next = tables.map((t) =>
-                t.id === id ? ({ ...t, ...updates } as Table) : t,
-            );
-            commit(next);
+            base.updateTable(id, updates);
+            setIsDirty(true);
         },
-        [tables, commit],
+        [base],
     );
 
-    const undo = useCallback(() => {
-        if (historyIndex <= 0) return;
+    const deleteTableWithDirty = useCallback(
+        (id: string) => {
+            base.deleteTable(id);
+            setIsDirty(true);
+        },
+        [base],
+    );
 
-        const prev = history[historyIndex - 1];
-        setTables(prev.tables);
-        setHistoryIndex(historyIndex - 1);
-    }, [history, historyIndex]);
-
-    const redo = useCallback(() => {
-        if (historyIndex >= history.length - 1) return;
-
-        const next = history[historyIndex + 1];
-        setTables(next.tables);
-        setHistoryIndex(historyIndex + 1);
-    }, [history, historyIndex]);
+    const rotateTableWithDirty = useCallback(
+        (id: string, deg = 90) => {
+            base.rotateTable(id, deg);
+            setIsDirty(true);
+        },
+        [base],
+    );
 
     const save = useCallback(() => {
         setSaving(true);
@@ -162,7 +108,7 @@ export function useVenueLayoutEditor(
             venueLayers.store().url,
             {
                 venue_id: venueId,
-                table_data: JSON.parse(JSON.stringify(tables)),
+                table_data: JSON.parse(JSON.stringify(base.tables)),
             },
             {
                 onFinish: () => {
@@ -171,7 +117,7 @@ export function useVenueLayoutEditor(
                 },
             },
         );
-    }, [tables, venueId]);
+    }, [base.tables, venueId]);
 
     const update = useCallback(
         (layerId?: number) => {
@@ -187,7 +133,7 @@ export function useVenueLayoutEditor(
                 venueLayers.update(id).url,
                 {
                     venue_id: venueId,
-                    table_data: JSON.parse(JSON.stringify(tables)),
+                    table_data: JSON.parse(JSON.stringify(base.tables)),
                 },
                 {
                     onFinish: () => {
@@ -197,44 +143,30 @@ export function useVenueLayoutEditor(
                 },
             );
         },
-        [initial?.id, save, tables, venueId],
+        [initial?.id, save, base.tables, venueId],
     );
 
     return {
-        tables,
+        ...base,
+        ...panZoom,
         name,
         setName,
 
         addRoundTable,
 
-        deleteTable,
-        moveTable,
-        rotateTable,
-        updateTable,
+        deleteTable: deleteTableWithDirty,
+        moveTable: moveTableWithSnap,
+        rotateTable: rotateTableWithDirty,
+        updateTable: updateTableWithDirty,
 
-        selectedTableIds,
-        setSelectedTableIds,
-        selectedId,
         setSelectedId,
-        selectedTable,
 
         snapEnabled,
         setSnapEnabled,
-
-        scale,
-        setScale,
-        pos,
-        setPos,
-
-        undo,
-        redo,
 
         save,
         update,
         saving,
         isDirty,
-
-        canUndo: historyIndex > 0,
-        canRedo: historyIndex < history.length - 1,
     };
 }

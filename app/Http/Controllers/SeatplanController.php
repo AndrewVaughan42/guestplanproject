@@ -11,9 +11,41 @@ class SeatplanController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
         $wedding = auth()->user()->wedding;
+        if (!$wedding) {
+            return redirect()->route('dashboard')->with('flash', [
+                'type' => 'error',
+                'message' => 'Please set up your wedding first.',
+            ]);
+        }
+
+        $venueLayer = $wedding->venue->venueLayers()->first();
+        if (!$venueLayer) {
+            return redirect()->route('dashboard')->with('flash', [
+                'type' => 'error',
+                'message' => 'No venue layout found. Please contact your coordinator.',
+            ]);
+        }
+
+        $seatplan = $wedding->seatplan()->firstorCreate([
+            'wedding_id' => $wedding->id,
+        ], [
+            'user_id' => $user->id,
+            'name' => $wedding->partnerA_firstname . ' & ' . $wedding->partnerB_firstname . ' Seatplan',
+            'layout' => ['allocations' => [], 'tablePositions' => []],
+            'venue_layer_id' => $wedding->venue->venueLayers()->first()->id,
+        ]);
+
+
+
         return Inertia::render('user/seat-plan', [
-            'seatplans' => $wedding->seatplans ?? [],
+            'seatplanId' => $seatplan->id,
+            'initialAllocations' => $seatplan->layout['allocations'] ?? [],
+            'initialTablePositions' => $seatplan->layout['tablePositions'] ?? [],
+            'venueLayersLayout' => $venueLayer,
+            'guests' => $wedding->guests,
+            'conflicts' => $wedding->guestConflicts()->with(['guestA', 'guestB'])->get(),
         ]);
     }
 
@@ -35,13 +67,32 @@ class SeatplanController extends Controller
 
     public function show(Seatplan $seatplan)
     {
-        if ($seatplan->wedding_id !== auth()->user()->wedding?->id) {
+        $user = auth()->user();
+        if ($seatplan->wedding_id !== $user->wedding?->id) {
             return redirect()->back()->with('flash', [
                 'type' => 'error',
                 'message' => 'You are not authorized to view this seat plan.',
             ]);
         }
-        return $seatplan;
+
+        $wedding = $user->wedding;
+        $venueLayer = $wedding->venue->venueLayers()->first();
+
+        if (!$venueLayer) {
+            return redirect()->route('task-list')->with('flash', [
+                'type' => 'error',
+                'message' => 'No venue layout found. Please contact your coordinator.',
+            ]);
+        }
+
+        return Inertia::render('user/seat-plan', [
+            'seatPlanId' => $seatplan->id,
+            'initialAllocations' => $seatplan->layout['allocations'] ?? [],
+            'initialTablePositions' => $seatplan->layout['tablePositions'] ?? [],
+            'venueLayersLayout' => $venueLayer,
+            'guests' => $wedding->guests,
+            'conflicts' => $wedding->conflicts()->with(['guestA', 'guestB'])->get(),
+        ]);
     }
 
     public function update(Request $request, Seatplan $seatplan)
