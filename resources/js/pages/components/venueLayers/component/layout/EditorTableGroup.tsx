@@ -2,12 +2,12 @@ import {
     getSeatPosition,
     getTableDimensions,
     SEAT_RADIUS,
-} from '@/pages/components/seatplans/utils/getSeatPosition';
+} from '@/pages/shared/hooks/getSeatPosition';
 import { Table } from '@/types';
 import { Circle, Group, Rect, Text } from 'react-konva';
 import { getTopTableSeatCount, isBrideSeat, isGroomSeat } from '@/pages/components/venueLayers/component/utils/seatHelper';
 import { useAppearance } from '@/hooks/use-appearance';
-import { canvasColours, isDarkMode } from '@/pages/components/seatplans/utils/seatStyle';
+import { canvasColours, isDarkMode } from '@/pages/shared/hooks/seatStyle';
 import { useRef } from 'react';
 
 

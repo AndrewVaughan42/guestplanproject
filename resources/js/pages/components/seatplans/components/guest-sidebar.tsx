@@ -17,6 +17,7 @@ export default function GuestSidebar({
     const [search, setSearch] = useState('');
 
     const filteredGuests = guests.filter((guest) =>
+        guest.role === 'normal' &&
         guest.name.toLowerCase().includes(search.toLowerCase()),
     );
 

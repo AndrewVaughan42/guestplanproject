@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\GuestRole;
 use App\GuestStatus;
 use App\Models\Guest;
 use App\Models\Group;
@@ -28,7 +29,7 @@ class GuestController extends Controller
         })->values();
 
         return Inertia::render('user/guest-manager', [
-            'guests' => $sortedGuests,
+            'guests' => $sortedGuests->filter(fn($guest) => $guest->role === GuestRole::NORMAL->value),
             'groups' => Group::where('wedding_id', $wedding->id)->get(),
             'menuItems' => $wedding->menuItems,
         ]);
@@ -49,6 +50,7 @@ class GuestController extends Controller
             'name' => ['required', 'string','max:255'],
             'menu_item_id' => ['nullable', 'exists:menu_items,id'],
             'status' => ['required', 'in:invited,confirmed,declined'],
+            'role' => ['required', 'in:normal,partner_a,partner_b'],
             'notes' => ['nullable'],
         ]);
 
@@ -85,6 +87,7 @@ class GuestController extends Controller
             'name' => ['required', 'string','max:255'],
             'menu_item_id' => ['nullable'],
             'status' => ['required', 'in:invited,confirmed,declined'],
+            'role' => ['required', 'in:normal,partner_a,partner_b'],
             'notes' => ['nullable'],
         ]);
 

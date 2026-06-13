@@ -1,24 +1,31 @@
+import { useAppearance } from '@/hooks/use-appearance';
 import Seat from '@/pages/components/seatplans/components/seat';
-import { getSeatPosition, getTableDimensions } from '@/pages/components/seatplans/utils/getSeatPosition';
+import {
+    getSeatPosition,
+    getTableDimensions,
+} from '@/pages/shared/hooks/getSeatPosition';
+import {
+    canvasColours,
+    isDarkMode,
+} from '@/pages/shared/hooks/seatStyle';
 import {
     isBrideSeat,
     isGroomSeat,
 } from '@/pages/components/venueLayers/component/utils/seatHelper';
 import { Circle, Group, Rect, Text } from 'react-konva';
 import { Guest, Table } from 'resources/js/types';
-import { useAppearance } from '@/hooks/use-appearance';
-import { canvasColours, isDarkMode } from '@/pages/components/seatplans/utils/seatStyle';
-
-
 
 interface TableChairsGroupProps {
     table: Table;
     guestMap: Map<number, Guest>;
     tableAllocations: Record<string, number | null>;
     selectedSeat: string | null;
+    selectedTableId: string | null;
+    activeGuestId?: number | null;
     hasConflict?: boolean;
     onDragEnd: (tableId: string, x: number, y: number) => void;
-    onSeatClick: (seatId: string) => void;
+    onSeatClick: (seatId: string, isBrideOrGroom: boolean) => void;
+    onSelectTable: (tableId: string | null) => void;
 }
 
 export default function TableChairsGroup({
@@ -26,9 +33,12 @@ export default function TableChairsGroup({
     guestMap,
     tableAllocations,
     selectedSeat,
+    selectedTableId,
+    activeGuestId,
     hasConflict = false,
     onDragEnd,
     onSeatClick,
+    onSelectTable,
 }: TableChairsGroupProps) {
     const { appearance } = useAppearance();
     const dark = isDarkMode(appearance);
@@ -37,6 +47,7 @@ export default function TableChairsGroup({
     const tableFill = theme.table.fill;
     const tableStroke = theme.table.stroke;
     const textColor = theme.text;
+    const tableSelected = theme.table.selectedFill;
 
     const isTableRound = table.type === 'round';
     const dims = getTableDimensions(table);
@@ -45,16 +56,24 @@ export default function TableChairsGroup({
     const seatCount =
         table.type === 'round'
             ? table.seat_count
-            : table.seats_per_side * 2 + 2;
+            : Math.max(Object.keys(tableAllocations || {}).length, table.seats_per_side * 2 + 2);
 
     const radius = isTableRound
         ? dims.radius!
         : Math.max(tableWidth, tableHeight) / 2;
 
+    const isTableSelected = selectedTableId === table.id;
+
+    const handleSelect = () => {
+        if (activeGuestId) return;
+        onSelectTable(selectedTableId === table.id ? null : table.id);
+    };
+
     return (
         <Group
             x={table.x}
             y={table.y}
+            onClick={handleSelect}
             rotation={table.rotation ?? 0}
             draggable={false}
             onDragEnd={(e) => onDragEnd(table.id, e.target.x(), e.target.y())}
@@ -73,8 +92,12 @@ export default function TableChairsGroup({
                 <Circle
                     radius={dims.radius!}
                     fill={tableFill}
-                    stroke={tableStroke}
-                    strokeWidth={2}
+                    stroke={isTableSelected ? tableSelected : tableStroke}
+                    strokeWidth={isTableSelected ? 3 : 2}
+                    onClick={(e) => {
+                        e.cancelBubble = true;
+                        handleSelect();
+                    }}
                 />
             ) : (
                 <Rect
@@ -83,8 +106,12 @@ export default function TableChairsGroup({
                     width={tableWidth}
                     height={tableHeight}
                     fill={tableFill}
-                    stroke={tableStroke}
-                    strokeWidth={2}
+                    stroke={isTableSelected ? tableSelected : tableStroke}
+                    strokeWidth={isTableSelected ? 3 : 2}
+                    onClick={(e) => {
+                        e.cancelBubble = true;
+                        handleSelect();
+                    }}
                 />
             )}
             {/* Label for Table Name */}
@@ -104,46 +131,32 @@ export default function TableChairsGroup({
             {/* Seat Rendering */}
             {Array.from({ length: seatCount }).map((_, index) => {
                 const seatId = `${table.id}-${index}`;
-                const guestId = tableAllocations?.[String(index)] ?? null;
+                const safeAllocations = tableAllocations || {};
+                const guestId = safeAllocations[index] ?? safeAllocations[String(index)] ?? null;
 
-                const guest = guestId ? (guestMap.get(guestId) ?? null) : null;
+                const guest = guestId ? (guestMap.get(Number(guestId)) ?? null) : null;
                 const pos = getSeatPosition(index, table);
 
                 const isBrideOrGroom =
                     table.type === 'top' &&
-                    (isBrideSeat(index, table) ||
-                       isGroomSeat(index, table));
+                    (isBrideSeat(index, table) || isGroomSeat(index, table));
 
                 return (
                     <Seat
+                        seatId={seatId}
                         key={index}
                         guest={guest}
                         isSelected={selectedSeat === seatId}
-                        onClick={() => onSeatClick(seatId)}
+                        isActiveGuestAssignment={
+                            Boolean(activeGuestId) && !guest
+                        }
+                        onClick={() => onSeatClick(seatId, isBrideOrGroom)}
                         x={pos.x}
                         y={pos.y}
-                        isReserved={isBrideOrGroom}
+                        isReserved={isBrideOrGroom && !guest}
                     />
                 );
             })}
-
-            {/* Minimum Seats Indicators */}
-            {table.type === 'round' &&
-                Array.from({ length: table.seat_minimum }).map((_, index) => {
-                    const pos = getSeatPosition(index, table);
-                    // Offset the indicator slightly inside the seat position
-                    const indicatorX = pos.x * 0.8;
-                    const indicatorY = pos.y * 0.8;
-                    return (
-                        <Circle
-                            key={`min-${index}`}
-                            radius={3}
-                            x={indicatorX}
-                            y={indicatorY}
-                            fill={theme.indicators.minimum}
-                        />
-                    );
-                })}
         </Group>
     );
 }

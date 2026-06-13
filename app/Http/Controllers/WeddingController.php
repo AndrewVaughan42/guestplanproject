@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\GuestStatus;
+use App\Models\Guest;
 use App\Models\Wedding;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,12 +36,12 @@ class WeddingController extends Controller
 
         if ($data['groupTemplates']) {
             $template = [
-                ['name' => "$wedding->partnerA_lastname Family", 'priority' => 1, 'description' => "Family of $wedding->partnerA_firstname $wedding->partnerA_lastname, automatically created by Guestplan."],
-                ['name' => "$wedding->partnerB_lastname Family", 'priority' => 1, 'description' => "Family of $wedding->partnerB_firstname $wedding->partnerB_lastname, automatically created by Guestplan."],
-                ['name' => "Groomsmen", 'priority' => 1],
-                ['name' => "Bridesmaids", 'priority' => 1],
-                ['name' => "Friends of $wedding->partnerA_firstname", 'priority' => 2],
-                ['name' => "Friends of $wedding->partnerB_firstname", 'priority' => 2],
+                ['name' => "$wedding->partnerA_lastname Family", 'priority' => 1, 'description' => "Family of $wedding->partnerA_firstname $wedding->partnerA_lastname, automatically created by Guestplan.", 'colour' => 'red'],
+                ['name' => "$wedding->partnerB_lastname Family", 'priority' => 1, 'description' => "Family of $wedding->partnerB_firstname $wedding->partnerB_lastname, automatically created by Guestplan.", 'colour' => 'blue'],
+                ['name' => "Groomsmen", 'priority' => 1, 'colour' => 'green'],
+                ['name' => "Bridesmaids", 'priority' => 1, 'colour' => 'pink'],
+                ['name' => "Friends of $wedding->partnerA_firstname", 'priority' => 2, 'colour' => 'yellow'],
+                ['name' => "Friends of $wedding->partnerB_firstname", 'priority' => 2, 'colour' => 'purple'],
 
             ];
             foreach ($template as $group) {
@@ -47,8 +49,15 @@ class WeddingController extends Controller
                     'name' => $group['name'],
                     'priority' => $group['priority'],
                     'description' => $group['description'] ?? null,
+                    'colour' => $group['colour'],
                 ]);
             }
+            $partnerA = Guest::create(
+                ['name' => "$wedding->partnerA_firstname $wedding->partnerA_lastname", 'wedding_id' => $wedding->id, 'status' => GuestStatus::CONFIRMED->value, 'role' => \App\GuestRole::PARTNER_A->value],
+            );
+            $partnerB = Guest::create(
+                ['name' => "$wedding->partnerB_firstname $wedding->partnerB_lastname", 'wedding_id' => $wedding->id, 'status' => GuestStatus::CONFIRMED->value, 'role' => \App\GuestRole::PARTNER_B->value],
+            );
 
         }
         return redirect()->back()->with('success', 'Task created successfully.');

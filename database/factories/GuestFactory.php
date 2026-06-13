@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\GuestRole;
+use App\GuestStatus;
 use App\Models\Guest;
 use App\Models\MenuItem;
 use App\Models\Wedding;
@@ -18,6 +20,8 @@ class GuestFactory extends Factory
             'name' => $this->faker->name(),
             'menu_item_id' => MenuItem::factory(),
             'notes' => $this->faker->sentence(),
+            'status' => GuestStatus::INVITED->value,
+            'role' => GuestRole::NORMAL->value,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
 

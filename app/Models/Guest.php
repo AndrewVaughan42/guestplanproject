@@ -19,6 +19,7 @@ class Guest extends Model
         'menu_item_id',
         'status',
         'notes',
+        'role',
     ];
 
     protected $casts = [

@@ -94,6 +94,7 @@ export interface Guest {
     id: number;
     name: string;
     wedding_id?: number;
+    role?: string | null;
     menu_item_id: number | null;
     status: GuestStatus;
     notes: string | null;

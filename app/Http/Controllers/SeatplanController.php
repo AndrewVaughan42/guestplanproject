@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\GuestRole;
 use App\Models\Guest;
 use App\Models\Seatplan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Laravel\Wayfinder\Route;
 
 class SeatplanController extends Controller
 {
@@ -30,7 +30,7 @@ class SeatplanController extends Controller
             ]);
         }
 
-        $seat_plan = Seatplan::firstorCreate([
+        $seat_plan = Seatplan::firstOrCreate([
             'wedding_id' => $wedding->id,
         ], [
             'wedding_id' => $wedding->id,
@@ -40,6 +40,17 @@ class SeatplanController extends Controller
             'venue_layer_id' => $venueLayer->id,
         ]);
 
+        $seat_plan->layout = $this->ensurePartnerSeated($seat_plan->layout, $venueLayer, $wedding);
+
+        $seat_plan->save();
+
+        $partnerA = $wedding->guests()
+            ->where('role', GuestRole::PARTNER_A->value)
+            ->first();
+
+        $partnerB = $wedding->guests()
+            ->where('role', GuestRole::PARTNER_B->value)
+            ->first();
 
         return Inertia::render('user/seat-plan', [
             'seatPlanId' => $seat_plan->id,
@@ -48,6 +59,7 @@ class SeatplanController extends Controller
             'venueLayersLayout' => $venueLayer,
             'guests' => Guest::where('wedding_id', $wedding->id)->with('groups')->get(),
             'conflicts' => $wedding->guestConflicts()->with(['guestA', 'guestB'])->get(),
+            'lockedGuests' => array_values(array_filter([$partnerA?->id, $partnerB?->id]))
         ]);
     }
 
@@ -63,6 +75,7 @@ class SeatplanController extends Controller
         ]);
 
         $data['wedding_id'] = $wedding->id;
+
 
         return Seatplan::create($data);
     }
@@ -87,13 +100,26 @@ class SeatplanController extends Controller
             ]);
         }
 
+        $seat_plan->layout = $this->ensurePartnerSeated($seat_plan->layout, $venueLayer, $wedding);
+
+        $seat_plan->save();
+
+        $partnerA = $wedding->guests()
+            ->where('role', GuestRole::PARTNER_A->value)
+            ->first();
+
+        $partnerB = $wedding->guests()
+            ->where('role', GuestRole::PARTNER_B->value)
+            ->first();
+
         return Inertia::render('user/seat-plan', [
             'seatPlanId' => $seat_plan->id,
             'initialAllocations' => $seat_plan->layout['allocations'] ?? [],
             'initialTablePositions' => $seat_plan->layout['tablePositions'] ?? [],
             'venueLayersLayout' => $venueLayer,
             'guests' => Guest::where('wedding_id', $wedding->id)->with('groups')->get(),
-            'conflicts' => $wedding->conflicts()->with(['guestA', 'guestB'])->get(),
+            'conflicts' => $wedding->guestConflicts()->with(['guestA', 'guestB'])->get(),
+            'lockedGuests' => array_values(array_filter([$partnerA?->id, $partnerB?->id]))
         ]);
     }
 
@@ -137,5 +163,55 @@ class SeatplanController extends Controller
             'type' => 'success',
             'message' => 'Seat plan deleted successfully.',
         ]);
+    }
+
+    private function ensurePartnerSeated(array $layout, $venueLayer, $wedding)
+    {
+        $allocations = $layout['allocations'] ?? [];
+
+        $partnerA = $wedding->guests()->where('role', GuestRole::PARTNER_A->value)->first();
+        $partnerB = $wedding->guests()->where('role', GuestRole::PARTNER_B->value)->first();
+
+        if (!$partnerA && !$partnerB) {
+            return $layout;
+        }
+
+        $topTable = null;
+
+        foreach ($venueLayer->table_data as $table) {
+            if (($table['type'] ?? '') === 'top') {
+                $topTable = $table;
+                break;
+            }
+        }
+        if (!$topTable) {
+            return $layout;
+        }
+
+        $tableId = $topTable['id'];
+
+        foreach ($allocations as $tId => $tableSeats) {
+            foreach ($tableSeats as $seatIndex => $guestId) {
+                if (($partnerA && (int)$guestId === (int)$partnerA->id) || ($partnerB && (int)$guestId === (int)$partnerB->id)) {
+                    unset($allocations[$tId][$seatIndex]);
+                }
+            }
+        }
+
+        $allocations[$tableId] ??= [];
+
+        $totalSeats = ($topTable['seats_per_side'] * 2) + 2;
+        $brideIndex = (int) floor($totalSeats / 2) - 1;
+        $groomIndex = (int) floor($totalSeats / 2);
+
+        if ($partnerA) {
+            $allocations[$tableId][$brideIndex] = (string) $partnerA->id;
+        }
+        if ($partnerB) {
+            $allocations[$tableId][$groomIndex] = (string) $partnerB->id;
+        }
+        $layout['allocations'] = $allocations;
+
+        return $layout;
     }
 }

@@ -1,5 +1,5 @@
 import { useHistoryState } from '@/pages/components/seatplans/hooks/useHistoryState';
-import { Table } from '@/types';
+import { RoundTable, Table, TopTable } from '@/types';
 import { useCallback, useMemo, useState } from 'react';
 
 export function useBaseCanvasEditor(initialTables: Table[]) {
@@ -11,6 +11,13 @@ export function useBaseCanvasEditor(initialTables: Table[]) {
         history,
         index,
     } = useHistoryState(initialTables);
+
+    type RoundTableUpdate = Partial<RoundTable>;
+    type TopTableUpdate = Partial<TopTable>;
+
+    type TableUpdate =
+        | { id: string; type: 'round'; updates: RoundTableUpdate }
+        | { id: string; type: 'top'; updates: TopTableUpdate };
 
     const [selectedTableIds, setSelectedTableIds] = useState<string[]>([]);
     const selectedId = selectedTableIds[0] ?? null;

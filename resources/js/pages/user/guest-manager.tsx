@@ -1,9 +1,3 @@
-import AddGuestToGroup from '../components/guest-group/add-guest-to-group';
-import CreateGuest from '../components/guests/create-guest';
-import DeleteGuest from '../components/guests/delete-guest';
-import EditGuest from '../components/guests/edit-guest';
-import GuestStatusBadge from '../components/guests/guest-status-badge';
-import GuestlistUpload from '../components/guests/guestlist-upload';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -19,6 +13,12 @@ import { BreadcrumbItem, Group, Guest, MenuItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import AddGuestToGroup from '../components/guest-group/add-guest-to-group';
+import CreateGuest from '../components/guests/create-guest';
+import DeleteGuest from '../components/guests/delete-guest';
+import EditGuest from '../components/guests/edit-guest';
+import GuestStatusBadge from '../components/guests/guest-status-badge';
+import GuestlistUpload from '../components/guests/guestlist-upload';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -83,7 +83,7 @@ export default function GuestManager({
                                 variant={'outline'}
                                 onClick={() => setImportOpen(true)}
                             >
-                                Import Guests via File
+                                Import Guests
                             </Button>
                             <GuestlistUpload
                                 onImport={(guestList) => {
@@ -95,7 +95,7 @@ export default function GuestManager({
                                 setOpen={setImportOpen}
                             />
                         </div>
-                        <Table className="mt-4">
+                        <Table className="mt-4 w-full table-fixed">
                             <TableHeader>
                                 <TableRow className="text-guestplan">
                                     <TableHead className="text-left font-bold">
@@ -109,12 +109,12 @@ export default function GuestManager({
                                     <TableHead className="text-right font-bold">
                                         <span className="text-xl">Status</span>
                                     </TableHead>
-                                    <TableHead className="text-right font-bold">
+                                    <TableHead className="text-center font-bold">
                                         <span className="text-xl">Notes</span>
                                     </TableHead>
                                     <TableHead className="text-center font-bold">
                                         <span className="text-xl">
-                                            Grouping Actions
+                                            Quick-Group
                                         </span>
                                     </TableHead>
                                     <TableHead className="text-right font-bold">
@@ -134,7 +134,7 @@ export default function GuestManager({
                                                     guest.menu_item_id,
                                                 )}
                                             </TableCell>
-                                            <TableCell className="text-centre">
+                                            <TableCell className="text-right">
                                                 <GuestStatusBadge
                                                     guest={guest}
                                                     status={guest.status}
@@ -166,17 +166,20 @@ export default function GuestManager({
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <Button
-                                                        variant="brand"
+                                                        variant="ghost"
                                                         size="icon"
-                                                        onClick={() =>
-                                                            handleEdit(guest)
-                                                        }
+                                                        className="text-amber-400"
+                                                        onClick={() => {
+                                                            if (!guest) return;
+                                                            handleEdit(guest);
+                                                        }}
                                                     >
                                                         <Edit />
                                                     </Button>
                                                     <Button
-                                                        variant="brand"
+                                                        variant="ghost"
                                                         size="icon"
+                                                        className="text-destructive"
                                                         onClick={() => {
                                                             if (!guest.id)
                                                                 return;

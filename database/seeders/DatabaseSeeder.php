@@ -144,7 +144,25 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+
         $userWedding->menuItems()->sync($menuItems->pluck('id'));
+
+        $partnerA = Guest::create([
+            'name' => $userWedding->partnerA_firstname . ' ' . $userWedding->partnerA_lastname,
+            'wedding_id' => $userWedding->id,
+            'status' => GuestStatus::CONFIRMED,
+            'role' => \App\GuestRole::PARTNER_A->value,
+            'menu_item_id' => $userWedding->menuItems->random()->id,
+        ]);
+
+        $partnerB = Guest::create([
+            'name' => $userWedding->partnerB_firstname . ' ' . $userWedding->partnerB_lastname,
+            'wedding_id' => $userWedding->id,
+            'status' => GuestStatus::CONFIRMED,
+            'role' => \App\GuestRole::PARTNER_B->value,
+            'menu_item_id' => $userWedding->menuItems->random()->id,
+        ]);
+
 
         //Create Groups
         $groups = collect(['Family (Partner A)', 'Family (Partner B)', 'Bridsmaids', 'Groomsmen', 'Friends of Partner A', 'Friends of Partner B'])->map(fn ($name) => Group::firstOrCreate(
@@ -160,6 +178,7 @@ class DatabaseSeeder extends Seeder
                 'wedding_id' => $regularUser->wedding->id,
                 'status' =>  GuestStatus::CONFIRMED,
                 'menu_item_id' => $userWedding->menuItems->random()->id,
+                'role' => \App\GuestRole::NORMAL->value,
                 'notes' => (random_int(1, 5) === 1 ? fake()->sentence() : null)
             ]);
         }

@@ -1,22 +1,25 @@
-import { Circle, Group, Text } from 'react-konva';
+import { Arc, Circle, Group, Text } from 'react-konva';
 import { Guest } from 'resources/js/types';
-import { resolveSeatStyle, canvasColours, isDarkMode } from '@/pages/components/seatplans/utils/seatStyle';
+import { resolveSeatStyle, canvasColours, isDarkMode } from '@/pages/shared/hooks/seatStyle';
 import { useAppearance } from '@/hooks/use-appearance';
-import { SEAT_RADIUS } from '@/pages/components/seatplans/utils/getSeatPosition';
+import { SEAT_RADIUS } from '@/pages/shared/hooks/getSeatPosition';
 
 
 interface SeatProps {
+    seatId: string;
     guest: Guest | null;
     isSelected: boolean;
+    isActiveGuestAssignment?: boolean;
     isReserved: boolean;
     onClick: () => void;
     x?: number;
     y?: number;
 }
-
 export default function Seat({
+    seatId,
     guest,
     isSelected,
+    isActiveGuestAssignment = false,
     isReserved,
     onClick,
     x,
@@ -31,42 +34,65 @@ export default function Seat({
           (guest.name.split(' ')[1]?.[0] ?? '')
         : '';
 
-    const seatFill = resolveSeatStyle({ guest, isSelected, isReserved, appearance})
+    const seatFill = resolveSeatStyle({
+        guest,
+        isSelected : isReserved ? false : isSelected,
+        isActiveGuestAssignment: isReserved ? false : isActiveGuestAssignment,
+        isReserved,
+        appearance,
+    });
+    const groupColours = guest?.groups?.map((group) => group.colour) ?? [];
+
+
     const strokeColor = theme.seat.stroke;
     const textColor = theme.textOnSeat;
 
+    const isCoupleLocked = guest?.role === 'partner_a' || guest?.role === 'partner_b';
+
+
     return (
-        <Group x={x} y={y} onClick={onClick}>
+        <Group x={x} y={y} onClick={() => {
+            if (isCoupleLocked) return;
+            onClick();
+        }} name={seatId}>
             <Circle
+                name={seatId}
                 radius={SEAT_RADIUS}
                 fill={seatFill}
-                stroke={strokeColor}
-                strokeWidth={1}
+                stroke={
+                    groupColours.length === 1 ? groupColours[0] : strokeColor
+                }
+                strokeWidth={groupColours.length <= 1 ? 3 : 1}
+
             />
-            {guest && (
+            {/* Adds Group Colour Arcs */}
+            {groupColours.length > 1 &&
+                groupColours.map((colour, index) => {
+                    const angle = 360 / groupColours.length;
+
+                    return (
+                        <Arc
+                            key={`${seatId}-${index}`}
+                            innerRadius={SEAT_RADIUS - 3}
+                            outerRadius={SEAT_RADIUS}
+                            angle={angle}
+                            rotation={angle * index}
+                            fill={colour}
+                        />
+                    );
+                })}
+            {/* Guest Initials */}
+            {(guest || isReserved) && (
                 <Text
                     text={guestInitials}
                     fontSize={12}
-                    fill={textColor}
+                    fill={isCoupleLocked ? theme.indicators.brideGroom : textColor}
                     align={'center'}
                     verticalAlign={'middle'}
                     width={SEAT_RADIUS * 2}
                     height={SEAT_RADIUS * 2}
                     offsetY={SEAT_RADIUS}
                     offsetX={SEAT_RADIUS}
-                />
-            )}
-            {isReserved && (
-                <Text
-                text={'R'}
-                fontSize={12}
-                fill={textColor}
-                align={'center'}
-                verticalAlign={'middle'}
-                width={SEAT_RADIUS * 2}
-                height={SEAT_RADIUS * 2}
-                offsetY={SEAT_RADIUS}
-                offsetX={SEAT_RADIUS}
                 />
             )}
         </Group>
