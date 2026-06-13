@@ -25,6 +25,7 @@ class Wedding extends Model
         'name',
         'priority',
         'description',
+        'colour',
     ];
 
     public function venue(): BelongsTo

@@ -148,8 +148,10 @@ class DatabaseSeeder extends Seeder
 
         //Create Groups
         $groups = collect(['Family (Partner A)', 'Family (Partner B)', 'Bridsmaids', 'Groomsmen', 'Friends of Partner A', 'Friends of Partner B'])->map(fn ($name) => Group::firstOrCreate(
-                ['wedding_id' => $regularUser->wedding->id, 'name' => $name, 'priority' => random_int(4, 10)],
+                ['wedding_id' => $regularUser->wedding->id, 'name' => $name, 'priority' => random_int(4, 10), 'colour' => fake()->hexColor(), 'description' => null],
             ));
+
+
         //Create Guests
         $guests = [];
         for ($i = 0; $i < 80; $i++) {

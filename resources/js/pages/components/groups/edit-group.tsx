@@ -8,11 +8,12 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Group } from 'resources/js/types';
+import ColourPicker from '@/pages/shared/ColourPicker';
+import groups from '@/routes/groups';
+import { Textarea } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
-import { Textarea } from '@headlessui/react';
-import groups from '@/routes/groups';
+import { Group } from 'resources/js/types';
 
 export default function EditGroup({
     open,
@@ -26,19 +27,20 @@ export default function EditGroup({
     const { data, setData, put, processing, reset, errors } = useForm<
         Partial<Group>
     >({
-        name: group?.name || '',
-        description: group?.description || '',
-        priority: group?.priority || 0,
+        name: '',
+        description: '',
+        priority: 0,
+        colour: '',
     });
 
     useEffect(() => {
-        if (group) {
-            setData({
-                name: group.name,
-                description: group.description || '',
-                priority: group.priority,
-            });
-        }
+        if (!group) return;
+        setData({
+            name: group.name ?? '',
+            description: group.description || '',
+            priority: group.priority ?? 0,
+            colour: group.colour ?? '',
+        });
     }, [group, setData]);
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
@@ -112,6 +114,19 @@ export default function EditGroup({
                         {errors.description && (
                             <span className="text-sm text-destructive">
                                 {errors.description}
+                            </span>
+                        )}
+                    </div>
+
+                    <div className="grid gap-2">
+                        <label htmlFor="colour">Colour</label>
+                        <ColourPicker
+                            value={data.colour ?? ''}
+                            onChange={(col) => setData('colour', col)}
+                        />
+                        {errors.colour && (
+                            <span className="text-sm text-destructive">
+                                {errors.colour}
                             </span>
                         )}
                     </div>

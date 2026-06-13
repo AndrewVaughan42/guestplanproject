@@ -34,7 +34,10 @@ export function TableSidebar({ table, onUpdate, onDelete }: TableSidebarProps) {
                             onChange={(e) => {
                                 onUpdate(
                                     'seat_minimum',
-                                    Number(e.target.value),
+                                    Math.max(
+                                        Number(e.target.value),
+                                        table.seat_minimum,
+                                    ),
                                 );
                             }}
                             className={'w-16 rounded border bg-background p-1'}
@@ -47,7 +50,16 @@ export function TableSidebar({ table, onUpdate, onDelete }: TableSidebarProps) {
                             type={'number'}
                             value={table.seat_count}
                             onChange={(e) => {
-                                onUpdate('seat_count', Number(e.target.value));
+                                onUpdate(
+                                    'seat_count',
+                                    Math.max(
+                                        table.seat_minimum,
+                                        Math.min(
+                                            table.seat_maximum,
+                                            Number(e.target.value),
+                                        ),
+                                    ),
+                                );
                             }}
                             className={'w-16 rounded border bg-background p-1'}
                         />
@@ -61,7 +73,7 @@ export function TableSidebar({ table, onUpdate, onDelete }: TableSidebarProps) {
                             onChange={(e) => {
                                 onUpdate(
                                     'seat_maximum',
-                                    Number(e.target.value),
+                                    Math.max(Number(e.target.value), table.seat_minimum),
                                 );
                             }}
                             className={'w-16 rounded border bg-background p-1'}

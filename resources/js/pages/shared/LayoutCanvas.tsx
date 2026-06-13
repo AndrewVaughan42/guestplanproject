@@ -1,6 +1,10 @@
 import { Table } from '@/types';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { useEffect, useRef, useState } from 'react';
+import React, {
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { Layer, Stage } from 'react-konva';
 
 interface LayoutCanvasProps {
@@ -9,15 +13,20 @@ interface LayoutCanvasProps {
     setScale: (scale: number) => void;
     setPos: (pos: { x: number; y: number }) => void;
     handleWithScrollWheel: (e: KonvaEventObject<WheelEvent>) => void;
-    centreTables: (tables: Table[], dimensions: { width: number; height: number }) => void;
+    centreTables: (
+        tables: Table[],
+        dimensions: { width: number; height: number },
+    ) => void;
     tables: Table[];
     selectedId: string | null;
     onSelect: (id: string | null) => void;
     onMove: (id: string, x: number, y: number) => void;
     setPosition: (pos: { x: number; y: number }) => void;
     children?: React.ReactNode;
-    onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
-    onDragOver?: (e: React.DragEvent<HTMLDivElement>) => void;
+    onContextMenu?: (e: KonvaEventObject<PointerEvent>) => void;
+    onSelectTable?: (
+        value: ((prevState: string | null) => string | null) | string | null,
+    ) => void;
 }
 export function LayoutCanvas({
     tables,
@@ -28,8 +37,7 @@ export function LayoutCanvas({
     handleWithScrollWheel,
     centreTables,
     children,
-    onDrop,
-    onDragOver,
+    onContextMenu,
 }: LayoutCanvasProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -47,7 +55,6 @@ export function LayoutCanvas({
         return () => window.removeEventListener('resize', updateSize);
     }, []);
 
-
     useEffect(() => {
         if (tables.length > 0 && dimensions.width > 0 && !hasCentered.current) {
             centreTables(tables, dimensions);
@@ -63,8 +70,6 @@ export function LayoutCanvas({
             ref={containerRef}
             className={'h-full w-full border border-border'}
             style={{ cursor: isPanning ? 'grabbing' : 'default' }}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
         >
             <Stage
                 width={width}
@@ -102,10 +107,9 @@ export function LayoutCanvas({
                 onClick={(e) => {
                     if (e.target === e.target.getStage()) onSelect(null);
                 }}
+                onContextMenu={onContextMenu}
             >
-                <Layer>
-                    {children}
-                </Layer>
+                <Layer>{children}</Layer>
             </Stage>
         </div>
     );

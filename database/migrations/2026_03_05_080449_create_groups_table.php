@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->string('name');
             $table->integer('priority')->default(5);
             $table->text('description')->nullable();
+            $table->string('colour');
             $table->foreignId('wedding_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

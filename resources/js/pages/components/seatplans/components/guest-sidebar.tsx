@@ -5,10 +5,14 @@ import { Guest } from 'resources/js/types';
 interface GuestSidebarProps {
     guests: Guest[];
     conflictsWithAssigned?: Set<number>;
+    activeGuestId?: number | null;
+    onGuestClick?: (guestId: number) => void;
 }
 export default function GuestSidebar({
     guests,
     conflictsWithAssigned,
+    activeGuestId,
+    onGuestClick,
 }: GuestSidebarProps) {
     const [search, setSearch] = useState('');
 
@@ -37,20 +41,24 @@ export default function GuestSidebar({
                     filteredGuests.map((guest) => (
                         <div
                             key={guest.id}
-                            draggable
-                            onDragStart={(e) => {
-                                e.dataTransfer.setData(
-                                    'guest_id',
-                                    String(guest.id),
-                                );
-                            }}
-                            className={`cursor-grab rounded-lg border border-sidebar-border p-2 text-sm shadow-sm hover:bg-accent active:cursor-grabbing ${
-                                conflictsWithAssigned?.has(guest.id)
-                                    ? 'border-red-200 bg-red-50 text-red-700'
-                                    : 'bg-card'
+                            onClick={() => onGuestClick?.(guest.id)}
+                            className={`cursor-pointer rounded-lg border p-2 text-sm shadow-sm transition-colors hover:bg-accent ${
+                                activeGuestId === guest.id
+                                    ? 'border-primary bg-primary/10 ring-2 ring-primary ring-inset'
+                                    : 'border-sidebar-border bg-card'
                             }`}
                         >
                             <span>{guest.name}</span>
+                            <div className="flex justify-between ">
+                                {guest.groups?.map((group) => (
+                                    <span
+                                    key={group.id}
+                                    title={group.name}
+                                    className={"h-5 w-5 rounded-full border"}
+                                    style={{backgroundColor: group.colour}}>
+                                    </span>
+                                ))}
+                            </div>
                         </div>
                     ))
                 ) : (

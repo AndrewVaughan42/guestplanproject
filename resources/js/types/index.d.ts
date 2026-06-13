@@ -97,6 +97,7 @@ export interface Guest {
     menu_item_id: number | null;
     status: GuestStatus;
     notes: string | null;
+    groups?: Group[];
 }
 
 export interface Group {
@@ -106,6 +107,7 @@ export interface Group {
     description: string | null;
     wedding_id?: number;
     guests_count: number;
+    colour: string;
 }
 export interface GuestConflict {
     id: number;
@@ -141,8 +143,7 @@ export interface TopTable extends BaseTable {
 }
 export type Table = RoundTable | TopTable;
 
-export type TableAllocation = Record<string, number>;
-export type Allocations = Record<string, TableAllocation>;
+export type Allocations = Record<string, Record<string, number | null>>;
 
 export type VenueLayer = {
     id: number;

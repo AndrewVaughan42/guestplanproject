@@ -45,7 +45,7 @@ export const canvasColours = {
             special: '#334155',
         },
         text: '#f8fafc',
-        textOnSeat: '#0f172a', // High contrast text for seat initials
+        textOnSeat: '#f8fafc', // High contrast text for seat initials
         indicators: {
             conflict: 'red',
             minimum: '#ef4444',
@@ -54,27 +54,24 @@ export const canvasColours = {
     }
 } as const;
 
-/**
- * Utility to determine if dark mode is active
- */
 export const isDarkMode = (appearance?: Appearance) => {
     return appearance === 'dark' || (appearance === 'system' && typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 };
 
-/**
- * Resolves seat style based on state and theme
- */
+
 export function resolveSeatStyle(params: {
     guest: Guest | null;
     isSelected: boolean;
+    isActiveGuestAssignment?: boolean;
     isReserved: boolean;
     appearance?: Appearance;
 }) {
     const theme = isDarkMode(params.appearance) ? canvasColours.dark : canvasColours.light;
     const colors = theme.seat;
 
-    if (params.isReserved) return colors.reserved;
     if (params.guest) return colors.occupied;
     if (params.isSelected) return colors.selected;
+    if (params.isActiveGuestAssignment) return '#bbf7d0'; // Light green for assignable
+    if (params.isReserved) return colors.reserved;
     return colors.empty;
 }

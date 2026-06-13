@@ -41,11 +41,11 @@ class Guest extends Model
     }
 
     public function conflictAsA(): HasMany {
-        return $this->hasMany(Guest::class, 'guest_conflict', 'guest_a_id');
+        return $this->hasMany(GuestConflict::class, 'guest_a_id');
     }
 
     public function conflictAsB(): HasMany {
-        return $this->hasMany(Guest::class, 'guest_conflict', 'guest_a_id');
+        return $this->hasMany(GuestConflict::class, 'guest_a_id');
     }
 
     public function conflictWith() {

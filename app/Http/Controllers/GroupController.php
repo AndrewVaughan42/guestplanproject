@@ -21,7 +21,7 @@ class GroupController extends Controller
 
         return Inertia::render('user/guest-groupings', [
             'groups' => Group::where('wedding_id', $wedding->id)
-                ->withCount('guests')->get()
+                ->withCount('guests')->orderByDesc('priority')->get(),
         ]);
 
     }
@@ -39,7 +39,8 @@ class GroupController extends Controller
         $data = $request->validate([
             'name' => ['required'],
             'priority' => ['required', 'integer', 'min:1', 'max:10'],
-            'description' => ['nullable']
+            'description' => ['nullable'],
+            'colour' => ['required', 'string', 'min:7', 'max:7'],
         ]);
 
         $data['wedding_id'] = $wedding->id;
@@ -75,7 +76,8 @@ class GroupController extends Controller
         $data = $request->validate([
             'name' => ['required'],
             'priority' => ['required', 'integer', 'min:1', 'max:10'],
-            'description' => ['nullable']
+            'description' => ['nullable'],
+            'colour' => ['required', 'string', 'min:7', 'max:7'],
         ]);
 
         $group->update($data);

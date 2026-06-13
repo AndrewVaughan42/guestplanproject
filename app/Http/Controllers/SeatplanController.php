@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guest;
 use App\Models\Seatplan;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Laravel\Wayfinder\Route;
@@ -12,7 +14,7 @@ class SeatplanController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $wedding = auth()->user()->wedding;
+        $wedding = $user->wedding;
         if (!$wedding) {
             return redirect()->route('dashboard')->with('flash', [
                 'type' => 'error',
@@ -28,23 +30,23 @@ class SeatplanController extends Controller
             ]);
         }
 
-        $seatplan = $wedding->seatplan()->firstorCreate([
+        $seat_plan = Seatplan::firstorCreate([
             'wedding_id' => $wedding->id,
         ], [
+            'wedding_id' => $wedding->id,
             'user_id' => $user->id,
             'name' => $wedding->partnerA_firstname . ' & ' . $wedding->partnerB_firstname . ' Seatplan',
             'layout' => ['allocations' => [], 'tablePositions' => []],
-            'venue_layer_id' => $wedding->venue->venueLayers()->first()->id,
+            'venue_layer_id' => $venueLayer->id,
         ]);
 
 
-
         return Inertia::render('user/seat-plan', [
-            'seatplanId' => $seatplan->id,
-            'initialAllocations' => $seatplan->layout['allocations'] ?? [],
-            'initialTablePositions' => $seatplan->layout['tablePositions'] ?? [],
+            'seatPlanId' => $seat_plan->id,
+            'initialAllocations' => $seat_plan->layout['allocations'] ?? [],
+            'initialTablePositions' => $seat_plan->layout['tablePositions'] ?? [],
             'venueLayersLayout' => $venueLayer,
-            'guests' => $wedding->guests,
+            'guests' => Guest::where('wedding_id', $wedding->id)->with('groups')->get(),
             'conflicts' => $wedding->guestConflicts()->with(['guestA', 'guestB'])->get(),
         ]);
     }
@@ -65,10 +67,10 @@ class SeatplanController extends Controller
         return Seatplan::create($data);
     }
 
-    public function show(Seatplan $seatplan)
+    public function show(Seatplan $seat_plan)
     {
         $user = auth()->user();
-        if ($seatplan->wedding_id !== $user->wedding?->id) {
+        if ($seat_plan->wedding_id !== $user->wedding?->id) {
             return redirect()->back()->with('flash', [
                 'type' => 'error',
                 'message' => 'You are not authorized to view this seat plan.',
@@ -79,25 +81,28 @@ class SeatplanController extends Controller
         $venueLayer = $wedding->venue->venueLayers()->first();
 
         if (!$venueLayer) {
-            return redirect()->route('task-list')->with('flash', [
+            return redirect()->back()->with('flash', [
                 'type' => 'error',
                 'message' => 'No venue layout found. Please contact your coordinator.',
             ]);
         }
 
         return Inertia::render('user/seat-plan', [
-            'seatPlanId' => $seatplan->id,
-            'initialAllocations' => $seatplan->layout['allocations'] ?? [],
-            'initialTablePositions' => $seatplan->layout['tablePositions'] ?? [],
+            'seatPlanId' => $seat_plan->id,
+            'initialAllocations' => $seat_plan->layout['allocations'] ?? [],
+            'initialTablePositions' => $seat_plan->layout['tablePositions'] ?? [],
             'venueLayersLayout' => $venueLayer,
-            'guests' => $wedding->guests,
+            'guests' => Guest::where('wedding_id', $wedding->id)->with('groups')->get(),
             'conflicts' => $wedding->conflicts()->with(['guestA', 'guestB'])->get(),
         ]);
     }
 
-    public function update(Request $request, Seatplan $seatplan)
+    public function update(Request $request, Seatplan $seat_plan): RedirectResponse
     {
-        if ($seatplan->wedding_id !== auth()->user()->wedding?->id) {
+        $user = auth()->user();
+        $wedding = $user->wedding;
+
+        if ($seat_plan->wedding_id !== $wedding->id && $seat_plan->user_id !== auth()->id()) {
             return redirect()->back()->with('flash', [
                 'type' => 'error',
                 'message' => 'You are not authorized to edit this seat plan.',
@@ -106,24 +111,31 @@ class SeatplanController extends Controller
 
         $data = $request->validate([
             'layout' => ['required'],
+            'layout.allocations' => ['required'],
         ]);
 
-        $seatplan->update($data);
+        $seat_plan->update($data);
 
-        return $seatplan;
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Seat plan updated successfully.',
+        ]);
     }
 
-    public function destroy(Seatplan $seatplan)
+    public function destroy(Seatplan $seat_plan): RedirectResponse
     {
-        if ($seatplan->wedding_id !== auth()->user()->wedding?->id) {
+        if ($seat_plan->wedding_id !== auth()->user()->wedding?->id) {
             return redirect()->back()->with('flash', [
                 'type' => 'error',
                 'message' => 'You are not authorized to delete this seat plan.',
             ]);
         }
 
-        $seatplan->delete();
+        $seat_plan->delete();
 
-        return response()->json();
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Seat plan deleted successfully.',
+        ]);
     }
 }

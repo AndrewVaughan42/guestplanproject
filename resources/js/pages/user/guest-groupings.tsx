@@ -1,6 +1,3 @@
-import CreateGroup from '../components/groups/create-group';
-import EditGroup from '../components/groups/edit-group';
-import DeleteGroup from '../components/groups/delete-group';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -14,13 +11,22 @@ import AppLayout from '@/layouts/app-layout';
 import groups from '@/routes/groups';
 import { BreadcrumbItem, Group } from '@/types';
 import { Head } from '@inertiajs/react';
-import React from 'react';
 import { Edit, Trash2 } from 'lucide-react';
+import React from 'react';
+import CreateGroup from '../components/groups/create-group';
+import DeleteGroup from '../components/groups/delete-group';
+import EditGroup from '../components/groups/edit-group';
 
-export default function GuestGroupings({ groups: groupList }: { groups: Group[] }) {
+export default function GuestGroupings({
+    groups: groupList,
+}: {
+    groups: Group[];
+}) {
     const [open, setOpen] = React.useState(false);
     const [editOpen, setEditOpen] = React.useState(false);
-    const [selectedGroup, setSelectedGroup] = React.useState<Group | null>(null);
+    const [selectedGroup, setSelectedGroup] = React.useState<Group | null>(
+        null,
+    );
 
     const handleEdit = (group: Group) => {
         setSelectedGroup(group);
@@ -57,6 +63,9 @@ export default function GuestGroupings({ groups: groupList }: { groups: Group[] 
                                         Group Name
                                     </TableHead>
                                     <TableHead className="text-xl font-bold">
+                                        Colour
+                                    </TableHead>
+                                    <TableHead className="text-xl font-bold">
                                         Priority
                                     </TableHead>
                                     <TableHead className="text-xl font-bold">
@@ -86,6 +95,13 @@ export default function GuestGroupings({ groups: groupList }: { groups: Group[] 
                                             <TableCell className="font-medium">
                                                 {group.name}
                                             </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    <span className={"h-4 w-4 rounded-full border"} style={{ backgroundColor: group.colour }}>
+
+                                                    </span>
+                                                </div>
+                                            </TableCell>
                                             <TableCell className="capitalize">
                                                 {group.priority}
                                             </TableCell>
@@ -96,25 +112,31 @@ export default function GuestGroupings({ groups: groupList }: { groups: Group[] 
                                                 {group.guests_count}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <Button
-                                                    variant="brand"
-                                                    size="sm"
-                                                    onClick={() =>
-                                                        handleEdit(group)
-                                                    }
-                                                >
-                                                    <Edit />
-                                                </Button>
-                                                <Button
-                                                    variant="brand"
-                                                    size="sm"
-                                                    className="text-destructive"
-                                                    onClick={() =>
-                                                        DeleteGroup(group.id)
-                                                    }
-                                                >
-                                                    <Trash2 />
-                                                </Button>
+                                                <div className="flex justify-end gap-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-amber-400"
+                                                        onClick={() =>
+                                                            handleEdit(group)
+                                                        }
+                                                    >
+                                                        <Edit />
+                                                    </Button>
+
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-destructive"
+                                                        onClick={() =>
+                                                            DeleteGroup(
+                                                                group.id,
+                                                            )
+                                                        }
+                                                    >
+                                                        <Trash2 />
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -122,7 +144,7 @@ export default function GuestGroupings({ groups: groupList }: { groups: Group[] 
                             </TableBody>
                         </Table>
                     </div>
-                    <CreateGroup open={open} setOpen={setOpen} />
+                    <CreateGroup open={open} setOpen={setOpen} existingGroups={ groupList} />
                     <EditGroup
                         open={editOpen}
                         setOpen={setEditOpen}
