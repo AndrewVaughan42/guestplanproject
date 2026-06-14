@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\GuestRole;
 use App\GuestStatus;
 use App\Models\Group;
 use App\Models\Guest;
@@ -48,8 +49,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-
-
         //User Account For Testing
         $regularUser = User::firstOrCreate(
             ['email' => 'user@laravel.com'],
@@ -81,13 +80,9 @@ class DatabaseSeeder extends Seeder
         $adminUser->venues()->syncWithoutDetaching([$fh->id, $sfh->id]);
 
         $menuItems = collect([
-            ['name' => 'Bread', 'description' => 'Baked bread, easy on the dough', 'is_plant_based' => false],
             ['name' => 'Roast Beef', 'description' => 'Roasted Beef, with a side of veg', 'is_plant_based' => false],
             ['name' => 'Chicken Casserole', 'description' => 'Chicken Casserole, recommended by the Chef', 'is_plant_based' => false],
             ['name' => 'Tofu', 'description' => "It's Tofu!", 'is_plant_based' => true],
-            ['name' => 'Caesar Salad', 'description' => 'For those who long for the forest', 'is_plant_based' => true],
-            ['name' => 'Fish and Chips', 'description' => 'Fish and Chips, with a side of chips', 'is_plant_based' => false],
-            ['name' => 'Gravlax', 'description' => 'Salmon, cured in salt and sugar', 'is_plant_based' => false],
         ])->map(fn ($item) => MenuItem::firstOrCreate(
             ['venue_id' => $fh->id, 'name' => $item['name']],
             ['description' => $item['description'], 'is_plant_based' => $item['is_plant_based'],]
@@ -108,8 +103,7 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
-        // 12 Round Tables
-        for ($i = 1; $i <= $maxTables; $i++) {
+        for ($i = 1; $i <= $maxTables - 1; $i++) {
             $tableData[] = [
                 'id' => Str::uuid(),
                 'type' => 'round',
@@ -125,13 +119,91 @@ class DatabaseSeeder extends Seeder
         }
 
         $venueLayer = VenueLayer::updateOrCreate(
-            ['name' => 'Fairyhill Standard Layout', 'venue_id' => $fh->id],
+            ['name' => 'Fairyhill - 11 Tables', 'venue_id' => $fh->id],
             [
                 'user_id' => $adminUser->id,
                 'table_data' => $tableData
             ]
         );
 
+        $tableData2 = [
+            // Top Table first
+            [
+                'id' => Str::uuid(),
+                'type' => 'top',
+                'name' => 'Top Table',
+                'x' => 475,
+                'y' => 100,
+                'rotation' => 0,
+                'seats_per_side' => 4,
+                'seat_minimum' => 8,
+                'locked' => true,
+            ],
+        ];
+
+        for ($i = 1; $i <= $maxTables; $i++) {
+            $tableData2[] = [
+                'id' => Str::uuid(),
+                'type' => 'round',
+                'name' => 'Table ' . $i,
+                'x' => 150 + (($i - 1) % 3) * 325,
+                'y' => 350 + floor(($i - 1) / 3) * 325,
+                'rotation' => 0,
+                'seat_count' => 8,
+                'seat_minimum' => 6,
+                'seat_maximum' => 10,
+                'locked' => true,
+            ];
+        }
+
+        $venueLayer = VenueLayer::updateOrCreate(
+            ['name' => 'Fairyhill - 12 Tables', 'venue_id' => $fh->id],
+            [
+                'user_id' => $adminUser->id,
+                'table_data' => $tableData2
+            ]
+        );
+
+        $tableData3 = [
+            // Top Table first
+            [
+                'id' => Str::uuid(),
+                'type' => 'top',
+                'name' => 'Top Table',
+                'x' => 475,
+                'y' => 100,
+                'rotation' => 0,
+                'seats_per_side' => 4,
+                'seat_minimum' => 8,
+                'locked' => true,
+            ],
+        ];
+
+        for ($i = 1; $i <= $maxTables + 1; $i++) {
+            $tableData3[] = [
+                'id' => Str::uuid(),
+                'type' => 'round',
+                'name' => 'Table ' . $i,
+                'x' => 150 + (($i - 1) % 3) * 325,
+                'y' => 350 + floor(($i - 1) / 3) * 325,
+                'rotation' => 0,
+                'seat_count' => 8,
+                'seat_minimum' => 6,
+                'seat_maximum' => 10,
+                'locked' => true,
+            ];
+        }
+
+        $venueLayer = VenueLayer::updateOrCreate(
+            ['name' => 'Fairyhill - 13 Tables', 'venue_id' => $fh->id],
+            [
+                'user_id' => $adminUser->id,
+                'table_data' => $tableData3
+            ]
+        );
+
+
+        //User Wedding
         $userWedding = Wedding::firstOrCreate(
             ['user_id' => $regularUser->id],
             [
@@ -151,7 +223,7 @@ class DatabaseSeeder extends Seeder
             'name' => $userWedding->partnerA_firstname . ' ' . $userWedding->partnerA_lastname,
             'wedding_id' => $userWedding->id,
             'status' => GuestStatus::CONFIRMED,
-            'role' => \App\GuestRole::PARTNER_A->value,
+            'role' => GuestRole::PARTNER_A->value,
             'menu_item_id' => $userWedding->menuItems->random()->id,
         ]);
 
@@ -159,7 +231,7 @@ class DatabaseSeeder extends Seeder
             'name' => $userWedding->partnerB_firstname . ' ' . $userWedding->partnerB_lastname,
             'wedding_id' => $userWedding->id,
             'status' => GuestStatus::CONFIRMED,
-            'role' => \App\GuestRole::PARTNER_B->value,
+            'role' => GuestRole::PARTNER_B->value,
             'menu_item_id' => $userWedding->menuItems->random()->id,
         ]);
 
@@ -178,7 +250,7 @@ class DatabaseSeeder extends Seeder
                 'wedding_id' => $regularUser->wedding->id,
                 'status' =>  GuestStatus::CONFIRMED,
                 'menu_item_id' => $userWedding->menuItems->random()->id,
-                'role' => \App\GuestRole::NORMAL->value,
+                'role' => GuestRole::NORMAL->value,
                 'notes' => (random_int(1, 5) === 1 ? fake()->sentence() : null)
             ]);
         }
@@ -204,5 +276,16 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+    }
+    private function quickLayerMaker( array $baseData, int $roundTableCount): array {
+        $result = [];
+
+        foreach ($baseData as $table) {
+            if ($table['type'] === 'top') {
+                $result[] = $table;
+            }
+        }
+        $roundTables = collect($baseData)->where('type', 'round')->take($roundTableCount)->values()->toArray();
+        return array_merge($result, $roundTables);
     }
 }
