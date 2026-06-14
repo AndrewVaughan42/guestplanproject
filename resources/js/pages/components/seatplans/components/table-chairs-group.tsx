@@ -26,6 +26,10 @@ interface TableChairsGroupProps {
     onDragEnd: (tableId: string, x: number, y: number) => void;
     onSeatClick: (seatId: string, isBrideOrGroom: boolean) => void;
     onSelectTable: (tableId: string | null) => void;
+    selectedAllocatedSeat?: {
+        tableId: string,
+        seatIndex: number,
+    } | null;
 }
 
 export default function TableChairsGroup({
@@ -39,6 +43,7 @@ export default function TableChairsGroup({
     onDragEnd,
     onSeatClick,
     onSelectTable,
+    selectedAllocatedSeat,
 }: TableChairsGroupProps) {
     const { appearance } = useAppearance();
     const dark = isDarkMode(appearance);
@@ -56,13 +61,15 @@ export default function TableChairsGroup({
     const seatCount =
         table.type === 'round'
             ? table.seat_count
-            : Math.max(Object.keys(tableAllocations || {}).length, table.seats_per_side * 2 + 2);
+            : table.seats_per_side * 2 + 2;
 
     const radius = isTableRound
         ? dims.radius!
         : Math.max(tableWidth, tableHeight) / 2;
 
     const isTableSelected = selectedTableId === table.id;
+
+
 
     const handleSelect = () => {
         if (activeGuestId) return;
@@ -137,6 +144,10 @@ export default function TableChairsGroup({
                 const guest = guestId ? (guestMap.get(Number(guestId)) ?? null) : null;
                 const pos = getSeatPosition(index, table);
 
+                const isSelectedAllocatedSeat =
+                    selectedAllocatedSeat?.tableId === table.id &&
+                    selectedAllocatedSeat.seatIndex === index;
+
                 const isBrideOrGroom =
                     table.type === 'top' &&
                     (isBrideSeat(index, table) || isGroomSeat(index, table));
@@ -147,10 +158,14 @@ export default function TableChairsGroup({
                         key={index}
                         guest={guest}
                         isSelected={selectedSeat === seatId}
+                        isSelectedAllocatedSeat={isSelectedAllocatedSeat}
                         isActiveGuestAssignment={
                             Boolean(activeGuestId) && !guest
                         }
-                        onClick={() => onSeatClick(seatId, isBrideOrGroom)}
+                        onClick={(e) => {
+                            e.cancelBubble = true;
+                            onSeatClick(seatId, isBrideOrGroom);
+                        }}
                         x={pos.x}
                         y={pos.y}
                         isReserved={isBrideOrGroom && !guest}

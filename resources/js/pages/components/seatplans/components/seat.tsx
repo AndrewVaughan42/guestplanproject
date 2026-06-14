@@ -3,6 +3,7 @@ import { Guest } from 'resources/js/types';
 import { resolveSeatStyle, canvasColours, isDarkMode } from '@/pages/shared/hooks/seatStyle';
 import { useAppearance } from '@/hooks/use-appearance';
 import { SEAT_RADIUS } from '@/pages/shared/hooks/getSeatPosition';
+import { KonvaEventObject } from 'konva/lib/Node';
 
 
 interface SeatProps {
@@ -10,8 +11,9 @@ interface SeatProps {
     guest: Guest | null;
     isSelected: boolean;
     isActiveGuestAssignment?: boolean;
+    isSelectedAllocatedSeat?: boolean;
     isReserved: boolean;
-    onClick: () => void;
+    onClick: (e: KonvaEventObject<MouseEvent>) => void;
     x?: number;
     y?: number;
 }
@@ -20,6 +22,7 @@ export default function Seat({
     guest,
     isSelected,
     isActiveGuestAssignment = false,
+    isSelectedAllocatedSeat = false,
     isReserved,
     onClick,
     x,
@@ -51,18 +54,20 @@ export default function Seat({
 
 
     return (
-        <Group x={x} y={y} onClick={() => {
+        <Group x={x} y={y} onClick={(e) => {
             if (isCoupleLocked) return;
-            onClick();
+            e.cancelBubble = true;
+            onClick(e);
         }} name={seatId}>
             <Circle
                 name={seatId}
                 radius={SEAT_RADIUS}
                 fill={seatFill}
                 stroke={
+                isSelectedAllocatedSeat ? theme.seat.selected :
                     groupColours.length === 1 ? groupColours[0] : strokeColor
                 }
-                strokeWidth={groupColours.length <= 1 ? 3 : 1}
+                strokeWidth={isSelectedAllocatedSeat ? 5 : groupColours.length <= 1 ? 3 : 1}
 
             />
             {/* Adds Group Colour Arcs */}

@@ -88,13 +88,12 @@ export function SeatplanTableSidebar({
                     <input
                         type="number"
                         min={0}
-                        max={4}
                         value={table.seats_per_side}
                         onChange={(e) =>
                             onUpdate({
                                 seats_per_side: Math.max(
                                     0,
-                                    Math.min(4, Number(e.target.value)),
+                                    Number(e.target.value),
                                 ),
                             })
                         }

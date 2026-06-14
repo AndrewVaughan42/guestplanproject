@@ -19,17 +19,17 @@ class GuestController extends Controller
         if (!$wedding && !auth()->user()->isAdmin) {
             return redirect()->route('dashboard')->with('flash', [
                 'type' => 'error',
-            'message' => 'Please set up your wedding first.'
+                'message' => 'Please set up your wedding first.'
             ]);
         }
 
-        $sortedGuests = $wedding->guests->sortBy(function ($guest) {
+        $sortedGuests = $wedding->guests()->where('role', GuestRole::NORMAL->value)->get()->sortBy(function ($guest) {
             $parts = explode(' ', $guest->name);
             return strtolower(end($parts));
         })->values();
 
         return Inertia::render('user/guest-manager', [
-            'guests' => $sortedGuests->filter(fn($guest) => $guest->role === GuestRole::NORMAL->value),
+            'guests' => $sortedGuests,
             'groups' => Group::where('wedding_id', $wedding->id)->get(),
             'menuItems' => $wedding->menuItems,
         ]);

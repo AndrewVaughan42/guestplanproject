@@ -7,7 +7,7 @@ interface TableSidebarProps {
 }
 
 export function TableSidebar({ table, onUpdate, onDelete }: TableSidebarProps) {
-    const topSeatClam = (value: number) => Math.max(0, Math.min(4, value));
+    const topSeatClam = (value: number) => Math.max(0, value);
     return (
         <div
             className={
@@ -34,9 +34,9 @@ export function TableSidebar({ table, onUpdate, onDelete }: TableSidebarProps) {
                             onChange={(e) => {
                                 onUpdate(
                                     'seat_minimum',
-                                    Math.max(
+                                    Math.min(
                                         Number(e.target.value),
-                                        table.seat_minimum,
+                                        table.seat_maximum,
                                     ),
                                 );
                             }}
@@ -140,7 +140,6 @@ export function TableSidebar({ table, onUpdate, onDelete }: TableSidebarProps) {
                                         topSeatClam(table.seats_per_side + 1),
                                     )
                                 }
-                                disabled={table.seats_per_side >= 4}
                                 className="w-8 rounded border bg-background text-center hover:bg-accent disabled:opacity-50"
                             >
                                 +
@@ -148,7 +147,7 @@ export function TableSidebar({ table, onUpdate, onDelete }: TableSidebarProps) {
                         </div>
 
                         <p className="text-xs text-muted-foreground">
-                            Min: 0, Max: 4
+                            Min: 0
                         </p>
                     </div>
 

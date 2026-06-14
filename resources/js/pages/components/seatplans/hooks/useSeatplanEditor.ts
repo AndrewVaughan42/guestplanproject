@@ -7,6 +7,7 @@ import {
     RoundTable,
     Table,
     TopTable,
+    VenueLayer,
 } from '@/types';
 import { router } from '@inertiajs/react';
 import { useCallback, useMemo, useState } from 'react';
@@ -18,7 +19,8 @@ interface EditorProps {
     conflicts: GuestConflict[];
     lockedGuests: number[];
     initialAllocations: Allocations;
-    initialTablePositions: Record<string, { x: number; y: number }>;
+    venueLayers: VenueLayer[];
+    venue_layer_id: number;
 }
 
 //Ensures seats unassigned if seat_count reduced.
@@ -50,66 +52,148 @@ function cleanTopAllocation(
     lockedGuests: number[] = [],
 ) {
     const next = structuredClone(allocation);
-    const tableAlloc = next[table.id];
-    if (!tableAlloc) return next;
 
-    const oldTotalSeats = table.seats_per_side * 2 + 2;
+    // Remove couple from ANY other table first to ensure they only exist on this one
+    const brideId = lockedGuests[0] ?? null;
+    const groomId = lockedGuests[1] ?? null;
+
+    if (brideId !== null || groomId !== null) {
+        Object.keys(next).forEach((tableId) => {
+            const tableAlloc = next[tableId];
+            Object.keys(tableAlloc).forEach((seat) => {
+                const guestId = Number(tableAlloc[seat]);
+                if (
+                    (brideId !== null && guestId === brideId) ||
+                    (groomId !== null && guestId === groomId)
+                ) {
+                    delete tableAlloc[seat];
+                }
+            });
+        });
+    }
+
+    const tableAlloc = next[table.id] ?? {};
     const newTotalSeats = newSeatsPerSide * 2 + 2;
-
-    const oldBrideIndex = Math.floor(oldTotalSeats / 2) - 1;
-    const oldGroomIndex = Math.floor(oldTotalSeats / 2);
 
     const newBrideIndex = Math.floor(newTotalSeats / 2) - 1;
     const newGroomIndex = Math.floor(newTotalSeats / 2);
 
-    const brideId = tableAlloc[oldBrideIndex] || tableAlloc[String(oldBrideIndex)];
-    const groomId = tableAlloc[oldGroomIndex] || tableAlloc[String(oldGroomIndex)];
-
-    const isBrideLocked = brideId && lockedGuests.includes(Number(brideId));
-    const isGroomLocked = groomId && lockedGuests.includes(Number(groomId));
-
     const newAlloc: Record<string, number> = {};
 
-    Object.keys(tableAlloc).forEach((seat) => {
-        const i = Number(seat);
-        const guestId = tableAlloc[seat];
-        if (!guestId) return;
+    for (const [seatStr, guestId] of Object.entries(tableAlloc)) {
+        const seat = Number(seatStr);
+        if (!guestId) continue;
 
-        if (i === oldBrideIndex && isBrideLocked) {
-            newAlloc[String(newBrideIndex)] = Number(guestId);
-        } else if (i === oldGroomIndex && isGroomLocked) {
-            newAlloc[String(newGroomIndex)] = Number(guestId);
-        } else if (i < newTotalSeats && i !== newBrideIndex && i !== newGroomIndex) {
-            // Keep other guests if they fit and don't clash with new middle seats
-            newAlloc[seat] = Number(guestId);
-        }
-    });
+        const isBride = brideId !== null && Number(guestId) === brideId;
+        const isGroom = groomId !== null && Number(guestId) === groomId;
 
+        // Skip if it's the bride or groom, they'll be placed at the center
+        if (isBride || isGroom) continue;
+
+        // Skip if it's the new center seats (will be occupied by bride/groom)
+        if (seat === newBrideIndex || seat === newGroomIndex) continue;
+
+        // Skip if outside new bounds
+        if (seat >= newTotalSeats) continue;
+
+        newAlloc[seat] = Number(guestId);
+    }
+
+    if (brideId != null) {
+        newAlloc[String(newBrideIndex)] = brideId;
+    }
+
+    if (groomId != null) {
+        newAlloc[String(newGroomIndex)] = groomId;
+    }
     next[table.id] = newAlloc;
+    return next;
+}
+//Reassigning allocations during layer change
+function reconcileAllocations(
+    allocations: Allocations,
+    tables: Table[],
+): Allocations {
+    const next: Allocations = structuredClone(allocations);
+    const tableMap = new Map(tables.map((table) => [table.id, table]));
+
+    for (const [tableId, seats] of Object.entries(next)) {
+        const table = tableMap.get(tableId);
+        if (!table) {
+            delete next[tableId];
+            continue;
+        }
+
+        const maxSeats =
+            table.type === 'round'
+                ? table.seat_count
+                : table.seats_per_side * 2 + 2;
+
+        for (const [seatIndex] of Object.entries(seats)) {
+            const seat = Number(seatIndex);
+
+            if (seat >= maxSeats) {
+                delete next[tableId][seatIndex];
+            }
+        }
+    }
     return next;
 }
 
 export function useSeatplanEditor({
     tables: initialTables,
-    initialTablePositions,
     initialAllocations,
     conflicts,
     guests,
     seatPlanId,
     lockedGuests,
+    venueLayers,
+    venue_layer_id,
 }: EditorProps) {
-    const base = useBaseCanvasEditor(
-        initialTables.map((t) => ({
-            ...t,
-            x: initialTablePositions[t.id]?.x ?? t.x,
-            y: initialTablePositions[t.id]?.y ?? t.y,
-        })),
+    const [currentLayerId, setCurrentLayerId] = useState(venue_layer_id);
+
+    const activeLayer = useMemo(() => {
+        return (
+            venueLayers.find((layer) => layer.id === currentLayerId) ??
+            venueLayers[0]
+        );
+    }, [currentLayerId, venueLayers]);
+
+    const baseTables = useMemo(() => {
+        return activeLayer.table_data.map((tempTable: Table) => {
+            const savedTable = initialTables.find((t) => t.id === tempTable.id);
+            if (!savedTable) return tempTable;
+
+            return {
+                ...tempTable,
+                ...savedTable,
+            } as Table;
+        });
+    }, [activeLayer.table_data, initialTables]);
+
+    const base = useBaseCanvasEditor(baseTables);
+    const { tables, updateTable, setTables } = base;
+
+    const [isDirty, setIsDirty] = useState(false);
+
+    //const [lockedGuestIds] = useState<Set<number>>(new Set(lockedGuests));
+
+    const normalizedAllocations: Allocations = Object.fromEntries(
+        Object.entries(initialAllocations).map(([tableId, seats]) => [
+            tableId,
+            Object.fromEntries(
+                Object.entries(seats).map(([seat, guestId]) => [
+                    seat,
+                    Number(guestId),
+                ]),
+            ),
+        ]),
     );
-    const { tables, updateTable } = base;
 
     const [allocations, setAllocations] = useState<Allocations>(
-        initialAllocations || {},
+        normalizedAllocations || {},
     );
+
     const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
     const [activeGuestId, setActiveGuestId] = useState<number | null>(null);
     const [saving, setSaving] = useState(false);
@@ -125,7 +209,10 @@ export function useSeatplanEditor({
 
     const [lockedGuestIds] = useState<Set<number>>(new Set(lockedGuests));
 
-    const isLockedGuest = useCallback((guestId: number) => lockedGuestIds.has(guestId), [lockedGuestIds]);
+    const isLockedGuest = useCallback(
+        (guestId: number) => lockedGuestIds.has(guestId),
+        [lockedGuestIds],
+    );
 
     const assignGuest = useCallback(
         ({
@@ -135,12 +222,26 @@ export function useSeatplanEditor({
         }: {
             guestId: number;
             tableId: string;
-            seatIndex: string;
+            seatIndex: number;
         }) => {
-            if (isLockedGuest(guestId)) return;
+            const isPartner = isLockedGuest(guestId);
+            setIsDirty(true);
             setAllocations((prev) => {
                 const next = structuredClone(prev);
 
+                const table = tables.find((t) => t.id === tableId);
+                if (isPartner && table?.type === 'top') {
+                    return cleanTopAllocation(
+                        next,
+                        table as TopTable,
+                        (table as TopTable).seats_per_side,
+                        lockedGuests,
+                    );
+                }
+
+                if (isPartner) return prev; // Partners can only be assigned via cleanTopAllocation logic (which is automated)
+
+                // Remove guest from any existing seat
                 Object.values(next).forEach((table) => {
                     Object.keys(table).forEach((seat) => {
                         if (table[seat] === guestId) {
@@ -153,11 +254,105 @@ export function useSeatplanEditor({
                 return next;
             });
         },
-        [setAllocations, isLockedGuest],
+        [setAllocations, isLockedGuest, tables, lockedGuests],
+    );
+
+    const moveOrAssignGuest = (
+        from: { tableId: string; seatIndex: number },
+        to: { tableId: string; seatIndex: number },
+    ) => {
+        setIsDirty(true);
+        setAllocations((prev) => {
+            const next = structuredClone(prev);
+
+            const fromKey = from.seatIndex;
+            const toKey = to.seatIndex;
+
+            const sourceGuest = next[from.tableId]?.[fromKey] ?? null;
+            const targetGuest = next[to.tableId]?.[toKey] ?? null;
+
+            if (!sourceGuest) return prev;
+
+            if (
+                isLockedGuest(sourceGuest) ||
+                (targetGuest && isLockedGuest(targetGuest))
+            )
+                return prev;
+
+            next[from.tableId] ??= {};
+            next[to.tableId] ??= {};
+
+            // If empty target seat
+            if (!targetGuest) {
+                delete next[from.tableId][fromKey];
+                next[to.tableId][toKey] = sourceGuest;
+                return next;
+            }
+            //swap guests in seats
+            next[from.tableId][fromKey] = targetGuest;
+            next[to.tableId][toKey] = sourceGuest;
+            return next;
+        });
+    };
+
+    const getLayerTables = useCallback(
+        (layer: VenueLayer) => {
+            return layer.table_data.map((templateTable: Table) => {
+                const savedTable = initialTables.find(
+                    (t) => t.id === templateTable.id,
+                );
+                return savedTable
+                    ? { ...templateTable, ...savedTable }
+                    : templateTable;
+            });
+        },
+        [initialTables],
+    );
+
+
+    const switchLayer = useCallback(
+        (layerId: number) => {
+            const nextLayer = venueLayers.find((l) => l.id === layerId);
+            if (!nextLayer) return;
+
+            const nextTables = getLayerTables(nextLayer);
+
+            let nextAllocations = reconcileAllocations(allocations, nextTables);
+
+            const topTable = nextTables.find(
+                (t) => t.type === 'top',
+            ) as TopTable;
+
+            if (topTable) {
+                nextAllocations = cleanTopAllocation(
+                    nextAllocations,
+                    topTable,
+                    topTable.seats_per_side,
+                    lockedGuests,
+                );
+            }
+
+            setSelectedTableId(null);
+            setSelectedSeat(null);
+            setActiveGuestId(null);
+
+            setAllocations(nextAllocations);
+            setTables(nextTables);
+            setCurrentLayerId(layerId);
+            setIsDirty(true);
+        },
+        [
+            allocations,
+            getLayerTables,
+            lockedGuests,
+            setTables,
+            venueLayers,
+        ],
     );
 
     const unassignGuest = useCallback(
         ({ tableId, seatIndex }: { tableId: string; seatIndex: number }) => {
+            setIsDirty(true);
             setAllocations((prev) => {
                 const guestId = prev[tableId]?.[seatIndex];
                 if (guestId && isLockedGuest(Number(guestId))) return prev;
@@ -255,41 +450,54 @@ export function useSeatplanEditor({
             );
 
             updateTable(table.id, { seat_count: safe });
+            setIsDirty(true);
 
-            setAllocations((prev) =>
-                cleanRoundAllocation(prev, table, safe)
-            );
+            setAllocations((prev) => cleanRoundAllocation(prev, table, safe));
         },
         [updateTable],
     );
 
     const updateTopSeatCount = useCallback(
         (table: TopTable, count: number) => {
-            const safe = Math.max(0, Math.min(4, count));
+            const safe = Math.max(0, count);
 
             updateTable(table.id, { seats_per_side: safe });
+            setIsDirty(true);
 
             setAllocations((prev) =>
-                cleanTopAllocation(prev, table, safe, lockedGuests)
+                cleanTopAllocation(prev, table, safe, lockedGuests),
             );
         },
         [updateTable, lockedGuests],
     );
 
-    const cleanAllocations = Object.fromEntries(
-        Object.entries(allocations).map(([tableId, guests]) => [
-            String(tableId),
-            Object.fromEntries(
-                Object.entries(guests).map(([seat, guestId]) => [
-                    String(seat),
-                    guestId,
-                ]),
-            ),
-        ]),
-    );
+    const cleanAllocations = useMemo(() => {
+        return Object.fromEntries(
+            Object.entries(allocations).map(([tableId, guests]) => [
+                String(tableId),
+                Object.fromEntries(
+                    Object.entries(guests).map(([seat, guestId]) => [
+                        String(seat),
+                        guestId,
+                    ]),
+                ),
+            ]),
+        );
+    }, [allocations]);
 
-
-
+    type TablePayload = | {
+        id: string;
+        type: 'top';
+        x: number;
+        y: number;
+        seats_per_side: number;
+    } | {
+        id: string;
+        type: 'round';
+        x: number;
+        y: number;
+        seat_count: number;
+    }
 
     const save = useCallback(() => {
         if (!seatPlanId) return;
@@ -298,16 +506,36 @@ export function useSeatplanEditor({
         router.patch(
             seatPlans.update(seatPlanId).url,
             {
+                venue_layer_id: currentLayerId,
                 layout: {
                     allocations: cleanAllocations,
+                    tables: initialTables.map<TablePayload>((table) => {
+                        const current = tables.find((t) => t.id === table.id);
+                        if (!current) return table;
+                        return {
+                            ...table,
+                            x: current.x,
+                            y: current.y,
+                            ...(current.type === 'top'
+                                ? { seats_per_side: current.seats_per_side }
+                                : { seat_count: current.seat_count }),
+                        };
+                    }),
                 },
             },
             {
                 preserveScroll: true,
+                onSuccess: () => setIsDirty(false),
                 onFinish: () => setSaving(false),
             },
         );
-    }, [cleanAllocations, seatPlanId]);
+    }, [
+        cleanAllocations,
+        currentLayerId,
+        initialTables,
+        seatPlanId,
+        tables,
+    ]);
 
     return {
         ...base,
@@ -318,7 +546,7 @@ export function useSeatplanEditor({
         unassignedGuests,
         conflictsWithUnassigned,
         assignedGuestIds,
-
+        moveOrAssignGuest,
         selectedSeat,
         setSelectedSeat,
         selectedTableId,
@@ -332,5 +560,10 @@ export function useSeatplanEditor({
         updateTopSeatCount,
         save,
         saving,
+        isDirty,
+        setAllocations,
+        reconcileAllocations,
+        switchLayer,
+        currentLayerId,
     };
 }

@@ -1,36 +1,69 @@
+import { Button } from '@headlessui/react';
+
 interface CanvasToolbarProps {
-    scale: number;
     saving: boolean;
-    onReset: () => void;
     onSave: () => void;
     onAutoSeat: () => void;
+
+    currentLayer: number
+    totalLayers: number
+    onPreviousLayer: () => void
+    onNextLayer: () => void
 }
 
 export function CanvasToolbar({
-    scale,
     saving,
-    onReset,
     onSave,
     onAutoSeat,
+    currentLayer,
+    totalLayers,
+    onPreviousLayer,
+    onNextLayer
 }: CanvasToolbarProps) {
     return (
-        <div className={'flex items-center gap-2 border-b p-2'}>
-            <button onClick={onReset}>Reset</button>
+        <div className={'flex items-center justify-between border-b px-4 py-2'}>
+            <Button
+                onClick={onAutoSeat}
+                className={
+                    'rounded-md border px-4 py-2 text-sm font-medium hover:bg-muted'
+                }
+            >
+                Auto Seat
+            </Button>
 
-            <span className={'text-sm'}>Scale: {Math.round(scale * 100)}%</span>
-
-            <div className={'ml-auto flex gap-2'}>
-                <button
-                    onClick={onAutoSeat}
-                    className={'flex gap-2 border px-3'}
+            <div className={'flex items-center gap-3'}>
+                <Button
+                    onClick={onPreviousLayer}
+                    disabled={currentLayer <= 1}
+                    className={
+                        'rounded-md border px-3 py-2 hover:bg-muted disabled:opacity-50'
+                    }
                 >
-                    Auto Seat
-                </button>
-
-                <button onClick={onSave} disabled={saving}>
-                    {saving ? 'Saving...' : 'Save'}
-                </button>
+                    -
+                </Button>
+                <span className={'min-h-25 text-center text-sm font-medium'}>
+                    Layer {currentLayer} / {totalLayers}
+                </span>
+                <Button
+                    onClick={onNextLayer}
+                    disabled={currentLayer >= totalLayers}
+                    className={
+                        'rounded-md border px-3 py-2 hover:bg-muted disabled:opacity-50'
+                    }
+                >
+                    +
+                </Button>
             </div>
+
+            <Button
+                onClick={onSave}
+                disabled={saving}
+                className={
+                    'rounded-md border px-4 py-2 text-sm font-medium hover:bg-muted disabled:opacity-50 dark:bg-white text-black'
+                }
+            >
+                {saving ? 'Saving...' : 'Save'}
+            </Button>
         </div>
     );
 }

@@ -17,17 +17,18 @@ import type {
     VenueLayer,
 } from '@/types';
 import { Head } from '@inertiajs/react';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import TableChairsGroup from '../components/seatplans/components/table-chairs-group';
 
 interface SeatPlanProps {
-    venueLayersLayout: VenueLayer;
+    venueLayers: VenueLayer[];
     guests: Guest[];
     initialAllocations: Allocations;
-    initialTablePositions: Record<string, { x: number; y: number }>;
+    initialTables: Table[];
     seatPlanId: number;
     conflicts: GuestConflict[];
     lockedGuests: number[];
+    venue_layer_id: number;
 }
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -39,23 +40,25 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function SeatPlan({
     seatPlanId,
     initialAllocations,
-    initialTablePositions,
-    venueLayersLayout,
+    initialTables,
+    venueLayers,
     guests,
     conflicts,
     lockedGuests,
+    venue_layer_id,
 }: SeatPlanProps) {
     const editor = useSeatplanEditor({
+        venue_layer_id: venue_layer_id,
         lockedGuests,
         seatPlanId,
         initialAllocations,
-        initialTablePositions,
         guests,
         conflicts,
-        tables: venueLayersLayout.table_data,
+        tables: initialTables,
+        venueLayers
     });
 
-    const { scale, pos, setPos, handleWithScrollWheel, reset, centreTables } =
+    const { scale, pos, setPos, handleWithScrollWheel, centreTables } =
         usePanZoom();
 
     const {
@@ -67,6 +70,7 @@ export default function SeatPlan({
         conflictsWithUnassigned,
         save,
         saving,
+        isDirty,
         moveTable,
         assignGuest,
         unassignGuest,
@@ -79,7 +83,15 @@ export default function SeatPlan({
         setActiveGuestId,
         updateTopSeatCount,
         updateRoundSeatCount,
+        moveOrAssignGuest,
+        switchLayer,
+        currentLayerId,
     } = editor;
+
+    const [selectedAllocatedSeat, setSelectedAllocatedSeat] = useState<{
+        tableId: string;
+        seatIndex: number;
+    } | null>(null);
 
     const handleTableEndDrag = useCallback(
         (tableId: string, x: number, y: number) => {
@@ -88,17 +100,20 @@ export default function SeatPlan({
         [moveTable],
     );
 
-    const handleGuestAssignment = (
-        guestId: number,
-        tableId: string,
-        seatIndex: string,
-    ) => {
-        assignGuest({ guestId, tableId, seatIndex });
-    };
-
     const handleSave = useCallback(() => {
         save();
     }, [save]);
+
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (isDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isDirty]);
 
     const handleTableUpdate = useCallback(
         (updates: Partial<Table>) => {
@@ -121,52 +136,76 @@ export default function SeatPlan({
 
     const handleUnassign = (tableId: string, seatIndex: number) => {
         unassignGuest({ tableId, seatIndex });
-    }
+    };
 
     const handleAutoSeat = useCallback(() => {
         //For Seating Algorithm     TODO
     }, []);
 
-    const handleSeatClick = (seatId: string, isBrideOrGroomSeat: boolean) => {
+    const handleSeatClick = (seatId: string) => {
+        const lastDash = seatId.lastIndexOf('-');
+        const tableId = seatId.substring(0, lastDash);
+        const seatIndex = Number(seatId.substring(lastDash + 1));
+
+        const guestId = allocations[tableId]?.[String(seatIndex)];
+        //Sidebar to Seatplan
         if (activeGuestId) {
-            const activeGuest = guestMap.get(activeGuestId);
-            const isPartner =
-                activeGuest?.role === 'partner_a' ||
-                activeGuest?.role === 'partner_b';
+            assignGuest({
+                guestId: activeGuestId,
+                tableId,
+                seatIndex,
+            });
 
-            if (isBrideOrGroomSeat && !isPartner) {
+            setActiveGuestId(null);
+            return;
+        }
+        //Deselect
+        if (
+            selectedAllocatedSeat?.tableId === tableId &&
+            selectedAllocatedSeat?.seatIndex === seatIndex
+        ) {
+            setSelectedAllocatedSeat(null);
+            return;
+        }
+
+        if (selectedAllocatedSeat) {
+            moveOrAssignGuest(selectedAllocatedSeat, {
+                tableId,
+                seatIndex: seatIndex,
+            });
+            setSelectedAllocatedSeat(null);
+            return;
+        }
+
+        if (guestId) {
+            if (lockedGuests.includes(guestId)) {
                 return;
             }
-            if (activeGuestId) {
-                const lastDash = seatId.lastIndexOf('-');
-                const tableId = seatId.substring(0, lastDash);
-                const seatIndex = seatId.substring(lastDash + 1);
-
-                // Check if seat is already occupied
-                const isOccupied = Boolean(
-                    allocations[tableId]?.[String(seatIndex)],
-                );
-                if (isOccupied) {
-                    setSelectedSeat(seatId);
-                    return;
-                }
-
-                handleGuestAssignment(activeGuestId, tableId, seatIndex);
-                setActiveGuestId(null);
-                setSelectedSeat(null);
-                return;
-            }
-
-            if (selectedSeat === seatId) {
-                setSelectedSeat(null);
-                return;
-            }
-
-            setSelectedSeat(seatId);
+            setSelectedAllocatedSeat({
+                tableId,
+                seatIndex,
+            });
+            return;
         }
     };
 
-    if (!venueLayersLayout) {
+    const currentLayerIndex = venueLayers.findIndex(l => l.id === currentLayerId) + 1;
+
+    const handlePreviousLayer = useCallback(() => {
+        const currentIndex = venueLayers.findIndex(l => l.id === currentLayerId);
+        if (currentIndex > 0) {
+            switchLayer(venueLayers[currentIndex - 1].id);
+        }
+    }, [venueLayers, currentLayerId, switchLayer]);
+
+    const handleNextLayer = useCallback(() => {
+        const currentIndex = venueLayers.findIndex(l => l.id === currentLayerId);
+        if (currentIndex < venueLayers.length - 1) {
+            switchLayer(venueLayers[currentIndex + 1].id);
+        }
+    }, [venueLayers, currentLayerId, switchLayer]);
+
+    if (!venueLayers) {
         return (
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="SeatPlan" />
@@ -199,11 +238,13 @@ export default function SeatPlan({
                 />
                 <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
                     <CanvasToolbar
-                        scale={scale}
                         saving={saving}
-                        onReset={reset}
                         onSave={handleSave}
                         onAutoSeat={handleAutoSeat}
+                        currentLayer={currentLayerIndex}
+                        totalLayers={venueLayers.length}
+                        onPreviousLayer={handlePreviousLayer}
+                        onNextLayer={handleNextLayer}
                     />
 
                     <div className="relative flex min-h-0 flex-1 overflow-hidden">
@@ -232,7 +273,10 @@ export default function SeatPlan({
                                     if (seatId.includes('-')) {
                                         const [tableId, seatIndex] =
                                             seatId.split('-');
-                                        unassignGuest({ tableId, seatIndex: Number(seatIndex) });
+                                        unassignGuest({
+                                            tableId,
+                                            seatIndex: Number(seatIndex),
+                                        });
                                         if (selectedSeat === seatId)
                                             setSelectedSeat(null);
                                     }
@@ -250,8 +294,11 @@ export default function SeatPlan({
                                     selectedTableId={selectedTableId}
                                     hasConflict={tableConflicts[table.id]}
                                     onDragEnd={handleTableEndDrag}
-                                    onSeatClick={handleSeatClick}
+                                    onSeatClick={(seatId) => handleSeatClick(seatId)}
                                     onSelectTable={setSelectedTableId}
+                                    selectedAllocatedSeat={
+                                        selectedAllocatedSeat
+                                    }
                                 />
                             ))}
                         </LayoutCanvas>

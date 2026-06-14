@@ -15,6 +15,7 @@ class SeatplanController extends Controller
     {
         $user = auth()->user();
         $wedding = $user->wedding;
+
         if (!$wedding) {
             return redirect()->route('dashboard')->with('flash', [
                 'type' => 'error',
@@ -22,11 +23,12 @@ class SeatplanController extends Controller
             ]);
         }
 
-        $venueLayer = $wedding->venue->venueLayers()->first();
-        if (!$venueLayer) {
+        $venueLayers = $wedding->venue->venueLayers()->get();
+
+        if ($venueLayers->isEmpty()) {
             return redirect()->route('dashboard')->with('flash', [
                 'type' => 'error',
-                'message' => 'No venue layout found. Please contact your coordinator.',
+                'message' => 'No venue layouts found. Please contact your coordinator.',
             ]);
         }
 
@@ -36,11 +38,20 @@ class SeatplanController extends Controller
             'wedding_id' => $wedding->id,
             'user_id' => $user->id,
             'name' => $wedding->partnerA_firstname . ' & ' . $wedding->partnerB_firstname . ' Seatplan',
-            'layout' => ['allocations' => [], 'tablePositions' => []],
-            'venue_layer_id' => $venueLayer->id,
+            'layout' => ['allocations' => [], 'tables' => []],
+            'venue_layer_id' => $venueLayers->first()->id,
         ]);
 
-        $seat_plan->layout = $this->ensurePartnerSeated($seat_plan->layout, $venueLayer, $wedding);
+        $activeLayer = $venueLayers->firstWhere('id', $seat_plan->venue_layer_id) ?? $venueLayers->first();
+
+        if (empty($seat_plan->layout['tables'] ?? null)) {
+            $seat_plan->layout['tables'] = [
+                'allocations' => [],
+                'tables' => $activeLayer->table_data,
+            ];
+        }
+
+        $seat_plan->layout = $this->ensurePartnerSeated($seat_plan->layout, $activeLayer, $wedding);
 
         $seat_plan->save();
 
@@ -55,8 +66,9 @@ class SeatplanController extends Controller
         return Inertia::render('user/seat-plan', [
             'seatPlanId' => $seat_plan->id,
             'initialAllocations' => $seat_plan->layout['allocations'] ?? [],
-            'initialTablePositions' => $seat_plan->layout['tablePositions'] ?? [],
-            'venueLayersLayout' => $venueLayer,
+            'initialTables' => $seat_plan->layout['tables'] ?? [],
+            'venueLayers' => $venueLayers,
+            'venue_layer_id' => $activeLayer->id,
             'guests' => Guest::where('wedding_id', $wedding->id)->with('groups')->get(),
             'conflicts' => $wedding->guestConflicts()->with(['guestA', 'guestB'])->get(),
             'lockedGuests' => array_values(array_filter([$partnerA?->id, $partnerB?->id]))
@@ -71,7 +83,10 @@ class SeatplanController extends Controller
         }
 
         $data = $request->validate([
+            'venue_layer_id' => ['required', 'integer', 'exists:venue_layers,id'],
             'layout' => ['required'],
+            'layout.allocations' => ['sometimes', 'array'],
+            'layout.tables' => ['required', 'array'],
         ]);
 
         $data['wedding_id'] = $wedding->id;
@@ -91,16 +106,18 @@ class SeatplanController extends Controller
         }
 
         $wedding = $user->wedding;
-        $venueLayer = $wedding->venue->venueLayers()->first();
 
-        if (!$venueLayer) {
+        $venueLayers = $wedding->venue->venueLayers()->get();
+        $activeLayer = $venueLayers->where('id', $seat_plan->venue_layer_id)->first() ?? $venueLayers->first();
+
+        if ($venueLayers->isEmpty()) {
             return redirect()->back()->with('flash', [
                 'type' => 'error',
                 'message' => 'No venue layout found. Please contact your coordinator.',
             ]);
         }
 
-        $seat_plan->layout = $this->ensurePartnerSeated($seat_plan->layout, $venueLayer, $wedding);
+        $seat_plan->layout = $this->ensurePartnerSeated($seat_plan->layout, $activeLayer, $wedding);
 
         $seat_plan->save();
 
@@ -115,8 +132,9 @@ class SeatplanController extends Controller
         return Inertia::render('user/seat-plan', [
             'seatPlanId' => $seat_plan->id,
             'initialAllocations' => $seat_plan->layout['allocations'] ?? [],
-            'initialTablePositions' => $seat_plan->layout['tablePositions'] ?? [],
-            'venueLayersLayout' => $venueLayer,
+            'initialTables' => $seat_plan->layout['tables'] ?? [],
+            'venueLayers' => $venueLayers,
+            'venue_layer_id' => $activeLayer->id,
             'guests' => Guest::where('wedding_id', $wedding->id)->with('groups')->get(),
             'conflicts' => $wedding->guestConflicts()->with(['guestA', 'guestB'])->get(),
             'lockedGuests' => array_values(array_filter([$partnerA?->id, $partnerB?->id]))
@@ -136,11 +154,18 @@ class SeatplanController extends Controller
         }
 
         $data = $request->validate([
+            'venue_layer_id' => ['required', 'integer', 'exists:venue_layers,id'],
             'layout' => ['required'],
-            'layout.allocations' => ['required'],
+            'layout.allocations' => ['sometimes', 'array'],
+            'layout.tables' => ['required', 'array'],
         ]);
 
-        $seat_plan->update($data);
+        if (isset($data['venue_layer_id'])) {
+            $seat_plan->venue_layer_id = $data['venue_layer_id'];
+        }
+
+        $seat_plan->layout = $data['layout'];
+        $seat_plan->save();
 
         return redirect()->back()->with('flash', [
             'type' => 'success',
@@ -165,7 +190,7 @@ class SeatplanController extends Controller
         ]);
     }
 
-    private function ensurePartnerSeated(array $layout, $venueLayer, $wedding)
+    private function ensurePartnerSeated(array $layout, $venueLayer, $wedding): array
     {
         $allocations = $layout['allocations'] ?? [];
 
@@ -190,6 +215,17 @@ class SeatplanController extends Controller
 
         $tableId = $topTable['id'];
 
+        // Use the saved seats_per_side if available in the layout, otherwise use the venue layer's default
+        $seatsPerSide = $topTable['seats_per_side'];
+        if (isset($layout['tables'])) {
+            foreach ($layout['tables'] as $savedTable) {
+                if ($savedTable['id'] == $tableId && isset($savedTable['seats_per_side'])) {
+                    $seatsPerSide = $savedTable['seats_per_side'];
+                    break;
+                }
+            }
+        }
+
         foreach ($allocations as $tId => $tableSeats) {
             foreach ($tableSeats as $seatIndex => $guestId) {
                 if (($partnerA && (int)$guestId === (int)$partnerA->id) || ($partnerB && (int)$guestId === (int)$partnerB->id)) {
@@ -200,7 +236,7 @@ class SeatplanController extends Controller
 
         $allocations[$tableId] ??= [];
 
-        $totalSeats = ($topTable['seats_per_side'] * 2) + 2;
+        $totalSeats = ($seatsPerSide * 2) + 2;
         $brideIndex = (int) floor($totalSeats / 2) - 1;
         $groomIndex = (int) floor($totalSeats / 2);
 
@@ -212,6 +248,31 @@ class SeatplanController extends Controller
         }
         $layout['allocations'] = $allocations;
 
+        // Ensure tables array matches the seats_per_side used for calculation
+        if (isset($layout['tables'])) {
+            foreach ($layout['tables'] as &$table) {
+                if ($table['id'] == $tableId) {
+                    $table['seats_per_side'] = $seatsPerSide;
+                }
+            }
+        }
+
         return $layout;
+    }
+
+    private function getLayerSeatCount($layer): int
+    {
+        $total = 0;
+
+        foreach ($layer->table_data as $table) {
+            if (($table['type'] === 'top')) {
+                $seatsPS =  ($table['seats_per_side'] ?? 0);
+                $total += ($seatsPS * 2) + 2;
+            } else {
+                $total += $table['seat_count'] ?? 0;
+            }
+        }
+
+        return $total;
     }
 }
