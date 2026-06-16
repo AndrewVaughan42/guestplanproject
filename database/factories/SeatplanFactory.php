@@ -15,12 +15,11 @@ class SeatplanFactory extends Factory
     public function definition(): array
     {
         return [
+            'name' => $this->faker->word() . ' Seatplan',
             'layout' => [],
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-
             'wedding_id' => Wedding::factory(),
             'user_id' => User::factory(),
+            'venue_layer_id' => \App\Models\VenueLayer::factory(),
         ];
     }
 }
