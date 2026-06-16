@@ -1,4 +1,3 @@
-
 import { usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { SharedData } from '@/types';
@@ -26,7 +25,7 @@ function getSeatplanDeadline(weddingDate: string | Date) {
     return date;
 }
 
-export default function WeddingManagementCard() {
+export default function WeddingCountdownCard() {
     const { auth } = usePage<SharedData>().props;
     const weddingDate = auth.user.wedding?.date;
 

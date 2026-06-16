@@ -69,7 +69,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(VenueLayer::class);
     }
-    public function seatplans() :HasMany
+    public function seat_plans() :HasMany
     {
         return $this->hasMany(Seatplan::class);
     }

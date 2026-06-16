@@ -24,10 +24,12 @@ Route::get('/', static function () {
 //User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', static function () {
-            return Inertia::render('user/dashboard', [
-                'venues' => Venue::all(),
-                //All Venues for now
-            ]);
+        $wedding = auth()->user()->wedding;
+        return Inertia::render('user/dashboard', [
+            'venues' => Venue::all(),
+            'availableMenuItems' => $wedding?->venue()?->menu_items ?? [],
+            'guests' => $wedding?->guests ?? [],
+        ]);
     })->name('dashboard');
 
     //Renders task-list page via index
@@ -39,7 +41,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Renders guest-manager page via index, + additional post-routes for importing guests via list and updating guest statuses
     Route::resource('guests', GuestController::class);
     Route::post('guests/import', [GuestController::class, 'bulkStore'])->name('guests.import');
-    Route::patch('guests/{guest}/update-status', [GuestController::class, 'updateStatus'])->name('guests.update-status');
+    Route::patch('guests/{guest}/status', [GuestController::class, 'updateStatus'])->name('guests.status');
+
 
     //Renders Group Management via Index
     Route::resource('groups', GroupController::class);

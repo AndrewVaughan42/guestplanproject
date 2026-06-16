@@ -78,15 +78,21 @@ export interface MenuItem {
 }
 
 export interface Wedding {
+
     id?: number;
     partnerA_firstname: string;
     partnerA_lastname: string;
     partnerB_firstname: string;
     partnerB_lastname: string;
+    guests: Guest[];
+    guest_count: number;
     date: string;
     venue_id: number;
     groupTemplates: boolean;
+    venue?: Venue;
     menu_items?: MenuItem[];
+    partnerA?: Guest;
+    partnerB?: Guest;
 }
 
 export type GuestStatus = 'invited' | 'confirmed' | 'declined';
@@ -100,6 +106,8 @@ export interface Guest {
     notes: string | null;
     groups?: Group[];
 }
+
+
 
 export interface Group {
     id: number;

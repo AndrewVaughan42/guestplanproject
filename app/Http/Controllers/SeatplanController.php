@@ -45,10 +45,9 @@ class SeatplanController extends Controller
         $activeLayer = $venueLayers->firstWhere('id', $seat_plan->venue_layer_id) ?? $venueLayers->first();
 
         if (empty($seat_plan->layout['tables'] ?? null)) {
-            $seat_plan->layout['tables'] = [
-                'allocations' => [],
-                'tables' => $activeLayer->table_data,
-            ];
+            $layout = $seat_plan->layout;
+            $layout['tables'] = $activeLayer->table_data;
+            $seat_plan->layout = $layout;
         }
 
         $seat_plan->layout = $this->ensurePartnerSeated($seat_plan->layout, $activeLayer, $wedding);
@@ -143,6 +142,8 @@ class SeatplanController extends Controller
 
     public function update(Request $request, Seatplan $seat_plan): RedirectResponse
     {
+        dump($request->all());
+
         $user = auth()->user();
         $wedding = $user->wedding;
 
@@ -165,7 +166,12 @@ class SeatplanController extends Controller
         }
 
         $seat_plan->layout = $data['layout'];
+
+        dump($seat_plan->venue_layer_id);
+
         $seat_plan->save();
+
+        dump($seat_plan->venue_layer_id);
 
         return redirect()->back()->with('flash', [
             'type' => 'success',

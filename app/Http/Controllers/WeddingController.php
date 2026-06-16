@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\GuestRole;
 use App\GuestStatus;
 use App\Models\Guest;
 use App\Models\Wedding;
@@ -31,9 +32,26 @@ class WeddingController extends Controller
             'groupTemplates' => ['nullable', 'boolean'],
         ]);
 
-        data_set($data, 'user_id', auth()->id()); //Check this works, it does
-        $wedding = Wedding::create($data);
 
+
+        data_set($data, 'user_id', auth()->id()); //Check this works, it does
+
+        $wedding = Wedding::create($data);
+        //Guests representing couple created
+        $partnerA = Guest::create(
+            ['name' => "$wedding->partnerA_firstname $wedding->partnerA_lastname", 'wedding_id' => $wedding->id, 'status' => GuestStatus::CONFIRMED->value, 'role' => GuestRole::PARTNER_A->value],
+        );
+        $partnerB = Guest::create(
+            ['name' => "$wedding->partnerB_firstname $wedding->partnerB_lastname", 'wedding_id' => $wedding->id, 'status' => GuestStatus::CONFIRMED->value, 'role' => GuestRole::PARTNER_B->value],
+        );
+
+        //Links Guest ids of partners to wedding
+        $wedding->update([
+            'partnerA_guest_id' => $partnerA->id,
+            'partnerB_guest_id' => $partnerB->id,
+        ]);
+
+        //If template date wanted (groupTemplates = true)
         if ($data['groupTemplates']) {
             $template = [
                 ['name' => "$wedding->partnerA_lastname Family", 'priority' => 1, 'description' => "Family of $wedding->partnerA_firstname $wedding->partnerA_lastname, automatically created by Guestplan.", 'colour' => 'red'],
@@ -52,12 +70,7 @@ class WeddingController extends Controller
                     'colour' => $group['colour'],
                 ]);
             }
-            $partnerA = Guest::create(
-                ['name' => "$wedding->partnerA_firstname $wedding->partnerA_lastname", 'wedding_id' => $wedding->id, 'status' => GuestStatus::CONFIRMED->value, 'role' => \App\GuestRole::PARTNER_A->value],
-            );
-            $partnerB = Guest::create(
-                ['name' => "$wedding->partnerB_firstname $wedding->partnerB_lastname", 'wedding_id' => $wedding->id, 'status' => GuestStatus::CONFIRMED->value, 'role' => \App\GuestRole::PARTNER_B->value],
-            );
+
 
         }
         return redirect()->back()->with('success', 'Task created successfully.');
@@ -76,7 +89,7 @@ class WeddingController extends Controller
         return $wedding;
     }
 
-    public function update(Request $request, Wedding $wedding)
+    public function update(Request $request, Wedding $wedding): RedirectResponse
     {
         if ($wedding->user_id !== auth()->id()) {
             return redirect()->back()->with('flash', [
@@ -86,20 +99,36 @@ class WeddingController extends Controller
         }
 
         $data = $request->validate([
-            'venue_id' => ['required', 'exists:venues,id'],
-            'partnerA_firstname' => ['required'],
-            'partnerA_lastname' => ['required'],
-            'partnerB_firstname' => ['required'],
-            'partnerB_lastname' => ['required'],
-            'date' => ['required', 'date'],
+            'venue_id' => ['sometimes', 'required', 'exists:venues,id'],
+            'partnerA_firstname' => ['sometimes', 'required'],
+            'partnerA_lastname' => ['sometimes', 'required'],
+            'partnerB_firstname' => ['sometimes', 'required'],
+            'partnerB_lastname' => ['sometimes', 'required'],
+            'date' => ['sometimes', 'required', 'date'],
         ]);
 
-        data_set($data, 'partnerA', $data['partnerA_firstname'] . ' ' . $data['partnerA_lastname']);
-        data_set($data, 'partnerB', $data['partnerB_firstname'] . ' ' . $data['partnerB_lastname']);
+        $menuItemsData = $request->validate([
+            'menu_item_ids' => ['sometimes', 'array', 'size:3'],
+            'menu_item_ids.*' => ['exists:menu_items,id'],
+        ]);
+
+        if (isset($data['partnerA_firstname'], $data['partnerA_lastname'])) {
+            data_set($data, 'partnerA', $data['partnerA_firstname'] . ' ' . $data['partnerA_lastname']);
+        }
+        if (isset($data['partnerB_firstname'], $data['partnerB_lastname'])) {
+            data_set($data, 'partnerB', $data['partnerB_firstname'] . ' ' . $data['partnerB_lastname']);
+        }
 
         $wedding->update($data);
 
-        return $wedding;
+        if (isset($menuItemsData['menu_item_ids'])) {
+            $wedding->menuItems()->sync($menuItemsData['menu_item_ids']);
+        }
+
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Wedding updated successfully.',
+        ]);
     }
 
     public function destroy(Wedding $wedding): RedirectResponse

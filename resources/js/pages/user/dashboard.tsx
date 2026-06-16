@@ -1,5 +1,5 @@
 
-import WeddingManagementCard from '../dashboard/user-cards/wedding-management-card';
+import WeddingCountdownCard from '../dashboard/user-cards/wedding-countdown-card';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 
@@ -7,6 +7,7 @@ import { type BreadcrumbItem, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import ManageWeddingTile from '../components/weddings/manage-wedding-tile';
 import { dashboard } from '@/routes';
+import SetWeddingMenuCard from '@/pages/dashboard/user-cards/set-wedding-menu-card';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -46,11 +47,10 @@ export default function Dashboard() {
                 <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            <WeddingManagementCard />
+                            <WeddingCountdownCard />
                         </div>
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            <p>More Components to be added</p>
-                            {/** <GuestManagementCard/> */}
+                            {<SetWeddingMenuCard />}
                         </div>
 
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">

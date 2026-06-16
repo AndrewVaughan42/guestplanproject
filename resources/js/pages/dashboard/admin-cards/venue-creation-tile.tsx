@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import AddVenue from '../components/venues/add-venue';
+import AddVenue from '../../components/venues/add-venue';
 
 export default function VenueCreationTile(){
     const [open, setOpen] = useState(false);

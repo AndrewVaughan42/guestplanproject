@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\GuestRole;
+use App\GuestStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +28,7 @@ class Wedding extends Model
         'priority',
         'description',
         'colour',
+        'menu_item_id',
     ];
 
     public function venue(): BelongsTo
@@ -53,7 +56,7 @@ class Wedding extends Model
         return $this->hasMany(Group::class);
     }
 
-    public function seatplan(): HasOne
+    public function seat_plan(): HasOne
     {
         return $this->hasOne(Seatplan::class);
     }
@@ -66,6 +69,16 @@ class Wedding extends Model
     public function guestConflicts(): HasMany
     {
         return $this->hasMany(GuestConflict::class);
+    }
+
+    public function partnerA(): BelongsTo
+    {
+        return $this->belongsTo(Guest::class, 'partnerA_guest_id');
+    }
+
+    public function partnerB(): BelongsTo
+    {
+        return $this->belongsTo(Guest::class, 'partnerB_guest_id');
     }
 
     protected function casts(): array

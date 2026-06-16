@@ -33,19 +33,20 @@ export default function CreateWedding({ open, setOpen, venuesList }: {
 }) {
 
 
-    const { data, setData, post, processing, reset, errors } = useForm<Wedding>({
-        partnerA_firstname: '',
-        partnerA_lastname: '',
-        partnerB_firstname: '',
-        partnerB_lastname: '',
-        date: '',
-        venue_id: 0,
-        groupTemplates: false,
-    });
+    const { data, setData, post, processing, reset, errors } = useForm<Partial<Wedding>>(
+        {
+            partnerA_firstname: '',
+            partnerA_lastname: '',
+            partnerB_firstname: '',
+            partnerB_lastname: '',
+            date: '',
+            venue_id: 0,
+            groupTemplates: false,
+        },
+    );
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
-
         post(weddings.store().url,
             {
                 onSuccess: () => {

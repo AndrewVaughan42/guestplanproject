@@ -1,14 +1,19 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { DialogFooter, DialogHeader } from '@/components/ui/dialog';
 import { MenuItem, Wedding } from 'resources/js/types';
-import { Form, useForm } from '@inertiajs/react';
-import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
-import { Select, SelectItem, SelectTrigger } from '@radix-ui/react-select';
+import { useForm } from '@inertiajs/react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertCircle } from 'lucide-react';
 import React, { useState } from 'react';
-import { Label } from 'react-konva';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import weddings from '@/routes/weddings';
+import {
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    Dialog
+} from '@/components/ui/dialog';
 
 export default function SetWeddingMenu({
     open,
@@ -30,20 +35,18 @@ export default function SetWeddingMenu({
         e.preventDefault();
         setValidationError(null);
 
-        //To ensure 3 menu items selected
-        if (data.menu_item_ids.some((id) => id === '')) {
+        if (data.menu_item_ids.some((id) => id === '' || id === 'none')) {
             setValidationError('Please select at least one menu item.');
             return;
         }
 
-        //To ensure each menu item in unique
         const uniqueIDs = new Set(data.menu_item_ids);
         if (uniqueIDs.size !== 3) {
             setValidationError('Please select 3 different menu items.');
             return;
         }
 
-        //To ensure 1 plant based meal
+        //To ensure 1 plant-based meal
         const selectedItems = availableMenuItems.filter((item) =>
             data.menu_item_ids.includes(item.id.toString()),
         );
@@ -55,6 +58,9 @@ export default function SetWeddingMenu({
             );
             return;
         }
+        const cleanItems = data.menu_item_ids.filter(Boolean);
+
+        setData('menu_item_ids', cleanItems);
 
         put(weddings.update(wedding.id!).url, {
             onSuccess: () => {
@@ -77,7 +83,7 @@ export default function SetWeddingMenu({
                     <DialogTitle>Set Your Wedding Menu</DialogTitle>
                 </DialogHeader>
 
-                <Form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
                         <h3 className="text-lg font-medium">Menu Items</h3>
                         <p className="text-sm text-muted-foreground">
@@ -99,7 +105,10 @@ export default function SetWeddingMenu({
                                     }
                                 >
                                     <SelectTrigger id={`menu-item-${index}`}>
-                                        <SelectItem value="">
+                                        <SelectValue placeholder="Select a menu item" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="none">
                                             Select a menu item
                                         </SelectItem>
                                         {availableMenuItems.map((item) => (
@@ -110,7 +119,7 @@ export default function SetWeddingMenu({
                                                 {item.name}
                                             </SelectItem>
                                         ))}
-                                    </SelectTrigger>
+                                    </SelectContent>
                                 </Select>
                             </div>
                         ))}
@@ -136,7 +145,7 @@ export default function SetWeddingMenu({
                             {processing ? 'Saving...' : 'Save Menu'}
                         </Button>
                     </DialogFooter>
-                </Form>
+                </form>
             </DialogContent>
         </Dialog>
     );
