@@ -45,12 +45,6 @@ class WeddingController extends Controller
             ['name' => "$wedding->partnerB_firstname $wedding->partnerB_lastname", 'wedding_id' => $wedding->id, 'status' => GuestStatus::CONFIRMED->value, 'role' => GuestRole::PARTNER_B->value],
         );
 
-        //Links Guest ids of partners to wedding
-        $wedding->update([
-            'partnerA_guest_id' => $partnerA->id,
-            'partnerB_guest_id' => $partnerB->id,
-        ]);
-
         //If template date wanted (groupTemplates = true)
         if ($data['groupTemplates']) {
             $template = [

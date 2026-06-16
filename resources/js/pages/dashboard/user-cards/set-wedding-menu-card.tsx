@@ -108,7 +108,7 @@ export default function SetWeddingMenuCard() {
                                             setAddPartnerMealOpen(true)
                                         }
                                     >
-                                        {hasPartners ?  'Edit Wedding Menu' : 'Set Wedding Menu'}
+                                        {hasPartners ?  'Edit Your Dishes' : 'Set Your Dishes'}
                                     </Button>
 
 
