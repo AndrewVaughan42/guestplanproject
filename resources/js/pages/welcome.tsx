@@ -19,7 +19,7 @@ export default function Welcome({
                 />
             </Head>
             <div className="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:justify-center lg:p-8 dark:bg-[#0a0a0a]">
-                <header className="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl">
+                <header className="mb-6 w-full max-w-83.75 text-sm not-has-[nav]:hidden lg:max-w-4xl">
                     <nav className="flex items-center justify-end gap-4">
                         {auth.user ? (
                             <Link
@@ -70,7 +70,7 @@ export default function Welcome({
                             GuestPlan
                         </h1>
 
-                        <p className="mt-4 text-xl font-light tracking-wide text-neutral-600 dark:text-neutral-300">
+                        <p className="mt-4 text-xl font-light tracking-wide text-guestplan">
                             A Plan For Your Guests
                         </p>
 
