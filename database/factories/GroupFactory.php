@@ -15,10 +15,9 @@ class GroupFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'relationship' => $this->faker->word(),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-
+            'priority' => $this->faker->numberBetween(1, 10),
+            'description' => $this->faker->sentence(),
+            'colour' => $this->faker->safeColorName(),
             'wedding_id' => Wedding::factory(),
         ];
     }

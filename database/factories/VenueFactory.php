@@ -12,18 +12,16 @@ class VenueFactory extends Factory
 
     public function definition(): array
     {
-        $minCap = $this->faker->numberBetween(20, 30);
-        $maxCap = $this->faker->numberBetween(60, 100);
+        $minCap = $this->faker->numberBetween(20, 50);
+        $maxCap = $this->faker->numberBetween($minCap + 10, 200);
         $minTables = $this->faker->numberBetween(5, 10);
-        $maxTables = $this->faker->numberBetween(15, 20);
+        $maxTables = $this->faker->numberBetween($minTables + 5, 30);
         return [
-            'name' => $this->faker->company(),
+            'name' => $this->faker->company() . ' Venue',
             'minimum_capacity' => $minCap,
             'maximum_capacity' => $maxCap,
             'minimum_table_amount' => $minTables,
             'maximum_table_amount' => $maxTables,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
         ];
     }
 }

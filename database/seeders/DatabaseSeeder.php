@@ -39,6 +39,16 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        $emptyUser = User::firstOrCreate(
+            ['email' => 'empty@laravel.com'],
+            [
+                'name' => 'Andrew Vaughan',
+                'password' => Hash::make('qwertyuiop'),
+                'email_verified_at' => now(),
+                'isAdmin' => false
+            ]
+        );
+
         $sfh = Venue::firstOrCreate(
             ['name' => 'Sant Ffraed House'],
             [
@@ -217,7 +227,7 @@ class DatabaseSeeder extends Seeder
         );
 
 
-        $userWedding->menuItems()->sync($menuItems->pluck('id'));
+        $userWedding->menuItems()->sync($menuItems->all());
 
         $partnerA = Guest::create([
             'name' => $userWedding->partnerA_firstname . ' ' . $userWedding->partnerA_lastname,

@@ -29,11 +29,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function GuestManager({
     guests = [],
     groups = [],
-    myMenuItems = [],
+    menuItems = [],
 }: {
     guests: Guest[];
     groups: Group[];
-    myMenuItems: MenuItem[];
+    menuItems: MenuItem[];
 }) {
     //New Guest Dialog
     const [createOpen, setCreateOpen] = useState(false);
@@ -48,7 +48,7 @@ export default function GuestManager({
     const [importOpen, setImportOpen] = useState(false);
 
     const getMenuItemName = (id: number | null | undefined) => {
-        return myMenuItems.find((item) => item.id === id)?.name ?? '—';
+        return menuItems.find((item) => item.id === id)?.name ?? '—';
     };
 
     const handleEdit = (guest: Guest) => {
@@ -76,7 +76,7 @@ export default function GuestManager({
                             <CreateGuest
                                 open={createOpen}
                                 setOpen={setCreateOpen}
-                                menuItems={myMenuItems}
+                                menuItems={menuItems}
                             />
                             <Button
                                 className={'mb-4 hover:text-guestplan'}

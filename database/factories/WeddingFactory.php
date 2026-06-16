@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use App\Models\Venue;
 use App\Models\VenueLayer;
 use App\Models\Wedding;
@@ -15,11 +16,12 @@ class WeddingFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
-            'date' => Carbon::now(),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-
+            'date' => Carbon::now()->addMonths(6),
+            'partnerA_firstname' => $this->faker->firstName(),
+            'partnerA_lastname' => $this->faker->lastName(),
+            'partnerB_firstname' => $this->faker->firstName(),
+            'partnerB_lastname' => $this->faker->lastName(),
+            'user_id' => User::factory(),
             'venue_id' => Venue::factory(),
             'venue_layer_id' => VenueLayer::factory(),
         ];

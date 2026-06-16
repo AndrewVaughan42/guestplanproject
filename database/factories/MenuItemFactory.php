@@ -7,19 +7,16 @@ use App\Models\MenuItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-class MenuFactory extends Factory
+class MenuItemFactory extends Factory
 {
     protected $model = MenuItem::class;
 
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
-            'description' => $this->faker->text(),
+            'name' => $this->faker->sentence(3),
+            'description' => $this->faker->paragraph(),
             'is_plant_based' => $this->faker->boolean(),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-
             'venue_id' => Venue::factory(),
         ];
     }

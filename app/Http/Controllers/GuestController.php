@@ -6,6 +6,7 @@ use App\GuestRole;
 use App\GuestStatus;
 use App\Models\Guest;
 use App\Models\Group;
+use App\Models\Wedding;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -31,7 +32,7 @@ class GuestController extends Controller
         return Inertia::render('user/guest-manager', [
             'guests' => $sortedGuests,
             'groups' => Group::where('wedding_id', $wedding->id)->get(),
-            'menuItems' => $wedding->menuItems,
+            'menuItems' => $wedding->menuItems()->get(),
         ]);
     }
 
@@ -77,15 +78,40 @@ class GuestController extends Controller
     public function update(Request $request, Guest $guest): RedirectResponse
     {
         $wedding = auth()->user()->wedding;
+
         if (!$wedding || $guest->wedding_id !== $wedding->id) {
             return redirect()->back()->with('flash', [
                 'type' => 'error',
                 'message' => 'You are not authorized to edit this guest.',
             ]);
         }
+
+        if (in_array($guest->role, [GuestRole::PARTNER_A->value, GuestRole::PARTNER_B->value], true)) {
+            $data = $request->validate([
+                'partnerA_meal' => ['nullable', 'exists:menu_items,id'],
+                'partnerB_meal' => ['nullable', 'exists:menu_items,id'],
+            ]);
+
+            $partnerA = $wedding->guests()->where('role', GuestRole::PARTNER_A->value)->first();
+            $partnerB = $wedding->guests()->where('role', GuestRole::PARTNER_B->value)->first();
+
+            if (isset($data['partnerA_meal'])) {
+                $partnerA?->update(['menu_item_id' => $data['partnerA_meal'] === '' ? null : $data['partnerA_meal']]);
+            }
+
+            if (isset($data['partnerB_meal'])) {
+                $partnerB?->update(['menu_item_id' => $data['partnerB_meal'] === '' ? null : $data['partnerB_meal']]);
+            }
+
+            return back()->with('flash', [
+                'type' => 'success',
+                'message' => 'Partners meals updated',
+            ]);
+        }
+
         $data = $request->validate([
             'name' => ['required', 'string','max:255'],
-            'menu_item_id' => ['nullable'],
+            'menu_item_id' => ['nullable', 'exists:menu_items,id'],
             'status' => ['required', 'in:invited,confirmed,declined'],
             'role' => ['required', 'in:normal,partner_a,partner_b'],
             'notes' => ['nullable'],
@@ -150,4 +176,6 @@ class GuestController extends Controller
             'message' => 'Guest list uploaded successfully.'
         ]);
     }
+
+
 }
