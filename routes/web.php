@@ -47,9 +47,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Renders Group Management via Index
     Route::resource('groups', GroupController::class);
 
-    //Renders Conflicts page via index
+    //Group routes
     Route::post('groups/{group}/guests', [GroupController::class, 'attachGuest'])->name('groups.guests.attach');
     Route::delete('groups/{group}/guests', [GroupController::class, 'detachGuest'])->name('groups.guests.detach');
+    Route::patch('groups/{group}/sync', [GroupController::class, 'syncGuests'])->name('groups.syncGuests');
+
+    //Renders Conflicts page via index
     Route::resource('conflicts', GuestConflictsController::class);
 
     //Meal Choices, no Page, part of Venue Management

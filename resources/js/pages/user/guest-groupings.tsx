@@ -9,24 +9,28 @@ import {
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import groups from '@/routes/groups';
-import { BreadcrumbItem, Group } from '@/types';
+import { BreadcrumbItem, Group, Guest } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Edit, Trash2 } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import CreateGroup from '../components/groups/create-group';
 import DeleteGroup from '../components/groups/delete-group';
 import EditGroup from '../components/groups/edit-group';
+import ManageGroupMembers from '@/pages/components/groups/manage-group-members';
 
 export default function GuestGroupings({
     groups: groupList,
+    guests,
 }: {
     groups: Group[];
+    guests: Guest[];
 }) {
-    const [open, setOpen] = React.useState(false);
-    const [editOpen, setEditOpen] = React.useState(false);
-    const [selectedGroup, setSelectedGroup] = React.useState<Group | null>(
+    const [open, setOpen] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
+    const [selectedGroup, setSelectedGroup] = useState<Group | null>(
         null,
     );
+    const [membersOpen, setMembersOpen] = useState(false);
 
     const handleEdit = (group: Group) => {
         setSelectedGroup(group);
@@ -39,6 +43,9 @@ export default function GuestGroupings({
             href: groups.index.url(),
         },
     ];
+
+
+
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -113,6 +120,12 @@ export default function GuestGroupings({
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
+                                                    <Button onClick={() => {
+                                                        setSelectedGroup(group);
+                                                        setMembersOpen(true);
+                                                    }}>
+                                                        Edit Members
+                                                    </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
@@ -150,6 +163,14 @@ export default function GuestGroupings({
                         setOpen={setEditOpen}
                         group={selectedGroup}
                     />
+                    {membersOpen && selectedGroup && (
+                        <ManageGroupMembers
+                            open={membersOpen}
+                            setOpen={setMembersOpen}
+                            group={selectedGroup!}
+                            guests={guests}
+                        />
+                    )}
                 </div>
             </div>
         </AppLayout>

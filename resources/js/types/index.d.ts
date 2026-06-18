@@ -117,6 +117,7 @@ export interface Group {
     wedding_id?: number;
     guests_count: number;
     colour: string;
+    guests: Guest[];
 }
 export interface GuestConflict {
     id: number;

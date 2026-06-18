@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\GuestRole;
 use App\Models\Group;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,9 +20,15 @@ class GroupController extends Controller
             ]);
         }
 
+        $sortedGuests = $wedding->guests()->where('role', GuestRole::NORMAL->value)->with('groups')->get()->sortBy(function ($guest) {
+            $parts = explode(' ', $guest->name);
+            return strtolower(end($parts));
+        })->values();
+
         return Inertia::render('user/guest-groupings', [
-            'groups' => Group::where('wedding_id', $wedding->id)
-                ->withCount('guests')->orderByDesc('priority')->get(),
+            'groups' => Group::where('wedding_id', $wedding->id)->with('guests')
+                ->withCount('guests')->orderByDesc('priority')->orderBy('name')->get(),
+            'guests' => $sortedGuests,
         ]);
 
     }
@@ -105,6 +112,7 @@ class GroupController extends Controller
         ]);
     }
 
+    //For quick addd to group in Guest Manger
     public function attachGuest(Request $request, Group $group): RedirectResponse
     {
         $data = $request->validate([
@@ -118,7 +126,7 @@ class GroupController extends Controller
             'message' => 'Guest added to group successfully.'
         ]);
     }
-
+    //
     public function detachGuest(Request $request, Group $group): RedirectResponse
     {
         $group->guests()->detach($request->guest_id);
@@ -126,6 +134,21 @@ class GroupController extends Controller
         return redirect()->back()->with('flash', [
             'type' => 'success',
             'message' => 'Guest removed from group successfully.'
+        ]);
+    }
+
+    public function syncGuests(Request $request, Group $group)
+    {
+        $data = $request->validate([
+            'guest_ids' => ['required', 'array'],
+            'guest_ids.*' => ['required', 'exists:guests,id'],
+        ]);
+
+        $group->guests()->sync($data['guest_ids'] ?? []);
+
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Guests synced to group successfully.'
         ]);
     }
 }
