@@ -142,8 +142,6 @@ class SeatplanController extends Controller
 
     public function update(Request $request, Seatplan $seat_plan): RedirectResponse
     {
-        dump($request->all());
-
         $user = auth()->user();
         $wedding = $user->wedding;
 
@@ -167,11 +165,7 @@ class SeatplanController extends Controller
 
         $seat_plan->layout = $data['layout'];
 
-        dump($seat_plan->venue_layer_id);
-
         $seat_plan->save();
-
-        dump($seat_plan->venue_layer_id);
 
         return redirect()->back()->with('flash', [
             'type' => 'success',
