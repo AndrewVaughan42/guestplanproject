@@ -24,7 +24,7 @@ class GuestController extends Controller
             ]);
         }
 
-        $sortedGuests = $wedding->guests()->where('role', GuestRole::NORMAL->value)->get()->sortBy(function ($guest) {
+        $sortedGuests = $wedding->guests()->where('role', GuestRole::NORMAL->value)->with('groups')->get()->sortBy(function ($guest) {
             $parts = explode(' ', $guest->name);
             return strtolower(end($parts));
         })->values();

@@ -26,6 +26,23 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: guestRoutes.index().url,
     },
 ];
+
+function GroupDots({ groups }: { groups?: Group[] }) {
+    if (!groups?.length) return null;
+
+    return (
+        <div className="flex items-center gap-1">
+            {groups.map((group) => (
+                <span
+                    key={group.id}
+                    title={group.name}
+                    className="h-4 w-4 rounded-full border"
+                    style={{ backgroundColor: group.colour }}
+                />
+            ))}
+        </div>
+    );
+}
 export default function GuestManager({
     guests = [],
     groups = [],
@@ -127,7 +144,10 @@ export default function GuestManager({
                                     guests.map((guest) => (
                                         <TableRow key={guest.id}>
                                             <TableCell className="text-left">
-                                                {guest.name}
+                                                <div className="flex items-center gap-2">
+                                                    <span>{guest.name}</span>
+                                                    <GroupDots groups={guest.groups} />
+                                                </div>
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 {getMenuItemName(
