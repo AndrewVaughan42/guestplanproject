@@ -21,6 +21,7 @@ export function SeatplanTableSidebar({
     guestMap,
     onUnassign,
 }: TablePropertiesSidebarProps) {
+    const topSeatClam = (value: number) => Math.max(0, value);
     return (
         <div className="flex h-full w-80 flex-col gap-4 overflow-y-auto border-sidebar-border bg-sidebar p-4">
             {/*Header*/}
@@ -88,13 +89,11 @@ export function SeatplanTableSidebar({
                     <input
                         type="number"
                         min={0}
+                        max={4}
                         value={table.seats_per_side}
                         onChange={(e) =>
                             onUpdate({
-                                seats_per_side: Math.max(
-                                    0,
-                                    Number(e.target.value),
-                                ),
+                                seats_per_side: topSeatClam(Number(e.target.value)),
                             })
                         }
                         className="w-20 rounded border px-2 py-1 text-sm"
