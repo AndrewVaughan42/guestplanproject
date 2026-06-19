@@ -53,6 +53,13 @@ export default function ManageGroupMembers({
         );
     }
 
+    function clearAllGuests() {
+        const confirmed = window.confirm('Are you sure you want to clear all guests from this group?');
+        if (!confirmed) return;
+
+        setData('guest_ids', []);
+    }
+
     function submit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -68,7 +75,7 @@ export default function ManageGroupMembers({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className={'flex max-h-125 flex-col sm:max-w-lg'}>
-                <form onSubmit={submit} className="flex h-full flex-col overflow-hidden">
+                <form onSubmit={submit} className="flex h-full flex-col overflow-hidden gap-3">
                     <DialogHeader>
                         <DialogTitle>Manage Group Members</DialogTitle>
                     </DialogHeader>
@@ -105,6 +112,9 @@ export default function ManageGroupMembers({
 
                     <DialogFooter className={'border-t pt-3'}>
                         <div className={'flex w-full justify-end gap-2'}>
+                            <Button type={"button"} variant={"outline"} onClick={clearAllGuests} disabled={processing || data.guest_ids.length === 0}>
+                                Clear All
+                            </Button>
                             <Button
                                 type={'button'}
                                 variant="outline"

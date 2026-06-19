@@ -81,7 +81,10 @@ export default function GuestGroupings({
                                     <TableHead className="text-xl font-bold">
                                         Guest Count
                                     </TableHead>
-                                    <TableHead className="text-right">
+                                    <TableHead className="text-xl font-bold text-right">
+                                        Guests
+                                    </TableHead>
+                                    <TableHead className="text-right text-xl">
                                         Actions
                                     </TableHead>
                                 </TableRow>
@@ -104,9 +107,15 @@ export default function GuestGroupings({
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
-                                                    <span className={"h-4 w-4 rounded-full border"} style={{ backgroundColor: group.colour }}>
-
-                                                    </span>
+                                                    <span
+                                                        className={
+                                                            'h-4 w-4 rounded-full border'
+                                                        }
+                                                        style={{
+                                                            backgroundColor:
+                                                                group.colour,
+                                                        }}
+                                                    ></span>
                                                 </div>
                                             </TableCell>
                                             <TableCell className="capitalize">
@@ -119,13 +128,18 @@ export default function GuestGroupings({
                                                 {group.guests_count}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <Button onClick={() => {
+                                                <Button
+                                                    onClick={() => {
                                                         setSelectedGroup(group);
                                                         setMembersOpen(true);
-                                                    }}>
-                                                        Edit Members
-                                                    </Button>
+                                                    }}
+                                                    className="bg-guestplan items-center"
+                                                >
+                                                    Edit Members
+                                                </Button>
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <div className="flex justify-end gap-2">
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
@@ -157,7 +171,11 @@ export default function GuestGroupings({
                             </TableBody>
                         </Table>
                     </div>
-                    <CreateGroup open={open} setOpen={setOpen} existingGroups={ groupList} />
+                    <CreateGroup
+                        open={open}
+                        setOpen={setOpen}
+                        existingGroups={groupList}
+                    />
                     <EditGroup
                         open={editOpen}
                         setOpen={setEditOpen}
