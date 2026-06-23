@@ -60,6 +60,7 @@ export interface Venue {
     minimum_table_amount: number;
     maximum_table_amount: number;
     menu_items?: MenuItem[];
+    weddings?: Wedding[];
 }
 
 export interface VenueSummary {
@@ -112,7 +113,7 @@ export interface Guest {
 export interface Group {
     id: number;
     name: string;
-    priority: number;
+    ranking: number;
     description: string | null;
     wedding_id?: number;
     guests_count: number;
@@ -160,9 +161,4 @@ export type VenueLayer = {
     name: string | null;
     table_data: Table[];
 };
-
-export interface VenueSummary {
-    id: number;
-    name: string;
-}
 

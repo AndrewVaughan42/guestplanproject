@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('priority')->default(5);
+            $table->integer('ranking')->default(5);
             $table->text('description')->nullable();
             $table->string('colour');
             $table->foreignId('wedding_id')->constrained()->cascadeOnDelete();

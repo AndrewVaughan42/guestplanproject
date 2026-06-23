@@ -8,15 +8,27 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import ManageGroupMembers from '@/pages/components/groups/manage-group-members';
 import groups from '@/routes/groups';
 import { BreadcrumbItem, Group, Guest } from '@/types';
-import { Head } from '@inertiajs/react';
-import { Edit, Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
+import { Head, router } from '@inertiajs/react';
+import { ArrowDown, ArrowUp, Edit, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import CreateGroup from '../components/groups/create-group';
 import DeleteGroup from '../components/groups/delete-group';
 import EditGroup from '../components/groups/edit-group';
-import ManageGroupMembers from '@/pages/components/groups/manage-group-members';
+
+function moveGroup(groupId: number, direction: 'up' | 'down') {
+    router.patch(
+        groups.move(groupId).url,
+        {
+            direction,
+        },
+        {
+            preserveScroll: true,
+        },
+    );
+}
 
 export default function GuestGroupings({
     groups: groupList,
@@ -27,9 +39,7 @@ export default function GuestGroupings({
 }) {
     const [open, setOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
-    const [selectedGroup, setSelectedGroup] = useState<Group | null>(
-        null,
-    );
+    const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [membersOpen, setMembersOpen] = useState(false);
 
     const handleEdit = (group: Group) => {
@@ -43,9 +53,6 @@ export default function GuestGroupings({
             href: groups.index.url(),
         },
     ];
-
-
-
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -73,7 +80,7 @@ export default function GuestGroupings({
                                         Colour
                                     </TableHead>
                                     <TableHead className="text-xl font-bold">
-                                        Priority
+                                        Ranking
                                     </TableHead>
                                     <TableHead className="text-xl font-bold">
                                         Description
@@ -81,7 +88,7 @@ export default function GuestGroupings({
                                     <TableHead className="text-xl font-bold">
                                         Guest Count
                                     </TableHead>
-                                    <TableHead className="text-xl font-bold text-right">
+                                    <TableHead className="text-right text-xl font-bold">
                                         Guests
                                     </TableHead>
                                     <TableHead className="text-right text-xl">
@@ -119,7 +126,66 @@ export default function GuestGroupings({
                                                 </div>
                                             </TableCell>
                                             <TableCell className="capitalize">
-                                                {group.priority}
+                                                <div
+                                                    className={
+                                                        'flex items-center gap-3'
+                                                    }
+                                                >
+                                                    <span
+                                                        className={
+                                                            'min-h-5 text-center'
+                                                        }
+                                                    >
+                                                        {group.ranking}
+                                                    </span>
+
+                                                    <div className="flex items-center gap-1">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8"
+                                                            disabled={
+                                                                group.ranking ===
+                                                                1
+                                                            }
+                                                            onClick={() => {
+                                                                if (
+                                                                    group.ranking ===
+                                                                    1
+                                                                )
+                                                                    return;
+                                                                moveGroup(
+                                                                    group.id,
+                                                                    'up',
+                                                                );
+                                                            }}
+                                                        >
+                                                            <ArrowUp className="h-8 w-8" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-5 w-5"
+                                                            disabled={
+                                                                group.ranking ===
+                                                                groupList.length
+                                                            }
+                                                            onClick={() => {
+                                                                if (
+                                                                    group.ranking ===
+                                                                    groupList.length
+                                                                )
+                                                                    return;
+                                                                moveGroup(
+                                                                    group.id,
+                                                                    'down',
+                                                                );
+                                                            }}
+                                                        >
+                                                            <ArrowDown className="h-3 w-3" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground">
                                                 {group.description}
@@ -133,7 +199,7 @@ export default function GuestGroupings({
                                                         setSelectedGroup(group);
                                                         setMembersOpen(true);
                                                     }}
-                                                    className="bg-guestplan items-center"
+                                                    className="items-center bg-guestplan"
                                                 >
                                                     Edit Members
                                                 </Button>

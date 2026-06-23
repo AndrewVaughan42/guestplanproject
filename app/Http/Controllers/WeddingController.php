@@ -8,6 +8,7 @@ use App\Models\Guest;
 use App\Models\Wedding;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class WeddingController extends Controller
 {
@@ -48,18 +49,18 @@ class WeddingController extends Controller
         //If template date wanted (groupTemplates = true)
         if ($data['groupTemplates']) {
             $template = [
-                ['name' => "$wedding->partnerA_lastname Family", 'priority' => 1, 'description' => "Family of $wedding->partnerA_firstname $wedding->partnerA_lastname, automatically created by Guestplan.", 'colour' => 'red'],
-                ['name' => "$wedding->partnerB_lastname Family", 'priority' => 1, 'description' => "Family of $wedding->partnerB_firstname $wedding->partnerB_lastname, automatically created by Guestplan.", 'colour' => 'blue'],
-                ['name' => "Groomsmen", 'priority' => 1, 'colour' => 'green'],
-                ['name' => "Bridesmaids", 'priority' => 1, 'colour' => 'pink'],
-                ['name' => "Friends of $wedding->partnerA_firstname", 'priority' => 2, 'colour' => 'yellow'],
-                ['name' => "Friends of $wedding->partnerB_firstname", 'priority' => 2, 'colour' => 'purple'],
+                ['name' => "$wedding->partnerA_lastname Family", 'ranking' => 1, 'description' => "Family of $wedding->partnerA_firstname $wedding->partnerA_lastname, automatically created by Guestplan.", 'colour' => 'red'],
+                ['name' => "$wedding->partnerB_lastname Family", 'ranking' => 2, 'description' => "Family of $wedding->partnerB_firstname $wedding->partnerB_lastname, automatically created by Guestplan.", 'colour' => 'blue'],
+                ['name' => "Groomsmen", 'ranking' => 3, 'colour' => 'green'],
+                ['name' => "Bridesmaids", 'ranking' => 4, 'colour' => 'pink'],
+                ['name' => "Friends of $wedding->partnerA_firstname", 'ranking' => 5, 'colour' => 'yellow'],
+                ['name' => "Friends of $wedding->partnerB_firstname", 'ranking' => 6, 'colour' => 'purple'],
 
             ];
             foreach ($template as $group) {
                 $wedding->groups()->create([
                     'name' => $group['name'],
-                    'priority' => $group['priority'],
+                    'ranking' => $group['ranking'],
                     'description' => $group['description'] ?? null,
                     'colour' => $group['colour'],
                 ]);
@@ -140,5 +141,72 @@ class WeddingController extends Controller
             'type' => 'success',
             'message' => 'Wedding deleted successfully.',
         ]);
+    }
+
+    public function selectWedding()
+    {
+        if (auth()->user()->role !== 'admin') {
+            return redirect()->back()->with('flash', [
+                'type' => 'error',
+                'message' => 'You are not authorized to view this.',
+            ]);
+        }
+
+        $venues = auth()->user()->venues()->get();
+
+        return Inertia::render('admin/select-wedding', [
+            'venues' => $venues,
+        ]);
+    }
+
+    //Route for wedding summary page, Admins only for that venue can access;
+    public function summary(Wedding $wedding)
+    {
+        if (auth()->user()->role !== 'admin') {
+            return redirect()->back()->with('flash', [
+                'type' => 'error',
+                'message' => 'You are not authorized to view this summary.',
+            ]);
+        }
+
+        if ($wedding->venue->user_id !== auth()->id()) {
+            return redirect()->back()->with('flash', [
+                'type' => 'error',
+                'message' => 'You are not authorized to view this summary.',
+            ]);
+        }
+
+        $guests = $wedding->guests()->with('menuItem')->get();
+
+        $totalGuests = $guests->count();
+
+        $confirmed = $guests->where('status', GuestStatus::CONFIRMED)->count();
+        $invited = $guests->where('status', GuestStatus::INVITED)->count();
+        $declined = $guests->where('status', GuestStatus::DECLINED)->count();
+
+        $confirmRate = $totalGuests > 0 ? round(($confirmed / $totalGuests) * 100, 2) : 0;
+
+        $menuBreakdown = $wedding->menuItems->map(function ($menuItem) use ($guests) {
+            return [
+                'id' => $menuItem->id,
+                'name' => $menuItem->name,
+                'description' => $menuItem->description,
+                'count' => $guests->where('status', GuestStatus::CONFIRMED)->where('menu_item_id', $menuItem->id)->count(),
+            ];
+        });
+
+        return Inertia::render('admin/wedding-summary', [
+            'wedding' => $wedding,
+            'guests' => $guests,
+            'stats' => [
+                'total' => $totalGuests,
+                'confirmed' => $confirmed,
+                'invited' => $invited,
+                'declined' => $declined,
+                'confirmRate' => $confirmRate,
+            ],
+            'menuItems' => $menuBreakdown,
+        ]);
+
     }
 }

@@ -41,14 +41,12 @@ export default function CreateGroup({
 
     type GroupForm = {
         name: string;
-        priority: number;
         colour: string;
         description: string;
     };
     const { data, setData, post, processing, errors } =
         useForm<GroupForm>({
             name: '',
-            priority: 0,
             colour: defaultColour,
             description: '',
         });
@@ -69,7 +67,6 @@ export default function CreateGroup({
 
         const initials: GroupForm = {
             name: '',
-            priority: 0,
             colour: colour,
             description: '',
         };
@@ -107,32 +104,6 @@ export default function CreateGroup({
                         )}
                     </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="relationship">Seating Priority</Label>
-                        <Input
-                            type={'number'}
-                            required
-                            aria-required="true"
-                            value={data.priority}
-                            name="priority"
-                            min={1}
-                            max={10}
-                            placeholder="Enter priority (From 1 to 10)"
-                            onChange={(e) =>
-                                setData(
-                                    'priority',
-                                    e.target.value
-                                        ? parseInt(e.target.value)
-                                        : 0,
-                                )
-                            }
-                        />
-                        {errors.priority && (
-                            <span className="text-sm text-destructive">
-                                {errors.priority}
-                            </span>
-                        )}
-                    </div>
                     <div className="grid gap-2">
                         <Label htmlFor="description">Description</Label>
                         <textarea

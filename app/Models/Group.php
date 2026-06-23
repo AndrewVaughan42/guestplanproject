@@ -11,7 +11,7 @@ class Group extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'priority', 'description', 'wedding_id', 'colour'];
+    protected $fillable = ['name', 'ranking', 'description', 'wedding_id', 'colour'];
 
     public function wedding(): BelongsTo
     {

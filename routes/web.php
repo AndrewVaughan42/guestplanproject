@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('groups/{group}/guests', [GroupController::class, 'attachGuest'])->name('groups.guests.attach');
     Route::delete('groups/{group}/guests', [GroupController::class, 'detachGuest'])->name('groups.guests.detach');
     Route::patch('groups/{group}/sync', [GroupController::class, 'syncGuests'])->name('groups.syncGuests');
+    Route::patch('groups/{group}/move', [GroupController::class, 'move'])->name('groups.move');
 
     //Renders Conflicts page via index
     Route::resource('conflicts', GuestConflictsController::class);

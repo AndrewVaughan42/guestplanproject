@@ -15,7 +15,7 @@ class GroupFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'priority' => $this->faker->numberBetween(1, 10),
+            'ranking' => $this->faker->numberBetween(1, 10),
             'description' => $this->faker->sentence(),
             'colour' => $this->faker->safeColorName(),
             'wedding_id' => Wedding::factory(),

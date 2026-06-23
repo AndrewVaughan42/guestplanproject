@@ -29,7 +29,6 @@ export default function EditGroup({
     >({
         name: '',
         description: '',
-        priority: 0,
         colour: '',
     });
 
@@ -38,7 +37,6 @@ export default function EditGroup({
         setData({
             name: group.name ?? '',
             description: group.description || '',
-            priority: group.priority ?? 0,
             colour: group.colour ?? '',
         });
     }, [group, setData]);
@@ -81,27 +79,6 @@ export default function EditGroup({
                         )}
                     </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="edit-priority">Seating Priority</Label>
-                        <Input
-                            type={'number'}
-                            required
-                            aria-required="true"
-                            value={data.priority}
-                            name="priority"
-                            min={1}
-                            max={10}
-                            placeholder="Enter priority (From 1 to 10)"
-                            onChange={(e) =>
-                                setData('priority', parseInt(e.target.value))
-                            }
-                        />
-                        {errors.priority && (
-                            <span className="text-sm text-destructive">
-                                {errors.priority}
-                            </span>
-                        )}
-                    </div>
                     <div className="grid gap-2">
                         <Label htmlFor="edit-description">Description</Label>
                         <Textarea

@@ -27,7 +27,7 @@ class GroupController extends Controller
 
         return Inertia::render('user/guest-groupings', [
             'groups' => Group::where('wedding_id', $wedding->id)->with('guests')
-                ->withCount('guests')->orderByDesc('priority')->orderBy('name')->get(),
+                ->withCount('guests')->orderBy('ranking')->get(),
             'guests' => $sortedGuests,
         ]);
 
@@ -45,12 +45,12 @@ class GroupController extends Controller
 
         $data = $request->validate([
             'name' => ['required'],
-            'priority' => ['required', 'integer', 'min:1', 'max:10'],
             'description' => ['nullable'],
             'colour' => ['required', 'string', 'min:7', 'max:7'],
         ]);
 
         $data['wedding_id'] = $wedding->id;
+        $data['ranking'] = Group::where('wedding_id', $wedding->id)->count() + 1;
 
         Group::create($data);
 
@@ -82,7 +82,6 @@ class GroupController extends Controller
 
         $data = $request->validate([
             'name' => ['required'],
-            'priority' => ['required', 'integer', 'min:1', 'max:10'],
             'description' => ['nullable'],
             'colour' => ['required', 'string', 'min:7', 'max:7'],
         ]);
@@ -149,6 +148,37 @@ class GroupController extends Controller
         return redirect()->back()->with('flash', [
             'type' => 'success',
             'message' => 'Guests synced to group successfully.'
+        ]);
+    }
+
+    public function move(Request $request, Group $group): RedirectResponse
+    {
+        $direction = request()->validate([
+            'direction' => ['required', 'in:up,down'],
+        ])['direction'];
+
+        $currentRank = $group->ranking;
+
+        $swap = $direction === 'up'
+            ? $group->ranking - 1
+            : $group->ranking + 1;
+
+        $swapGroup = Group::where('wedding_id', $group->wedding_id)
+            ->where('ranking', $swap)
+            ->first();
+
+        if (!$swapGroup) return back();
+
+        $swapGroup->update([
+            'ranking' => $currentRank,
+        ]);
+        $group->update([
+            'ranking' => $swap,
+        ]);
+
+        return redirect()->back()->with('flash', [
+            'type' => 'success',
+            'message' => 'Group moved successfully.'
         ]);
     }
 }
