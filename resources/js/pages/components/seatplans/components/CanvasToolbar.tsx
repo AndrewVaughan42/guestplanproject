@@ -9,6 +9,7 @@ interface CanvasToolbarProps {
     totalLayers: number
     onPreviousLayer: () => void
     onNextLayer: () => void
+    isAutoSeatDisabled?: boolean
 }
 
 export function CanvasToolbar({
@@ -18,18 +19,27 @@ export function CanvasToolbar({
     currentLayer,
     totalLayers,
     onPreviousLayer,
-    onNextLayer
+    onNextLayer,
+    isAutoSeatDisabled = false
 }: CanvasToolbarProps) {
     return (
         <div className={'flex items-center justify-between border-b px-4 py-2'}>
-            <Button
-                onClick={onAutoSeat}
-                className={
-                    'rounded-md border px-4 py-2 text-sm font-medium hover:bg-muted'
-                }
-            >
-                Auto Seat
-            </Button>
+            <div className="flex items-center gap-2">
+                <Button
+                    onClick={onAutoSeat}
+                    disabled={isAutoSeatDisabled}
+                    className={
+                        'rounded-md border px-4 py-2 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed'
+                    }
+                >
+                    Auto Seat
+                </Button>
+                {isAutoSeatDisabled && (
+                    <span className="text-xs text-muted-foreground">
+                        Fill top table to enable auto-seat
+                    </span>
+                )}
+            </div>
 
             <div className={'flex items-center gap-3'}>
                 <Button
