@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\GuestRole;
 use App\Models\Guest;
 use App\Models\Seatplan;
+use App\Models\VenueLayer;
+use App\Models\Wedding;
+use App\Services\SeatingAlgorithm\AutoSeatService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -215,7 +218,6 @@ class SeatplanController extends Controller
 
         $tableId = $topTable['id'];
 
-        // Use the saved seats_per_side if available in the layout, otherwise use the venue layer's default
         $seatsPerSide = $topTable['seats_per_side'];
         if (isset($layout['tables'])) {
             foreach ($layout['tables'] as $savedTable) {
@@ -226,11 +228,19 @@ class SeatplanController extends Controller
             }
         }
 
+        // Remove partners from ANY table they might be on
         foreach ($allocations as $tId => $tableSeats) {
             foreach ($tableSeats as $seatIndex => $guestId) {
                 if (($partnerA && (int)$guestId === (int)$partnerA->id) || ($partnerB && (int)$guestId === (int)$partnerB->id)) {
                     unset($allocations[$tId][$seatIndex]);
                 }
+            }
+            $isTop = false;
+            foreach($venueLayer->table_data as $td) {
+                if ($td['id'] == $tId && ($td['type'] ?? '') === 'top') { $isTop = true; break; }
+            }
+            if (!$isTop) {
+                $allocations[$tId] = array_values($allocations[$tId]);
             }
         }
 
@@ -260,19 +270,66 @@ class SeatplanController extends Controller
         return $layout;
     }
 
-    private function getLayerSeatCount($layer): int
+    public function autoSeat(Request $request, $seat_plan_id, AutoSeatService $autoSeatService)
     {
-        $total = 0;
+        $seatplan = Seatplan::with('wedding')->find($seat_plan_id);
 
-        foreach ($layer->table_data as $table) {
-            if (($table['type'] === 'top')) {
-                $seatsPS =  ($table['seats_per_side'] ?? 0);
-                $total += ($seatsPS * 2) + 2;
-            } else {
-                $total += $table['seat_count'] ?? 0;
-            }
+        if (!$seatplan) {
+            return response()->json(['error' => 'Seatplan not found.'], 404);
         }
 
-        return $total;
+        $wedding = $seatplan->wedding;
+
+        if ($request->has('layout')) {
+            $seatplan->layout = $request->input('layout');
+            if ($request->has('venue_layer_id')) {
+                $seatplan->venue_layer_id = $request->input('venue_layer_id');
+            }
+            $seatplan->save();
+        }
+
+        $currentLayer = $seatplan->venueLayer ?: $wedding->venueLayer;
+
+        if (!$currentLayer) {
+            return response()->json(['error' => 'No venue layer found for this wedding.'], 422);
+        }
+        try {
+            $options = [];
+            if ($seatplan->layout) {
+                if (isset($seatplan->layout['allocations'])) {
+                    $options['currentAllocations'] = $seatplan->layout['allocations'];
+                }
+                if (isset($seatplan->layout['tables'])) {
+                    $options['currentTables'] = $seatplan->layout['tables'];
+                }
+            }
+
+            $result = $autoSeatService->generate($wedding, $currentLayer, $options);
+
+            $formattedAllocations = [];
+            foreach ($result['allocations'] as $tableId => $guestIds) {
+                $formattedAllocations[(string)$tableId] = [];
+                foreach ($guestIds as $index => $guestId) {
+                    $formattedAllocations[(string)$tableId][(string)$index] = (int)$guestId;
+                }
+            }
+
+            $layout = [
+                'allocations' => $formattedAllocations,
+                'tables' => array_values($result['tables']->toArray()),
+            ];
+
+            $layout = $this->ensurePartnerSeated($layout, $currentLayer, $wedding);
+
+
+            return response()->json([
+                'allocations' => $layout['allocations'],
+                'tables' => $layout['tables'],
+                'venue_layer_id' => $currentLayer->id,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
+
 }

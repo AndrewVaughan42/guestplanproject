@@ -61,6 +61,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //Renders seat plan page via index
     Route::resource('seat-plans', SeatplanController::class)->only('index', 'update');
+    Route::post('seat-plans/{seat_plan}/auto-seat', [SeatplanController::class, 'autoSeat'])->name('seat-plans.autoSeat');
 
     //Admin-only routes
     Route::middleware(['CheckAdmin'])->group(function () {

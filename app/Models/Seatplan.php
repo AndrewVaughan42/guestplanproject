@@ -28,6 +28,11 @@ class Seatplan extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function venueLayer(): BelongsTo
+    {
+        return $this->belongsTo(VenueLayer::class);
+    }
+
     protected function casts(): array
     {
         return [
