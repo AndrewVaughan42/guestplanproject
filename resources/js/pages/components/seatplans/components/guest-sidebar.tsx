@@ -10,7 +10,6 @@ interface GuestSidebarProps {
 }
 export default function GuestSidebar({
     guests,
-    conflictsWithAssigned,
     activeGuestId,
     onGuestClick,
 }: GuestSidebarProps) {
