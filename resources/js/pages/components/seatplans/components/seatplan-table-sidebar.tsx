@@ -167,7 +167,7 @@ export function SeatplanTableSidebar({
 
                                 {guest && guest.role === 'normal' &&(
                                     <button
-                                        className="ml-auto"
+                                        className="ml-auto text-red-500"
                                         onClick={() => onUnassign?.(table.id, index)}
                                     >
                                         Remove

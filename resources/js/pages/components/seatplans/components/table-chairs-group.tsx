@@ -22,6 +22,7 @@ interface TableChairsGroupProps {
     selectedSeat: string | null;
     selectedTableId: string | null;
     activeGuestId?: number | null;
+    conflictsMap?: Map<number, Set<number>>;
     hasConflict?: boolean;
     onDragEnd: (tableId: string, x: number, y: number) => void;
     onSeatClick: (seatId: string, isBrideOrGroom: boolean) => void;
@@ -39,6 +40,7 @@ export default function TableChairsGroup({
     selectedSeat,
     selectedTableId,
     activeGuestId,
+    conflictsMap,
     hasConflict = false,
     onDragEnd,
     onSeatClick,
@@ -152,6 +154,8 @@ export default function TableChairsGroup({
                     table.type === 'top' &&
                     (isBrideSeat(index, table) || isGroomSeat(index, table));
 
+                const hasConflictWithActive = Boolean(activeGuestId) && Boolean(guest) && Boolean(conflictsMap?.get(activeGuestId!)?.has(guest!.id));
+
                 return (
                     <Seat
                         seatId={seatId}
@@ -162,6 +166,7 @@ export default function TableChairsGroup({
                         isActiveGuestAssignment={
                             Boolean(activeGuestId) && !guest
                         }
+                        hasConflictWithActive={hasConflictWithActive}
                         onClick={(e) => {
                             e.cancelBubble = true;
                             onSeatClick(seatId, isBrideOrGroom);

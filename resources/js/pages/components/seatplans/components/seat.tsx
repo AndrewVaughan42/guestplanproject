@@ -12,6 +12,7 @@ interface SeatProps {
     isSelected: boolean;
     isActiveGuestAssignment?: boolean;
     isSelectedAllocatedSeat?: boolean;
+    hasConflictWithActive?: boolean;
     isReserved: boolean;
     onClick: (e: KonvaEventObject<MouseEvent>) => void;
     x?: number;
@@ -23,6 +24,7 @@ export default function Seat({
     isSelected,
     isActiveGuestAssignment = false,
     isSelectedAllocatedSeat = false,
+    hasConflictWithActive = false,
     isReserved,
     onClick,
     x,
@@ -41,6 +43,7 @@ export default function Seat({
         guest,
         isSelected : isReserved ? false : isSelected,
         isActiveGuestAssignment: isReserved ? false : isActiveGuestAssignment,
+        hasConflictWithActive,
         isReserved,
         appearance,
     });

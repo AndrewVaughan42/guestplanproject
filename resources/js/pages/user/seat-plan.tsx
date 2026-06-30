@@ -18,7 +18,9 @@ import type {
 } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useCallback, useEffect, useState } from 'react';
+import { Spinner } from '@/components/ui/spinner';
 import TableChairsGroup from '../components/seatplans/components/table-chairs-group';
+import axios from 'axios';
 
 interface SeatPlanProps {
     venueLayers: VenueLayer[];
@@ -47,6 +49,7 @@ export default function SeatPlan({
     lockedGuests,
     venue_layer_id,
 }: SeatPlanProps) {
+    const [processing, setProcessing] = useState(false);
     const editor = useSeatplanEditor({
         venue_layer_id: venue_layer_id,
         lockedGuests,
@@ -86,6 +89,7 @@ export default function SeatPlan({
         moveOrAssignGuest,
         switchLayer,
         currentLayerId,
+        conflictsMap,
     } = editor;
 
     const [selectedAllocatedSeat, setSelectedAllocatedSeat] = useState<{
@@ -138,9 +142,35 @@ export default function SeatPlan({
         unassignGuest({ tableId, seatIndex });
     };
 
-    const handleAutoSeat = useCallback(() => {
-        //For Seating Algorithm     TODO
-    }, []);
+    const handleAutoSeat = useCallback(async () => {
+
+        if (!confirm('Auto-seat will overwrite your seat-plan since your last save. Continue?'))
+            return;
+
+        setProcessing(true);
+        try {
+            const currentData = editor.getCurrentLayout();
+            const response = await axios.post(
+                seatPlans.autoSeat(seatPlanId).url,
+                currentData,
+            );
+            const { allocations: newAllocations, tables: newTables, venue_layer_id: newLayerId } = response.data;
+
+            if (newLayerId && newLayerId !== editor.currentLayerId) {
+                editor.switchLayer(newLayerId);
+            }
+
+            editor.setAllocations(newAllocations);
+            editor.setTables(newTables);
+
+            console.log('Auto-seat completed successfully');
+        } catch (error) {
+            console.error('Error during auto-seat:', error);
+            alert('An error occurred during auto-seating. Please try again.');
+        } finally {
+            setProcessing(false);
+        }
+    }, [editor, seatPlanId]);
 
     const handleSeatClick = (seatId: string) => {
         const lastDash = seatId.lastIndexOf('-');
@@ -190,6 +220,20 @@ export default function SeatPlan({
     };
 
     const currentLayerIndex = venueLayers.findIndex(l => l.id === currentLayerId) + 1;
+
+    const topTable = tables.find(t => t.type === 'top');
+    const isTopTableFull = topTable ? (() => {
+        const tableAllocations = allocations[topTable.id] || {};
+        const seatsPerSide = topTable.seats_per_side || 0;
+        const totalSeats = (seatsPerSide * 2) + 2;
+        let filledSeats = 0;
+        for (let i = 0; i < totalSeats; i++) {
+            if (tableAllocations[String(i)]) {
+                filledSeats++;
+            }
+        }
+        return filledSeats >= totalSeats;
+    })() : true;
 
     const handlePreviousLayer = useCallback(() => {
         const currentIndex = venueLayers.findIndex(l => l.id === currentLayerId);
@@ -245,6 +289,7 @@ export default function SeatPlan({
                         totalLayers={venueLayers.length}
                         onPreviousLayer={handlePreviousLayer}
                         onNextLayer={handleNextLayer}
+                        isAutoSeatDisabled={!isTopTableFull}
                     />
 
                     <div className="relative flex min-h-0 flex-1 overflow-hidden">
@@ -290,6 +335,7 @@ export default function SeatPlan({
                                     guestMap={guestMap}
                                     tableAllocations={allocations[table.id]}
                                     activeGuestId={activeGuestId}
+                                    conflictsMap={conflictsMap}
                                     selectedSeat={selectedSeat}
                                     selectedTableId={selectedTableId}
                                     hasConflict={tableConflicts[table.id]}
@@ -320,6 +366,18 @@ export default function SeatPlan({
                     </div>
                 </div>
             </div>
+
+            {processing && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/50 backdrop-blur-sm">
+                    <div className="flex flex-col items-center gap-4 rounded-lg bg-card p-8 shadow-lg border">
+                        <Spinner className="h-12 w-12 text-primary" />
+                        <p className="text-lg font-medium">Generating your seat plan...</p>
+                        <p className="text-sm text-muted-foreground text-center">
+                            This may take a few seconds as we calculate <br /> the best seating arrangement.
+                        </p>
+                    </div>
+                </div>
+            )}
         </AppLayout>
     );
 }

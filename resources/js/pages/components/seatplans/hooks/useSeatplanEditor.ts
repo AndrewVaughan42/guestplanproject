@@ -537,6 +537,27 @@ export function useSeatplanEditor({
         tables,
     ]);
 
+    const getCurrentLayout = useCallback(() => {
+        return {
+            venue_layer_id: currentLayerId,
+            layout: {
+                allocations: cleanAllocations,
+                tables: initialTables.map((table) => {
+                    const current = tables.find((t) => t.id === table.id);
+                    if (!current) return table;
+                    return {
+                        ...table,
+                        x: current.x,
+                        y: current.y,
+                        ...(current.type === 'top'
+                            ? { seats_per_side: current.seats_per_side }
+                            : { seat_count: current.seat_count }),
+                    };
+                }),
+            },
+        };
+    }, [cleanAllocations, currentLayerId, initialTables, tables]);
+
     return {
         ...base,
         allocations,
@@ -559,9 +580,11 @@ export function useSeatplanEditor({
         updateRoundSeatCount,
         updateTopSeatCount,
         save,
+        getCurrentLayout,
         saving,
         isDirty,
         setAllocations,
+        setTables,
         reconcileAllocations,
         switchLayer,
         currentLayerId,

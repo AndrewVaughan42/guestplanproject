@@ -23,6 +23,7 @@ export const canvasColours = {
         textOnSeat: '#0f172a',
         indicators: {
             conflict: 'red',
+            activeConflict: '#ef4444',
             minimum: '#ef4444',
             brideGroom: '#FACC15',
         }
@@ -48,6 +49,7 @@ export const canvasColours = {
         textOnSeat: '#f8fafc', // High contrast text for seat initials
         indicators: {
             conflict: 'red',
+            activeConflict: '#f87171',
             minimum: '#ef4444',
             brideGroom: '#FACC15',
         }
@@ -64,11 +66,13 @@ export function resolveSeatStyle(params: {
     isSelected: boolean;
     isActiveGuestAssignment?: boolean;
     isReserved: boolean;
+    hasConflictWithActive?: boolean;
     appearance?: Appearance;
 }) {
     const theme = isDarkMode(params.appearance) ? canvasColours.dark : canvasColours.light;
     const colors = theme.seat;
 
+    if (params.hasConflictWithActive) return theme.indicators.activeConflict;
     if (params.guest) return colors.occupied;
     if (params.isSelected) return colors.selected;
     if (params.isActiveGuestAssignment) return '#bbf7d0'; // Light green for assignable
