@@ -101,7 +101,7 @@ class DatabaseSeeder extends Seeder
         $tableData = [
             // Top Table first
             [
-                'id' => Str::uuid(),
+                'id' => "venue-{$fh->id}-top-1",
                 'type' => 'top',
                 'name' => 'Top Table',
                 'x' => 475,
@@ -115,7 +115,7 @@ class DatabaseSeeder extends Seeder
 
         for ($i = 1; $i <= $maxTables - 1; $i++) {
             $tableData[] = [
-                'id' => Str::uuid(),
+                'id' => "round-{$i}"    ,
                 'type' => 'round',
                 'name' => 'Table ' . $i,
                 'x' => 150 + (($i - 1) % 3) * 325,
@@ -139,7 +139,7 @@ class DatabaseSeeder extends Seeder
         $tableData2 = [
             // Top Table first
             [
-                'id' => Str::uuid(),
+                'id' => "venue-{$fh->id}-top-1",
                 'type' => 'top',
                 'name' => 'Top Table',
                 'x' => 475,
@@ -153,7 +153,7 @@ class DatabaseSeeder extends Seeder
 
         for ($i = 1; $i <= $maxTables; $i++) {
             $tableData2[] = [
-                'id' => Str::uuid(),
+                'id' => "round-{$i}",
                 'type' => 'round',
                 'name' => 'Table ' . $i,
                 'x' => 150 + (($i - 1) % 3) * 325,
@@ -177,7 +177,7 @@ class DatabaseSeeder extends Seeder
         $tableData3 = [
             // Top Table first
             [
-                'id' => Str::uuid(),
+                'id' => "venue-{$fh->id}-top-1",
                 'type' => 'top',
                 'name' => 'Top Table',
                 'x' => 475,
@@ -191,7 +191,7 @@ class DatabaseSeeder extends Seeder
 
         for ($i = 1; $i <= $maxTables + 1; $i++) {
             $tableData3[] = [
-                'id' => Str::uuid(),
+                'id' => "round-{$i}",
                 'type' => 'round',
                 'name' => 'Table ' . $i,
                 'x' => 150 + (($i - 1) % 3) * 325,
@@ -276,7 +276,7 @@ class DatabaseSeeder extends Seeder
 
         //Create Guests
         $guests = [];
-        for ($i = 0; $i < 80; $i++) {
+        for ($i = 0; $i < 98; $i++) {
             $guests[] = Guest::create([
                 'name' => fake()->name(),
                 'wedding_id' => $regularUser->wedding->id,
@@ -288,9 +288,18 @@ class DatabaseSeeder extends Seeder
         }
 
         //Guests in Groups
-        foreach ($guests as $index => $guest) {
-            if ($index < 60) {
-                $guest->groups()->attach($groups->random()->id);
+        foreach ($guests as $guest) {
+
+            // 0–2 groups per guest (tweak as needed)
+            $groupCount = match (true) {
+                $guest->role !== GuestRole::NORMAL->value => 1,
+                default => fake()->numberBetween(1, 3),
+            };
+
+            $selectedGroups = $groups->random($groupCount);
+
+            foreach ($selectedGroups as $group) {
+                $guest->groups()->attach($group->id);
             }
         }
 
