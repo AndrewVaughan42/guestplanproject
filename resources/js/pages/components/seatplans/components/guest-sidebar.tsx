@@ -16,10 +16,17 @@ export default function GuestSidebar({
 }: GuestSidebarProps) {
     const [search, setSearch] = useState('');
 
+    //Ger only normal guests, excludes clients
     const filteredGuests = guests.filter((guest) =>
         guest.role === 'normal' &&
         guest.name.toLowerCase().includes(search.toLowerCase()),
-    );
+    ).sort((a, b) =>{ // return in alphabetical surname order
+        const surnameA = a.name.trim().split(' ').pop()?.toLowerCase() ?? '';
+        const surnameB = b.name.trim().split(' ').pop()?.toLowerCase() ?? '';
+
+        const compare = surnameA.localeCompare(surnameB);
+        return compare !== 0 ? compare : a.name.localeCompare(b.name);
+    });
 
     return (
         <aside
@@ -27,7 +34,7 @@ export default function GuestSidebar({
                 'flex w-64 flex-col min-h-0 gap-2 h-full border-r border-sidebar-border bg-sidebar p-4'
             }
         >
-            <h2 className="text-lg font-semibold">Guests ({guests.length})</h2>
+            <h2 className="text-lg font-semibold">Guests ({filteredGuests.length})</h2>
 
             <Input
                 type="text"
@@ -50,7 +57,7 @@ export default function GuestSidebar({
                             }`}
                         >
                             <span>{guest.name}</span>
-                            <div className="flex justify-between ">
+                            <div className="flex ">
                                 {guest.groups?.map((group) => (
                                     <span
                                     key={group.id}
