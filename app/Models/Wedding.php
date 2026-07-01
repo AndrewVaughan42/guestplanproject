@@ -25,10 +25,10 @@ class Wedding extends Model
         'partnerB_lastname',
         'date',
         'name',
-        'priority',
         'description',
         'colour',
         'menu_item_id',
+        'ranking',
     ];
 
     public function venue(): BelongsTo
