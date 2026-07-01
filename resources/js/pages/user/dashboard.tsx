@@ -8,6 +8,7 @@ import { Head, usePage } from '@inertiajs/react';
 import ManageWeddingTile from '../components/weddings/manage-wedding-tile';
 import { dashboard } from '@/routes';
 import SetWeddingMenuCard from '@/pages/dashboard/user-cards/set-wedding-menu-card';
+import GuestManagementCard from '@/pages/dashboard/user-cards/guest-management-card';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -54,8 +55,7 @@ export default function Dashboard() {
                         </div>
 
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            <p>More Components to be added</p>
-                            {/** <ManagementCard/> */}
+                            { <GuestManagementCard />}
                         </div>
                     </div>
                     <div className="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
