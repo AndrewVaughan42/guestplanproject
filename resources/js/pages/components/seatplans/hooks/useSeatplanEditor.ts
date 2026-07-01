@@ -44,7 +44,6 @@ function cleanRoundAllocation(
 }
 
 //For top tables, ensures seats unassigned if count reduced and placement of wedding couple always at centre
-//This took way, WAY, too long to figure out.
 function cleanTopAllocation(
     allocation: Allocations,
     table: TopTable,
@@ -71,13 +70,10 @@ function cleanTopAllocation(
             });
         });
     }
-
     const tableAlloc = next[table.id] ?? {};
     const newTotalSeats = newSeatsPerSide * 2 + 2;
-
     const newBrideIndex = Math.floor(newTotalSeats / 2) - 1;
     const newGroomIndex = Math.floor(newTotalSeats / 2);
-
     const newAlloc: Record<string, number> = {};
 
     for (const [seatStr, guestId] of Object.entries(tableAlloc)) {
@@ -98,11 +94,9 @@ function cleanTopAllocation(
 
         newAlloc[seat] = Number(guestId);
     }
-
     if (brideId != null) {
         newAlloc[String(newBrideIndex)] = brideId;
     }
-
     if (groomId != null) {
         newAlloc[String(newGroomIndex)] = groomId;
     }
