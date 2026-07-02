@@ -237,9 +237,7 @@ class AutoSeatService
             if ($bestTable) {
                 $allocation[$bestTable][] = $guest->id;
             } else {
-                // FALLBACK: If no table has capacity according to seat_count,
-                // but we still have unassigned guests, find ANY table with absolute capacity.
-                // This shouldn't happen if TableBalancer did its job and guestCount matches sum(seat_count).
+
                 foreach ($otherTables as $table) {
                     $absCapacity = $table['seat_maximum'] ?? $table['capacity'] ?? 0;
                     if (count($allocation[$table['id']]) < $absCapacity) {
@@ -261,7 +259,7 @@ class AutoSeatService
             return $allocation;
         }
 
-        for ($i = 0; $i < 200; $i++) {
+        for ($i = 0; $i < 60; $i++) {
             $a = $otherTableIds[array_rand($otherTableIds)];
             $b = $otherTableIds[array_rand($otherTableIds)];
 
@@ -269,50 +267,31 @@ class AutoSeatService
                 continue;
             }
 
-            if (count($allocation[$a]) === 0 || count($allocation[$b]) === 0) {
-                // Try to move a guest instead of swap if one table is empty
-                $source = count($allocation[$a]) > 0 ? $a : $b;
-                $target = $source === $a ? $b : $a;
+            $tableA = $allocation[$a];
+            $tableB = $allocation[$b];
 
-                if (count($allocation[$source]) === 0) continue;
-
-                $guestId = $allocation[$source][array_rand($allocation[$source])];
-                $capacity = $tableMap[$target]['seat_count'] ?? $tableMap[$target]['seat_maximum'] ?? $tableMap[$target]['capacity'] ?? 0;
-
-                if (count($allocation[$target]) >= $capacity) continue;
-
-                $currentScore = $this->scorer->scoreFull($allocation, $wedding);
-                $tempAllocation = $allocation;
-                $tempAllocation[$source] = array_values(array_diff($tempAllocation[$source], [$guestId]));
-                $tempAllocation[$target][] = $guestId;
-
-                $newScore = $this->scorer->scoreFull($tempAllocation, $wedding);
-                if ($newScore > $currentScore) {
-                    $allocation = $tempAllocation;
-                }
-                continue;
-            }
-
-            $guestAId = $allocation[$a][array_rand($allocation[$a])];
-            $guestBId = $allocation[$b][array_rand($allocation[$b])];
+            $guestAId = $tableA[array_rand($tableA)];
+            $guestBId = $tableB[array_rand($tableB)];
 
             if (!isset($this->guestMap[$guestAId]) || !isset($this->guestMap[$guestBId])) {
                 continue;
             }
 
-            $currentScore = $this->scorer->scoreFull($allocation, $wedding);
+            $oldScore = $this->scorer->scoreTable($tableA, $tableMap[$a], $wedding) +
+                $this->scorer->scoreTable($tableB, $tableMap[$b], $wedding);
 
-            $tempAllocation = $allocation;
-            $tempAllocation[$a] = array_values(array_diff($tempAllocation[$a], [$guestAId]));
-            $tempAllocation[$b] = array_values(array_diff($tempAllocation[$b], [$guestBId]));
+            $newA = array_values(array_diff($tableA, [$guestAId]));
+            $newB = array_values(array_diff($tableB, [$guestBId]));
 
-            $tempAllocation[$a][] = $guestBId;
-            $tempAllocation[$b][] = $guestAId;
+            $newA[] = $guestBId;
+            $newB[] = $guestAId;
 
-            $newScore = $this->scorer->scoreFull($tempAllocation, $wedding);
+            $newScore = $this->scorer->scoreTable($newA, $tableMap[$a], $wedding) +
+                $this->scorer->scoreTable($newB, $tableMap[$b], $wedding);
 
-            if ($newScore > $currentScore) {
-                $allocation = $tempAllocation;
+            if ($newScore > $oldScore) {
+                $allocation[$a] = $newA;
+                $allocation[$b] = $newB;
             }
         }
         return $allocation;
