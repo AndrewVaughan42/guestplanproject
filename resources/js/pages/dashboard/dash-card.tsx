@@ -10,7 +10,7 @@ export function DashCard({ title, content }: DashCardProps) {
             <div className="mb-4 text-sm font-semibold text-neutral-400">
                 {title}
             </div>
-            <div className="flec-col flex h-full">{content}</div>
+            <div className="flex h-full flex-col">{content}</div>
         </div>
     );
 }

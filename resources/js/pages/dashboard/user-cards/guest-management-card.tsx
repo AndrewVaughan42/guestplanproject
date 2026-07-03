@@ -50,39 +50,6 @@ export default function GuestManagementCard() {
                 title={'Guest Management'}
                 content={
                     <>
-                        <div className="grid grid-cols-3 gap-3">
-                            <div className="rounded-lg bg-neutral-100 p-3 dark:bg-neutral-900">
-                                <p className="text-xs text-muted-foreground">
-                                    Total Guests
-                                </p>
-                                <p className="text-xl font-bold">
-                                    {wedding!.guests.length}
-                                </p>
-                            </div>
-
-                            <div className="rounded-lg bg-neutral-100 p-3 dark:bg-neutral-900">
-                                <p className="text-xs text-muted-foreground">
-                                    Response Rate
-                                </p>
-                                <p className="text-xl font-bold">
-                                    {Math.round(
-                                        (statusData[0].value /
-                                            wedding!.guests.length) *
-                                            100,
-                                    )}
-                                    %
-                                </p>
-                            </div>
-
-                            <div className="rounded-lg bg-neutral-100 p-3 dark:bg-neutral-900">
-                                <p className="text-xs text-muted-foreground">
-                                    Awaiting Reply
-                                </p>
-                                <p className="text-xl font-bold">
-                                    {statusData[1].value}
-                                </p>
-                            </div>
-                        </div>
                         {!statsMinThresh ? (
                             <div className="mt-4 flex items-center justify-center border border-dashed border-neutral-200 rounded-xl p-6">
                                 <p className={'text-xs text-neutral-500'}>
@@ -91,7 +58,7 @@ export default function GuestManagementCard() {
                                 </p>
                             </div>
                         ) : (
-                            <div className={'h-48 w-full border'}>
+                            <div className={'h-36 w-full border'}>
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart
                                         data={statusData}
@@ -105,14 +72,15 @@ export default function GuestManagementCard() {
                                         <YAxis
                                             dataKey="name"
                                             type={'category'}
-                                            width={90}
+                                            width={60}
+                                            fontSize={12}
                                         />
                                         <Tooltip />
 
                                         <Bar
                                             dataKey="value"
                                             radius={[0, 4, 4, 0]}
-                                            barSize={20}
+                                            barSize={12}
                                         >
                                             {statusData.map((_, index) => (
                                                 <Cell

@@ -9,6 +9,7 @@ import ManageWeddingTile from '../components/weddings/manage-wedding-tile';
 import { dashboard } from '@/routes';
 import SetWeddingMenuCard from '@/pages/dashboard/user-cards/set-wedding-menu-card';
 import GuestManagementCard from '@/pages/dashboard/user-cards/guest-management-card';
+import { WeddingMenuStatsCard } from '@/pages/dashboard/user-cards/wedding-menu-stats-card';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -47,15 +48,20 @@ export default function Dashboard() {
                 <Head title="Dashboard" />
                 <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                        <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                        <div className="relative min-h-50 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                             <WeddingCountdownCard />
                         </div>
-                        <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            {<SetWeddingMenuCard />}
+                        <div className="relative min-h-50 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                            <SetWeddingMenuCard />
                         </div>
 
-                        <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            { <GuestManagementCard />}
+                        <div className="relative min-h-50 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                            <GuestManagementCard />
+                        </div>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-3">
+                        <div className="md:col-span-1">
+                            <WeddingMenuStatsCard />
                         </div>
                     </div>
                     <div className="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
