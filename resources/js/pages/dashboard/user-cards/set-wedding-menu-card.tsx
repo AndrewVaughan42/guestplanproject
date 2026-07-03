@@ -35,8 +35,8 @@ export default function SetWeddingMenuCard() {
             <DashCard
                 title={'Wedding Menu'}
                 content={
-                    <div className={'w-full max-w-5xl mx-auto px-2 sm:px-4 lg:px-8'}>
-                        <div className={"grid gap-4 lg:grid-cols-2"}>
+                    <div className={'w-full px-3 sm:px-4'}>
+                        <div className={"grid h-full grid-cols-1 gap-4 lg:grid-cols-2"}>
                             {!hasMenu ? (
                                 <>
                                     {/* No Menu */}
@@ -67,10 +67,9 @@ export default function SetWeddingMenuCard() {
                             ) : (
                                 <>
                                     {/* Menu Set Up*/}
-                                    <div className="flex flex-col h-full">
+                                    <div className="flex flex-col h-full justify-between">
                                         <div className="flex-1">
-                                            <p className="mb-2 font-medium">Wedding Menu Set Up</p>
-                                            <div className="space-y-2">
+                                            <div className="grid gap-2">
                                                 {wedding.menu_items?.map((item) => (
                                                     <div
                                                         key={item.id}
@@ -78,14 +77,14 @@ export default function SetWeddingMenuCard() {
                                                             'flex items-center justify-between rounded-lg bg-neutral-50 px-3 py-2 dark:bg-neutral-900'
                                                         }
                                                     >
-                                                        <span className={'text-sm font-medium'}>
+                                                        <span className={'text-sm font-medium text-left flex-1'}>
                                                             {item.name}
                                                         </span>
 
                                                         {item.is_plant_based && (
                                                             <span
                                                                 className={
-                                                                    'rounded bg-green-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-600 dark:text-green-400'
+                                                                    'ml-2 rounded bg-green-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-600 dark:text-green-400 shrink-0'
                                                                 }
                                                             >
                                                                 Plant Based
@@ -97,7 +96,7 @@ export default function SetWeddingMenuCard() {
                                         </div>
 
                                         {/* Sets Partner Menu Items*/}
-                                        <div className="mt-4 flex justify-end">
+                                        <div className="mt-4 flex justify-center">
                                             <Button
                                                 className={
                                                     'inline-flex items-center gap-2 rounded-lg bg-guestplan px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity'
