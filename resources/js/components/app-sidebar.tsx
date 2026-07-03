@@ -1,4 +1,3 @@
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -18,8 +17,6 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     AngryIcon,
     ArmchairIcon,
-    BookOpen,
-    Folder,
     GroupIcon,
     LayoutGrid,
     ListTodo,
@@ -87,19 +84,6 @@ const adminNavItems: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    }, // TODO Delete when complete
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
-
 export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     const isAdmin = auth.user.isAdmin;
@@ -124,7 +108,6 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
