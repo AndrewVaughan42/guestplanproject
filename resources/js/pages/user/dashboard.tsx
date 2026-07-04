@@ -10,6 +10,7 @@ import { dashboard } from '@/routes';
 import SetWeddingMenuCard from '@/pages/dashboard/user-cards/set-wedding-menu-card';
 import GuestManagementCard from '@/pages/dashboard/user-cards/guest-management-card';
 import { WeddingMenuStatsCard } from '@/pages/dashboard/user-cards/wedding-menu-stats-card';
+import VenueCreationTile from '@/pages/dashboard/admin-cards/venue-creation-tile';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -29,8 +30,7 @@ export default function Dashboard() {
                 <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            <p>Hello Admin and only Admins!!!</p>
-                            <p> Client User Summary Here?</p>
+                            <VenueCreationTile />
                         </div>
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                             <p>Venue Manager Summary Here</p>
@@ -38,6 +38,9 @@ export default function Dashboard() {
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                             <p>Venue Manager Summary Here</p>
                         </div>
+                    </div>
+                    <div className="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
+                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                     </div>
                 </div>
             </AppLayout>

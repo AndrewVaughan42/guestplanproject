@@ -8,24 +8,24 @@ export function WeddingMenuStatsCard() {
 
     const wedding = auth.user.wedding;
 
-    if (!wedding || wedding.menu_items!.length !== 3) {
+    if (!wedding || wedding.menu_items?.length !== 3) {
         return null;
     }
 
-    const statsMinThresh = (wedding.guests.length ?? 0) >= 10;
+    const statsMinThresh = (wedding.guests?.length ?? 0) >= 10;
 
     const graphColours = ['#007bff', '#28a745', '#dc3545'];
 
     const mealData = wedding.menu_items?.map((item) => {
         const count =
-            wedding.guests.filter((guest) => guest.menu_item_id === item.id)
+            wedding.guests?.filter((guest) => guest.menu_item_id === item.id)
                 .length ?? 0;
 
         return {
             name: item.name,
             value: count,
         };
-    });
+    }) || [];
 
     return (
         <DashCard
@@ -50,7 +50,7 @@ export function WeddingMenuStatsCard() {
                                         outerRadius={80}
                                         innerRadius={40}
                                     >
-                                        {mealData!.map((_, index) => (
+                                        {mealData.map((_, index) => (
                                             <Cell
                                                 key={`cell-${index}`}
                                                 fill={

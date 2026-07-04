@@ -20,15 +20,15 @@ export default function GuestManagementCard() {
     const statusData = [
         {
             "name": "Confirmed",
-            "value": wedding!.guests.filter((guest) => guest.status === "confirmed").length
+            "value": wedding?.guests?.filter((guest) => guest.status === "confirmed").length ?? 0
         },
         {
             "name": "Invited",
-            "value": wedding!.guests.filter((guest) => guest.status === "invited").length
+            "value": wedding?.guests?.filter((guest) => guest.status === "invited").length ?? 0
         },
         {
             "name": "Declined",
-            "value": wedding!.guests.filter((guest) => guest.status === "declined").length
+            "value": wedding?.guests?.filter((guest) => guest.status === "declined").length ?? 0
         },
     ]
     const statusColours = [
@@ -37,7 +37,7 @@ export default function GuestManagementCard() {
         '#ef4444', // declined
         ];
 
-    const statsMinThresh = (wedding!.guests.length ?? 0) >= 10;
+    const statsMinThresh = (wedding?.guests?.length ?? 0) >= 10;
 
     if (!weddingMenuItems) {
         return (

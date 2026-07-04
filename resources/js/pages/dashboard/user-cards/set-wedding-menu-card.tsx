@@ -25,8 +25,8 @@ export default function SetWeddingMenuCard() {
     }
 
     const hasMenu = (wedding.menu_items?.length ?? 0) === 3;
-    const partnerA = wedding.guests.find((guest) => guest.role === 'partner_a');
-    const partnerB = wedding.guests.find((guest) => guest.role === 'partner_b');
+    const partnerA = wedding.guests?.find((guest) => guest.role === 'partner_a');
+    const partnerB = wedding.guests?.find((guest) => guest.role === 'partner_b');
     const hasPartners = !!partnerA?.menu_item_id && !!partnerB?.menu_item_id;
 
 
