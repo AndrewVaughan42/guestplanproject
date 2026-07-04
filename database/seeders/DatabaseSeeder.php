@@ -278,7 +278,7 @@ class DatabaseSeeder extends Seeder
         $guests = [];
         for ($i = 0; $i < 98; $i++) {
             $guests[] = Guest::create([
-                'name' => fake()->name(),
+                'name' => fake()->firstName() . ' ' . fake()->lastName(),
                 'wedding_id' => $regularUser->wedding->id,
                 'status' =>  GuestStatus::CONFIRMED,
                 'menu_item_id' => $userWedding->menuItems->random()->id,

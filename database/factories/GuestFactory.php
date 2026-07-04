@@ -17,7 +17,7 @@ class GuestFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
+            'name' => $this->faker->firstName() . ' ' . $this->faker->lastName(),
             'notes' => $this->faker->sentence(),
             'status' => GuestStatus::INVITED->value,
             'role' => \App\GuestRole::NORMAL->value,
