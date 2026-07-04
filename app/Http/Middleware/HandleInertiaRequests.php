@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -43,9 +44,10 @@ class HandleInertiaRequests extends Middleware
             ? $user->wedding?->loadMissing(
                 'partnerA',
                 'partnerB',
-                'guests',
                 'menuItems',
-                'venue.menuItems'
+                'venue.menuItems',
+                'guests.menuItem',
+                'guests.groups',
             )
             : null;
 
@@ -55,7 +57,8 @@ class HandleInertiaRequests extends Middleware
             //'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $user,
-                'wedding' => $wedding
+                'wedding' => $wedding,
+                'guests' => Inertia::lazy(fn () => $wedding?->guests()->with('groups', 'menuItem')->get() ?? [])
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => $request->session()->get('flash'),

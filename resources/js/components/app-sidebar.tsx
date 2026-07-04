@@ -32,6 +32,7 @@ import seatPlans from '@/routes/seat-plans';
 import venueLayers from '@/routes/venue-layers';
 import groups from '@/routes/groups';
 import conflicts from '@/routes/conflicts';
+import adminWeddings from '@/routes/admin-weddings';
 
 
 const mainNavItems: NavItem[] = [
@@ -70,6 +71,11 @@ const adminNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard().url,
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Wedding Summaries',
+        href: adminWeddings.index().url,
         icon: LayoutGrid,
     },
     {

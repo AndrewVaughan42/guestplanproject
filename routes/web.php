@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminWeddingController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GuestConflictsController;
 use App\Http\Controllers\GuestController;
@@ -24,11 +25,8 @@ Route::get('/', static function () {
 //User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', static function () {
-        $wedding = auth()->user()->wedding;
         return Inertia::render('user/dashboard', [
-            'venues' => Venue::all(),
-            'availableMenuItems' => $wedding?->venue()?->menu_items ?? [],
-            'guests' => $wedding?->guests ?? [],
+            'venues' => auth()->user()->wedding ? [] : Venue::all(),
         ]);
     })->name('dashboard');
 
@@ -65,9 +63,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //Admin-only routes
     Route::middleware(['CheckAdmin'])->group(function () {
-
+        //Venue Manager page + routes
         Route::resource('venues', VenueController::class);
+        // Layer Editor page + routes
         Route::resource('venue-layers', VenueLayerController::class);
+
+        //Wedding Summary pages + routes
+        Route::get('admin/weddings', [AdminWeddingController::class, 'index'])->name('admin-weddings.index');
+        Route::get('admin/weddings/{wedding}', [AdminWeddingController::class, 'show'])->name('admin-weddings.show');
+        Route::get('admin/weddings/{wedding}/export-pdf', [AdminWeddingController::class, 'export'])->name('admin-weddings.export');
+
     });
+
+    Route::resource('weddings', WeddingController::class);
 });
 require __DIR__.'/settings.php';
