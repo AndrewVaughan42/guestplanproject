@@ -11,6 +11,7 @@ use App\Http\Controllers\VenueController;
 use App\Http\Controllers\VenueLayerController;
 use App\Http\Controllers\WeddingController;
 use App\Models\Venue;
+use App\Models\Wedding;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -25,8 +26,17 @@ Route::get('/', static function () {
 //User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', static function () {
+        $user = auth()->user();
+        if ($user->isAdmin) {
+            $weddings = Wedding::with('venue')->whereHas('venue.users', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            })->whereDate('date', '>=', now())->orderBy('date')->get();
+            return Inertia::render('user/dashboard', [
+                'upcomingWeddings' => $weddings,
+            ]);
+        }
         return Inertia::render('user/dashboard', [
-            'venues' => auth()->user()->wedding ? [] : Venue::all(),
+            'venues' => $user->wedding ? [] : Venue::all(),
         ]);
     })->name('dashboard');
 

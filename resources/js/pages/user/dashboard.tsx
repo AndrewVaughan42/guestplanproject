@@ -11,6 +11,7 @@ import SetWeddingMenuCard from '@/pages/dashboard/user-cards/set-wedding-menu-ca
 import GuestManagementCard from '@/pages/dashboard/user-cards/guest-management-card';
 import { WeddingMenuStatsCard } from '@/pages/dashboard/user-cards/wedding-menu-stats-card';
 import VenueCreationTile from '@/pages/dashboard/admin-cards/venue-creation-tile';
+import UpcomingWeddingsTile from '@/pages/dashboard/admin-cards/upcoming-weddings-tile';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -28,15 +29,12 @@ export default function Dashboard() {
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Dashboard" />
                 <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                    <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+                    <div className="grid auto-rows-min gap-4 md:grid-cols-2">
+                        <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                            <UpcomingWeddingsTile />
+                        </div>
                         <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                             <VenueCreationTile />
-                        </div>
-                        <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            <p>Venue Manager Summary Here</p>
-                        </div>
-                        <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                            <p>Venue Manager Summary Here</p>
                         </div>
                     </div>
                     <div className="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
