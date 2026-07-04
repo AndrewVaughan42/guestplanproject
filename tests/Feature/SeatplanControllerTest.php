@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Guest;
+use App\Models\Seatplan;
 use App\Models\User;
 use App\Models\Venue;
 use App\Models\VenueLayer;
@@ -28,7 +30,7 @@ class SeatplanControllerTest extends TestCase
            'venue_id' => $venue->id,
            'table_data' => [],
        ]);
-
+        // Index creates a seatplan if missing, i.e., first time opening the page
        $this->actingAs($user)->get(route('seat-plans.index'))->assertOk();
 
        $this->assertDatabaseHas('seatplans', [
@@ -46,25 +48,20 @@ class SeatplanControllerTest extends TestCase
                 ['id' => 'table-1', 'type' => 'round', 'seat_maximum' => 10],
             ],
         ]);
-
         $wedding = Wedding::factory()->create([
             'user_id' => $user->id,
             'venue_id' => $venue->id,
             'venue_layer_id' => $layer->id,
         ]);
-
-        $guests = \App\Models\Guest::factory()->count(5)->create(['wedding_id' => $wedding->id]);
-
-        $seatplan = \App\Models\Seatplan::create([
+        $guests = Guest::factory()->count(5)->create(['wedding_id' => $wedding->id]);
+        $seatplan = Seatplan::create([
             'wedding_id' => $wedding->id,
             'user_id' => $user->id,
             'venue_layer_id' => $layer->id,
             'name' => 'Default Plan',
             'layout' => ['allocations' => [], 'tables' => []],
         ]);
-
         $response = $this->actingAs($user)->post("/seat-plans/{$seatplan->id}/auto-seat");
-
         $response->assertOk();
         $response->assertJsonStructure([
             'allocations',
@@ -74,9 +71,8 @@ class SeatplanControllerTest extends TestCase
 
         $data = $response->json();
 
-        // Check that tables is a sequential array, not an object
+        // Check that tables stored as sequential array, not object
         $this->assertTrue(array_is_list($data['tables']), 'Tables should be a sequential JSON array');
-
         // Check types for frontend compatibility
         foreach ($data['allocations'] as $tableId => $seats) {
             $this->assertIsString($tableId);
@@ -88,6 +84,7 @@ class SeatplanControllerTest extends TestCase
         }
     }
 
+    //Checks to make sure top table allocations are preserved
     public function test_autoseat_preserves_top_table_allocations(): void
     {
         $user = User::factory()->create();
@@ -99,17 +96,14 @@ class SeatplanControllerTest extends TestCase
                 ['id' => 'round-1', 'type' => 'round', 'seat_maximum' => 10],
             ],
         ]);
-
         $wedding = Wedding::factory()->create([
             'user_id' => $user->id,
             'venue_id' => $venue->id,
             'venue_layer_id' => $layer->id,
         ]);
-
-        $guests = \App\Models\Guest::factory()->count(5)->create(['wedding_id' => $wedding->id]);
+        $guests = Guest::factory()->count(5)->create(['wedding_id' => $wedding->id]);
         $guestToLock = $guests[0];
-
-        $seatplan = \App\Models\Seatplan::create([
+        $seatplan = Seatplan::create([
             'wedding_id' => $wedding->id,
             'user_id' => $user->id,
             'venue_layer_id' => $layer->id,
@@ -123,13 +117,11 @@ class SeatplanControllerTest extends TestCase
                 'tables' => $layer->table_data
             ],
         ]);
-
         $response = $this->actingAs($user)->post("/seat-plans/{$seatplan->id}/auto-seat");
-
         $response->assertOk();
         $data = $response->json();
 
-        // Check that guestToLock is still on top-1 at index 0
+        // Check that guestToLock is still on top table at index 0
         $this->assertEquals($guestToLock->id, $data['allocations']['top-1']['0']);
     }
 }

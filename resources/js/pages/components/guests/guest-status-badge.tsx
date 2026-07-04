@@ -50,7 +50,6 @@ export default function GuestStatusBadge({
                     {config.label}
                 </span>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent align="center">
                 {(
                     Object.entries(statusConfig) as [

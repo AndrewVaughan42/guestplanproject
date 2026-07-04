@@ -26,7 +26,6 @@ function LayerEditor({
     layouts: VenueLayer[];
 }) {
     const editor = useVenueLayoutEditor(activeLayout, venueId);
-
     const currentTableCount = editor.tables.length;
     const tableCountInAny = layouts.some(
         (l) =>

@@ -62,6 +62,7 @@ export default function Seat({
             e.cancelBubble = true;
             onClick(e);
         }} name={seatId}>
+            {/* Seat Shape */}
             <Circle
                 name={seatId}
                 radius={SEAT_RADIUS}
@@ -71,13 +72,11 @@ export default function Seat({
                     groupColours.length === 1 ? groupColours[0] : strokeColor
                 }
                 strokeWidth={isSelectedAllocatedSeat ? 5 : groupColours.length <= 1 ? 3 : 1}
-
             />
             {/* Adds Group Colour Arcs */}
             {groupColours.length > 1 &&
                 groupColours.map((colour, index) => {
                     const angle = 360 / groupColours.length;
-
                     return (
                         <Arc
                             key={`${seatId}-${index}`}

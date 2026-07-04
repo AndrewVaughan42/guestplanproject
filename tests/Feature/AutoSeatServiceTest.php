@@ -23,7 +23,6 @@ class AutoSeatServiceTest extends TestCase
     {
         $user = User::factory()->create();
         $venue = Venue::factory()->create([]);
-
         $layer = VenueLayer::create([
             'venue_id' => $venue->id,
             'user_id' => $user->id,
@@ -47,7 +46,6 @@ class AutoSeatServiceTest extends TestCase
                 ]
             ]
         ]);
-
         $wedding = Wedding::factory()->create([
             'user_id' => $user->id,
             'venue_id' => $venue->id,
@@ -164,10 +162,10 @@ class AutoSeatServiceTest extends TestCase
         $tableWithGuestA1 = null;
 
         foreach ($allocation as $tableId => $guestIds) {
-            if (in_array($guestsA[0]->id, $guestIds)) {
+            if (in_array($guestsA[0]->id, $guestIds, true)) {
                 $tableWithGuestA0 = $tableId;
             }
-            if (in_array($guestsA[1]->id, $guestIds)) {
+            if (in_array($guestsA[1]->id, $guestIds, true)) {
                 $tableWithGuestA1 = $tableId;
             }
         }
@@ -189,7 +187,7 @@ class AutoSeatServiceTest extends TestCase
                 $tableWithGroupB = $tableId;
             }
         }
-        $this->assertEquals(3, $groupBCount, 'Group B should be seated together');
+        $this->assertEquals(3, $groupBCount, 'Group B should be sat together');
     }
 
     public function test_seating_allocation_throws_exception_if_not_enough_capacity(): void
