@@ -87,7 +87,7 @@ class AutoSeatService
 
         // Increase optimization passes for better grouping
         for ($j = 0; $j < 5; $j++) {
-             $allocation = $this->optimise($allocation, $guests, $tables, $wedding);
+             $allocation = $this->optimise($allocation, $tables, $wedding);
         }
 
         $allocation = $this->conflicts->resolve($allocation, $wedding);
@@ -250,7 +250,7 @@ class AutoSeatService
         return [$allocation, collect([])];
     }
 
-    private function optimise($allocation, $guests, $tables, $wedding): array
+    private function optimise($allocation, $tables, $wedding): array
     {
         $tableMap = $tables->keyBy('id');
         $otherTableIds = $tables->filter(fn($t) => $t['type'] !== 'top')->pluck('id')->toArray();
@@ -273,7 +273,7 @@ class AutoSeatService
             $guestAId = $tableA[array_rand($tableA)];
             $guestBId = $tableB[array_rand($tableB)];
 
-            if (!isset($this->guestMap[$guestAId]) || !isset($this->guestMap[$guestBId])) {
+            if (!isset($this->guestMap[$guestAId], $this->guestMap[$guestBId])) {
                 continue;
             }
 
@@ -288,7 +288,6 @@ class AutoSeatService
 
             $newScore = $this->scorer->scoreTable($newA, $tableMap[$a], $wedding) +
                 $this->scorer->scoreTable($newB, $tableMap[$b], $wedding);
-
             if ($newScore > $oldScore) {
                 $allocation[$a] = $newA;
                 $allocation[$b] = $newB;
@@ -297,8 +296,4 @@ class AutoSeatService
         return $allocation;
     }
 
-    private function isHighPriority($guest): bool
-    {
-        return optional($guest->groups->first())->ranking <= 3;
-    }
 }

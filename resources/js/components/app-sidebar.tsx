@@ -88,6 +88,11 @@ const adminNavItems: NavItem[] = [
         href: venueLayers.index().url,
         icon: LayoutGrid,
     },
+    {
+        title: 'Tasks',
+        href: tasks.index().url,
+        icon: ListTodo,
+    },
 ];
 
 export function AppSidebar() {

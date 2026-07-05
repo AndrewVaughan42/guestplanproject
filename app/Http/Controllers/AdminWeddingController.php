@@ -106,9 +106,6 @@ class AdminWeddingController extends Controller
         ]);
     }
 
-    /**
-     * @throws \Throwable
-     */
     public function export(Wedding $wedding): \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
     {
         $wedding->load([

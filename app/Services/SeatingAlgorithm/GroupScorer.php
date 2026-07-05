@@ -12,12 +12,9 @@ class GroupScorer
 {
     final int $sameGroupBonus = 5;
     final int $penaltyRate = 50;
-
     protected Collection $guestMap;
-
     protected array $groupCache = [];
     protected array $conflictsCache = [];
-
     public function setGuestMap(Collection $guestMap): void
     {
         $this->guestMap = $guestMap;
@@ -35,7 +32,6 @@ class GroupScorer
             }
         }
     }
-
     public function scorePlacement(Guest $guest, array $table, array $allocation): float
     {
 
@@ -89,6 +85,7 @@ class GroupScorer
 
         return $score;
     }
+
 
     public function groupSeatingScore(Guest $guest, array $tableGuests): float
     {

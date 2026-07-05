@@ -26,12 +26,14 @@ class ConflictResolver
                     if (in_array($conflict->guest_a_id, $guestIds, true) && in_array($conflict->guest_b_id, $guestIds, true)) {
                         $this->separate($allocation, $tableId, $conflict);
                         $changed = true;
-                        // Refresh guestIds for this table since it changed
+                        // Reset guestIds for this table since it changed
                         $guestIds = $allocation[$tableId];
                     }
                 }
             }
-            if (!$changed) break;
+            if (!$changed) {
+                break;
+            }
         }
 
         return $allocation;
@@ -68,7 +70,6 @@ class ConflictResolver
     {
         $bestTable = null;
         $bestScore = -INF;
-
         $guest = $this->guestMap[$guestId] ?? null;
 
         if (!$guest) {

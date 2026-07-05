@@ -17,7 +17,7 @@ export default function GuestSidebar({
 
     //Ger only normal guests, excludes clients
     const filteredGuests = guests.filter((guest) =>
-        guest.role === 'normal' &&
+        guest.role === 'normal' && guest.status !== 'declined' &&
         guest.name.toLowerCase().includes(search.toLowerCase()),
     ).sort((a, b) =>{ // return in alphabetical surname order
         const surnameA = a.name.trim().split(' ').pop()?.toLowerCase() ?? '';

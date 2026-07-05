@@ -15,25 +15,18 @@ class TableBalancer
         $otherTables = $tables->filter(fn($table) => $table['type'] !== 'top');
 
         $topTableGuestsCount = $topTables->sum(function($table) {
-            // Respect existing guest_count if provided, otherwise assume 0 for auto-seat calculations
             return $table['guest_count'] ?? 0;
         });
         $remainingGuestsCount = max(0, $guestCount - $topTableGuestsCount);
-
         $totalMaxCapacityOther = $otherTables->sum(fn ($table) => $table['seat_maximum'] ?? $table['capacity'] ?? 0);
-
         if ($totalMaxCapacityOther < $remainingGuestsCount) {
             return null;
         }
-
         $tableCount = $otherTables->count();
-
         if ($tableCount > 0) {
             $base = intdiv($remainingGuestsCount, $tableCount);
             $remainder = $remainingGuestsCount % $tableCount;
 
-            // Sort tables to consistently assign remainder to certain tables if needed
-            // Or just map them.
             $balancedOtherTables = $otherTables->map(function ($table) use (&$remainder, $base) {
                 $target = $base;
 
@@ -74,21 +67,6 @@ class TableBalancer
         }
 
         return $tables;
-    }
-
-    public function findBestLayer(Collection $layers, int $guestCount): VenueLayer
-    {
-        return $layers->map(function ($layer) use ($guestCount) {
-
-            $capacity = collect($layer->table_data)->sum(fn ($table) => $table['seat_maximum'] ?? 0);
-
-            return [
-                'capacity' => $capacity,
-                'layer' => $layer,
-                'fits' => $capacity >= $guestCount,
-                'overflow' => $capacity - $guestCount,
-            ];
-        })->filter(fn ($l) => $l['fits'])->sortBy('overflow')->first();
     }
 
     public function redistribute(Collection $tables, array $allocations): Collection

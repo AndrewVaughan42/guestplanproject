@@ -154,6 +154,7 @@ export interface TopTable extends BaseTable {
 }
 export type Table = RoundTable | TopTable;
 
+// Table Allocation = {Table ID, (Guest ID, Seat Number/Index)}
 export type Allocations = Record<string, Record<string, number | null>>;
 
 export type VenueLayer = {

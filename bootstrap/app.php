@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\AdminCheck;
+use App\Http\Middleware\ClientCheck;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -15,7 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'CheckAdmin' => \App\Http\Middleware\AdminCheck::class,
+            'CheckAdmin' => AdminCheck::class,
+            'CheckClient' => ClientCheck::class,
         ]);
 
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
