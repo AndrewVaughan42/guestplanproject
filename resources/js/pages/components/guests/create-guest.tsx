@@ -34,6 +34,7 @@ export default function CreateGuest({
         name: '',
         menu_item_id: null,
         status: 'invited',
+        role: 'normal',
         notes: '',
     });
 

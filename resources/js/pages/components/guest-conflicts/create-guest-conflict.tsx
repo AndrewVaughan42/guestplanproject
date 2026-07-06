@@ -35,6 +35,8 @@ export default function CreateGuestConflict({ open, setOpen, guests }: {
         wedding_id: weddingId,
     });
 
+    const filteredGuests = guests.filter((guest) => guest.role === "normal");
+
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -64,7 +66,7 @@ export default function CreateGuestConflict({ open, setOpen, guests }: {
                                 <SelectValue placeholder="Select first guest" />
                             </SelectTrigger>
                             <SelectContent>
-                                {guests.map((guest) => (
+                                {filteredGuests.map((guest) => (
                                     <SelectItem key={guest.id} value={guest.id?.toString() || ''}>
                                         {guest.name}
                                     </SelectItem>
@@ -84,7 +86,7 @@ export default function CreateGuestConflict({ open, setOpen, guests }: {
                                 <SelectValue placeholder="Select second guest" />
                             </SelectTrigger>
                             <SelectContent>
-                                {guests.map((guest) => (
+                                {filteredGuests.map((guest) => (
                                     <SelectItem key={guest.id} value={guest.id?.toString() || ''}>
                                         {guest.name}
                                     </SelectItem>

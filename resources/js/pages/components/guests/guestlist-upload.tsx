@@ -6,7 +6,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Textarea } from '@headlessui/react';
 
 type ParsedGuest = { name: string; error?: string };
@@ -59,7 +59,7 @@ export default function GuestlistUpload({
             seen.add(normalizedName);
             return { name };
         });
-        setParsedInput(parsed);
+            setParsedInput(parsed);
     };
 
     const validGuests = parsedInput.filter((guest) => !guest.error);

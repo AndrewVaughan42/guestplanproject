@@ -222,7 +222,7 @@ class DatabaseSeeder extends Seeder
                 'partnerA_lastname' => 'Serr',
                 'partnerB_firstname' => 'Ada',
                 'partnerB_lastname' => 'Minn',
-                'date' => now()->addMonths(6),
+                'date' => now()->addMonths(3),
             ]
         );
 
@@ -317,16 +317,5 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-    }
-    private function quickLayerMaker( array $baseData, int $roundTableCount): array {
-        $result = [];
-
-        foreach ($baseData as $table) {
-            if ($table['type'] === 'top') {
-                $result[] = $table;
-            }
-        }
-        $roundTables = collect($baseData)->where('type', 'round')->take($roundTableCount)->values()->toArray();
-        return array_merge($result, $roundTables);
     }
 }

@@ -8,6 +8,7 @@ use App\Models\VenueLayer;
 use App\Models\Wedding;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Nette\Utils\Random;
 
 class WeddingFactory extends Factory
 {

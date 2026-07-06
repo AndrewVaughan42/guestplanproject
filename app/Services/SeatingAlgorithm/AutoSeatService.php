@@ -37,7 +37,6 @@ class AutoSeatService
             throw new \RuntimeException('No suitable layer found');
         }
         $tables = collect($layer->table_data)->map(function ($table) use ($options) {
-            // If we have current table data from the layout, merge it (especially for 'top' tables)
             if (isset($options['currentTables'])) {
                 $currentTable = collect($options['currentTables'])->firstWhere('id', $table['id']);
                 if ($currentTable) {
@@ -64,9 +63,6 @@ class AutoSeatService
         foreach ($tables->where('type', 'top') as $topTable) {
             $alreadySeatedIds = $options['currentAllocations'][$topTable['id']] ?? [];
 
-            // If it's an auto-seat run, we might want to still put partners there if it's empty or requested?
-            // BUT the requirement says: "It is not involved in auto-seat at all"
-            // "cannot add, remove guests from seats or adjust top table's seat count"
 
             foreach ($alreadySeatedIds as $index => $guestId) {
                 if ($guestId) {
@@ -75,10 +71,7 @@ class AutoSeatService
                 }
             }
 
-            // EXCEPTION for partners? Usually they ARE on the top table.
-            // If the user hasn't seated them yet, should we?
-            // The prompt says: "It is not involved in auto-seat at all"
-            // This suggests even partners shouldn't be automatically added if they aren't there.
+
         }
 
         [$allocation, $unassigned] = $this->seedGuests($unassigned, $tables, $allocation);

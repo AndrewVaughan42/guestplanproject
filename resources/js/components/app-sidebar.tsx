@@ -98,7 +98,7 @@ const adminNavItems: NavItem[] = [
 export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     const isAdmin = auth.user.isAdmin;
-
+    // dynamic sidebar
     const items = isAdmin ? adminNavItems : mainNavItems;
     return (
         <Sidebar collapsible="icon" variant="inset">

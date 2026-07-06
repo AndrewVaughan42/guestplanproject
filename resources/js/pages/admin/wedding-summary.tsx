@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import adminWeddings from '@/routes/admin-weddings';
 import { type BreadcrumbItem, MenuItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 
 interface SummaryGuest {
@@ -27,7 +27,6 @@ interface WeddingSummary {
 }
 export default function AdminWeddingSummary() {
     const { wedding } = usePage<{ wedding: WeddingSummary }>().props;
-
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Wedding Summary',
