@@ -6,4 +6,4 @@ Client users would be able to quickly enter their guest lists and assign those g
 
 The project's intention was to create a unique system that allowed clients to easily manage their seating plan while the venue can efficiently manage multiple clients and enforce their chosen table layout.
 
-This project was developed as part of my Dissertation for my BSc in Applied Software Engineering at Swansea University, of which I graduated with First Class Honours.
+This project was developed as part of my Dissertation for my BSc in Applied Software Engineering at Swansea University.
